@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-
+import CRUDTable from './components/CrudEjemplo';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
 import { Donadores, Donaciones, Ayudantes, Beneficiarios, Dashboard, Proyectos } from './pages';
 
@@ -42,7 +42,9 @@ const App = () => {
               <Route path="/donadores" element={<Donadores />} />
               <Route path="/beneficiarios" element={<Beneficiarios />} />
               <Route path="/ayudantes" element={<Ayudantes />} />
-              <Route path="/proyectos" element={<Proyectos />} /> 
+              <Route path="/proyectos" element={<CRUDTable />} />
+             
+  
 
               {/* Charts */}
               <Route path="/line-chart" element={<LineChart />} />

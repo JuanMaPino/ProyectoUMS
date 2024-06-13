@@ -12,7 +12,7 @@ const Sidebar = () => {
   const iconSize = activeMenu ? "text-3xl" : "text-4xl"; // Tamaño de los iconos basado en el estado de activeMenu
 
   return (
-    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white shadow-md transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%] '}`}>
+    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white shadow-lg transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%] '}`}>
       <div className="flex flex-col h-full">
         <div className={`flex items-center justify-between p-4 ${activeMenu ? '' : 'justify-center'}`}>
           <Link to="/" onClick={() => setActiveMenu(false)} className={`flex items-center gap-3 font-extrabold text-blue-500 dark:text-white ${activeMenu ? '' : 'justify-center'}`}>
@@ -33,9 +33,9 @@ const Sidebar = () => {
                     <NavLink
                       to={`/${link.name}`}
                       onClick={() => {}}
-                      className={({ isActive }) => `flex items-center py-3 px-4 m-1 text-lg text-gray-700 dark:text-gray-200 dark:hover:text-black transition-all duration-200 ease-in-out hover:font-bold hover:bg-blue-400 w-100${isActive ? 'text-blue-500 font-bold bg-blue-400 items-center' : ''} ${activeMenu ? 'text-base' : 'text-sm '} rounded-md  `}>
+                      className={({ isActive }) => `flex items-center py-3 px-4 m-1  text-lg text-gray-700 dark:text-gray-200 dark:hover:text-black transition-all duration-200 ease-in-out hover:font-bold hover:bg-blue-400 w-100${isActive ? 'text-blue-500 font-bold bg-blue-400 items-center' : ''} ${activeMenu ? 'text-base' : 'text-sm '} rounded-md `}>
                       {link.icon}
-                      <span className={`${activeMenu ? 'block text-base' : 'hidden text-sm '}`}>
+                      <span className={`${activeMenu ? 'block text-base pl-2' : 'hidden text-sm pl-2 '}`}>
                         {link.name}
                       </span>
                     </NavLink>
