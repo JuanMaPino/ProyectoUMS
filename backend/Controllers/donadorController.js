@@ -82,7 +82,7 @@ exports.obtenerDonadorPorIdentificacion = async (req, res) => {
   try {
     const beneficiario = await Beneficiario.findOne({ identificacion: req.params.identificacion });
     if (!beneficiario) {
-      return res.status(404).json({ error: 'Beneficiario no encontrado' });
+      return res.status(404).json({ error: 'donador no encontrado' });
     }
     res.json(beneficiario);
   } catch (error) {
