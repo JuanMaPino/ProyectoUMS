@@ -149,7 +149,7 @@ const CRUDTable = () => {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-yellow-400 from-10% to-orange-600 hover:from-yellow-600 hover:to-orange-600 p-2"
+                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
                                                 >
                                                     <RiEyeLine />
                                                 </button>
@@ -188,6 +188,7 @@ const CRUDTable = () => {
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
                                 onSwitchChange={handleSwitchChange}
+                                isActive={item.estado === 'activo'}
                             />
                         ))}
                         <Pagination
@@ -210,7 +211,7 @@ const CRUDTable = () => {
                         <ViewModal onClose={closeViewModal} item={selectedItem} />
                     </div>
                 )}
-            </div>  
+            </div>                                                                  
     );
 };
 
