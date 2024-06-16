@@ -1,9 +1,12 @@
 import React from 'react';
 import { RiDeleteBin6Line, RiEdit2Line, RiEyeLine } from 'react-icons/ri';
+import Switch from './Switch'; // Asegúrate de importar tu componente de Switch adecuadamente
 
-const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange }) => {
+const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) => {
+    const cardClass = isActive ? "bg-gradient-to-r from-gray-200 from-35% via-sky-300 via-55% to-blue-500 shadow-inner" : "bg-gradient-to-r from-gray-200 from-35% via-red-300 to-red-600 shadow-inner animate-pulse";
+
     return (
-        <div className="bg-white shadow-md rounded-lg p-4 mb-4">
+        <div className={`rounded-lg ml-4 p-4 mb-4 ${cardClass}`}>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">ID:</span>
                 <span className="ml-2">{item.identificacion}</span>
@@ -24,14 +27,11 @@ const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange }) => {
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Estado:</span>
-                <label className="switch ml-2">
-                    <input
-                        type="checkbox"
-                        checked={item.estado === 'activo'}
-                        onChange={() => onSwitchChange(item._id)}
-                    />
-                    <span className="slider round"></span>
-                </label>
+                <Switch
+                    name="estado"
+                    checked={item.estado === 'activo'}
+                    onChange={() => onSwitchChange(item._id)}
+                />
             </div>
             <div className="flex justify-between">
                 <button onClick={() => onView(item)} className="rounded-lg transition-colors text-white bg-secondary-100 hover:bg-secondary-500 p-2">
