@@ -1,0 +1,25 @@
+###
+POST http://localhost:3000/beneficiarios HTTP/1.1
+Content-Type: application/json
+
+{   
+    "identificacion": 1031940291,
+    "nombre": "camilooo",
+    "telefono": 201002,
+    "correoElectronico": "ccasasss0625@gmail.com",
+    "cantidadFamiliares": 5
+}
+
+###
+POST http://localhost:3000/ayudantes HTTP/1.1
+Content-Type: application/json
+
+{   
+    "identificacion": 1031940291,
+    "nombre": "camilooo",
+    "telefono": 201002,
+    "rol": "alfabetizador",
+    "direccion": "calle 118",
+    "correoElectronico": "camilo@gmail.com",
+    "institucion": "sapos"
+}
