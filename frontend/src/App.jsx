@@ -40,7 +40,7 @@ const App = () => {
               {/* Tables */}
               <Route path="/donaciones" element={<Donaciones />} />
               <Route path="/donadores" element={<Donadores />} />
-              <Route path="/beneficiarios" element={<Beneficiarios />} />
+              <Route path="/beneficiarios" element={<CRUDTable />} />
               <Route path="/ayudantes" element={<Ayudantes />} />
               <Route path="/proyectos" element={<CRUDTable />} />
              

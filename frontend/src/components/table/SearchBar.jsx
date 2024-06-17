@@ -14,7 +14,7 @@ const SearchBar = ({ onSearch }) => {
         <div className="relative text-gray-600">
             <input
                 type="text"
-                placeholder="Buscar por identificación"
+                placeholder="Buscar..."
                 value={query}
                 onChange={handleInputChange}
                 className="bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none"

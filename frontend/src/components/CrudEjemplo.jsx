@@ -31,7 +31,9 @@ const CRUDTable = () => {
 
     useEffect(() => {
         const filtered = data.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
@@ -124,8 +126,8 @@ const CRUDTable = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>ID</TableCell>
-                                <TableCell>Nombre</TableCell>
+                                <TableCell>Identificación</TableCell>
+                                <TableCell>Beneficiario</TableCell>
                                 <TableCell>Teléfono</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
@@ -134,8 +136,18 @@ const CRUDTable = () => {
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="ID">{item.identificacion}</TableCell>
-                                        <TableCell label="Nombre">{item.nombre}</TableCell>
+                                        <TableCell label="Identificación">
+                                            <div>
+                                                <p className="ext-black">{item.tipoDocumento.split(' ')[0]}</p>
+                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Beneficiario">
+                                            <div>
+                                                <p className="text-black">{item.nombre}</p>
+                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                            </div>
+                                        </TableCell>
                                         <TableCell label="Teléfono">{item.telefono}</TableCell>
                                         <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
                                             {item.estado}
@@ -157,13 +169,15 @@ const CRUDTable = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800 p-2`}
+                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                    disabled={item.estado !== 'activo'}
                                                 >
                                                     <RiPlaneFill />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700 p-2"
+                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                    disabled={item.estado !== 'activo'}
                                                 >
                                                     <RiDeleteBin6Line />
                                                 </button>
