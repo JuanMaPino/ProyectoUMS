@@ -10,11 +10,11 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from './table/CreateButton';
 import SearchBar from './table/SearchBar';
 import Switch from './table/Switch';
-import FormModal from './table/modals/ModalBeneficiario';
-import ViewModal from './table/views/ViewBeneficiario';
+import ModalDonador from './table/modals/ModalDonador';
+import ViewDonador from './table/views/ViewDonador';
 import CardItem from './table/CardItem';
 
-const CRUDTable = () => {
+const CRUDDonador = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +41,7 @@ const CRUDTable = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3002/beneficiarios');
+            const response = await axios.get('http://localhost:3002/donadores');
             setData(response.data);
             setFilteredData(response.data);
         } catch (error) {
@@ -60,7 +60,7 @@ const CRUDTable = () => {
 
     const handleUpdate = async (updatedItem) => {
         try {
-            await axios.put(`http://localhost:3002/beneficiarios/${updatedItem._id}`, updatedItem);
+            await axios.put(`http://localhost:3002/donadores/${updatedItem._id}`, updatedItem);
             fetchData();
             closeModal();
         } catch (error) {
@@ -70,7 +70,7 @@ const CRUDTable = () => {
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/beneficiarios/${id}`);
+            await axios.delete(`http://localhost:3002/donadores/${id}`);
             fetchData();
         } catch (error) {
             console.error('Error deleting item:', error);
@@ -127,7 +127,7 @@ const CRUDTable = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Beneficiario</TableCell>
+                                <TableCell>Nombre</TableCell>
                                 <TableCell>Teléfono</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
@@ -138,11 +138,11 @@ const CRUDTable = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="ext-black">{item.tipoDocumento.split(' ')[0]}</p>
+                                                <p className="text-black">{item.tipoDocumen.split(' ')[0]}</p>
                                                 <p className="text-xs text-gray-600">{item.identificacion}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Beneficiario">
+                                        <TableCell label="Nombre">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
                                                 <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
@@ -216,17 +216,17 @@ const CRUDTable = () => {
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <ViewModal onClose={closeViewModal} item={selectedItem} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
         </div>
     );
 };
 
-export default CRUDTable;
+export default CRUDDonador;

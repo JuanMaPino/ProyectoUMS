@@ -1,39 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ModalBeneficiario = ({ onClose, item, fetchData }) => {
+const ModalDonador = ({ onClose, item, fetchData }) => {
     const [formData, setFormData] = useState({
-        tipoDocumento: 'Cedula de ciudadania',
+        tipoDocumento: 'C.C',
         identificacion: '',
         nombre: '',
+        tipoDonador: 'Natural',
         telefono: '',
         correoElectronico: '',
         direccion: '',
-        cantidadFamiliares: 1,
         estado: 'activo'
     });
 
     useEffect(() => {
         if (item) {
             setFormData({
-                tipoDocumento: item.tipoDocumento || 'Cedula de ciudadania',
+                tipoDocumento: item.tipoDocumento || 'C.C',
                 identificacion: item.identificacion || '',
                 nombre: item.nombre || '',
+                tipoDonador: item.tipoDonador || 'Natural',
                 telefono: item.telefono || '',
                 correoElectronico: item.correoElectronico || '',
                 direccion: item.direccion || '',
-                cantidadFamiliares: item.cantidadFamiliares || 1,
                 estado: item.estado || 'activo'
             });
         } else {
             setFormData({
-                tipoDocumento: 'Cedula de ciudadania',
+                tipoDocumento: 'C.C',
                 identificacion: '',
                 nombre: '',
+                tipoDonador: 'Natural',
                 telefono: '',
                 correoElectronico: '',
                 direccion: '',
-                cantidadFamiliares: 1,
                 estado: 'activo'
             });
         }
@@ -48,9 +48,9 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
         e.preventDefault();
         try {
             if (item) {
-                await axios.put(`http://localhost:3002/beneficiarios/${item._id}`, formData);
+                await axios.put(`http://localhost:3002/donadores/${item._id}`, formData);
             } else {
-                await axios.post('http://localhost:3002/beneficiarios', formData);
+                await axios.post('http://localhost:3002/donadores', formData);
             }
             fetchData();
             onClose();
@@ -64,7 +64,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
             <div className="p-8 flex gap-8">
                 {/* Columna izquierda */}
                 <div className="flex-1">
-                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
+                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donador' : 'Agregar Donador'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
@@ -75,8 +75,8 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
                             >
-                                <option value="Cedula de ciudadania">Cédula de ciudadanía</option>
-                                <option value="Tarjeta de identidad">Tarjeta de identidad</option>
+                                <option value="C.C">Cédula de ciudadanía</option>
+                                <option value="NIT">NIT</option>
                             </select>
                         </div>
                         <div>
@@ -125,6 +125,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                                 value={formData.correoElectronico}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
                             />
                         </div>
                         <div>
@@ -139,15 +140,17 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
-                            <input
-                                type="number"
-                                name="cantidadFamiliares"
-                                value={formData.cantidadFamiliares}
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donador</label>
+                            <select
+                                name="tipoDonador"
+                                value={formData.tipoDonador}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
-                            />
+                            >
+                                <option value="Natural">Natural</option>
+                                <option value="Empresa">Empresa</option>
+                            </select>
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
@@ -164,14 +167,14 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-green-200 to-green-500 hover:from-green-300 hover:to-green-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
                             </button>
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 Cancelar
                             </button>
@@ -183,4 +186,4 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
     );
 };
 
-export default ModalBeneficiario;
+export default ModalDonador;

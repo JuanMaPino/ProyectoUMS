@@ -9,6 +9,9 @@ import { Donadores, Donaciones, Ayudantes, Beneficiarios, Dashboard, Proyectos }
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
+import CRUDDonador from './components/CrudDonador';
+import CRUDProyecto from './components/CrudProyectos';
+
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -39,10 +42,10 @@ const App = () => {
 
               {/* Tables */}
               <Route path="/donaciones" element={<Donaciones />} />
-              <Route path="/donadores" element={<Donadores />} />
+              <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
               <Route path="/ayudantes" element={<Ayudantes />} />
-              <Route path="/proyectos" element={<CRUDTable />} />
+              <Route path="/proyectos" element={<CRUDProyecto />} />
              
   
 
