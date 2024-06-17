@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const ModalBeneficiario = ({ onClose, item, fetchData }) => {
     const [formData, setFormData] = useState({
-        tipoDocumento: 'Cedula de ciudadania',
+        tipoDocumento: 'C.C',
         identificacion: '',
         nombre: '',
         telefono: '',
@@ -16,7 +16,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
     useEffect(() => {
         if (item) {
             setFormData({
-                tipoDocumento: item.tipoDocumento || 'Cedula de ciudadania',
+                tipoDocumento: item.tipoDocumento || 'C.C',
                 identificacion: item.identificacion || '',
                 nombre: item.nombre || '',
                 telefono: item.telefono || '',
@@ -27,7 +27,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
             });
         } else {
             setFormData({
-                tipoDocumento: 'Cedula de ciudadania',
+                tipoDocumento: 'C.C',
                 identificacion: '',
                 nombre: '',
                 telefono: '',
@@ -75,8 +75,8 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
                             >
-                                <option value="Cedula de ciudadania">Cédula de ciudadanía</option>
-                                <option value="Tarjeta de identidad">Tarjeta de identidad</option>
+                                <option value="C.C">C.C</option>
+                                <option value="T.I">T.I</option>
                             </select>
                         </div>
                         <div>

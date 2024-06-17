@@ -13,6 +13,7 @@
     "@syncfusion/ej2-react-popups": "^19.4.52",
     "@syncfusion/ej2-react-richtexteditor": "^19.4.50",
     "@syncfusion/ej2-react-schedule": "^19.4.50",
+    "axios": "^1.7.2",
     "classnames": "^2.5.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
