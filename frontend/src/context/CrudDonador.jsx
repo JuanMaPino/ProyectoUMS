@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
-import Table from './table/Table';
+import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
 import Pagination from '../components/table/Pagination';
-import CreateButton from './table/CreateButton';
-import SearchBar from './table/SearchBar';
-import Switch from './table/Switch';
-import FormModal from './table/modals/ModalProyecto'; // Adapted for Proyecto
-import ViewModal from './table/views/ViewProyecto'; // Adapted for Proyecto
-import CardItem from './table/CardItem';
+import CreateButton from '../components/table/CreateButton';
+import SearchBar from '../components/table/SearchBar';
+import Switch from '../components/table/Switch';
+import ModalDonador from '../components/table/modals/ModalDonador';
+import ViewDonador from '../components/table/views/ViewDonador';
+import CardItem from '../components/table/CardItem';
 
-const CRUDProyecto = () => {
+const CRUDDonador = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,9 +31,9 @@ const CRUDProyecto = () => {
 
     useEffect(() => {
         const filtered = data.filter(item =>
-            item.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
@@ -41,7 +41,7 @@ const CRUDProyecto = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3002/proyectos');
+            const response = await axios.get('http://localhost:3002/donadores');
             setData(response.data);
             setFilteredData(response.data);
         } catch (error) {
@@ -60,7 +60,7 @@ const CRUDProyecto = () => {
 
     const handleUpdate = async (updatedItem) => {
         try {
-            await axios.put(`http://localhost:3002/proyectos/${updatedItem._id}`, updatedItem);
+            await axios.put(`http://localhost:3002/donadores/${updatedItem._id}`, updatedItem);
             fetchData();
             closeModal();
         } catch (error) {
@@ -70,7 +70,7 @@ const CRUDProyecto = () => {
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/proyectos/${id}`);
+            await axios.delete(`http://localhost:3002/donadores/${id}`);
             fetchData();
         } catch (error) {
             console.error('Error deleting item:', error);
@@ -126,22 +126,32 @@ const CRUDProyecto = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Código</TableCell>
+                                <TableCell>Identificación</TableCell>
                                 <TableCell>Nombre</TableCell>
-                                <TableCell>Descripción</TableCell>
-                                <TableCell>Fecha de Inicio</TableCell>
-                                <TableCell>Fecha de Fin</TableCell>
+                                <TableCell>Teléfono</TableCell>
+                                <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Código">{item.codigo}</TableCell>
-                                        <TableCell label="Nombre">{item.nombre}</TableCell>
-                                        <TableCell label="Descripción">{item.descripcion}</TableCell>
-                                        <TableCell label="Fecha de Inicio">{new Date(item.fechaInicio).toLocaleDateString()}</TableCell>
-                                        <TableCell label="Fecha de Fin">{new Date(item.fechaFin).toLocaleDateString()}</TableCell>
+                                        <TableCell label="Identificación">
+                                            <div>
+                                                <p className="text-black">{item.tipoDocumen.split(' ')[0]}</p>
+                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Nombre">
+                                            <div>
+                                                <p className="text-black">{item.nombre}</p>
+                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
+                                        <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
+                                            {item.estado}
+                                        </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -207,16 +217,16 @@ const CRUDProyecto = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewModal onClose={closeViewModal} item={selectedItem} />
+                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
         </div>
     );
 };
 
-export default CRUDProyecto;
+export default CRUDDonador;

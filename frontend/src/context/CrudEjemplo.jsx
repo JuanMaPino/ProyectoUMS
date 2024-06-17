@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
-import Table from './table/Table';
+import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
 import Pagination from '../components/table/Pagination';
-import CreateButton from './table/CreateButton';
-import SearchBar from './table/SearchBar';
-import Switch from './table/Switch';
-import ModalDonador from './table/modals/ModalDonador';
-import ViewDonador from './table/views/ViewDonador';
-import CardItem from './table/CardItem';
+import CreateButton from '../components/table/CreateButton';
+import SearchBar from '../components/table/SearchBar';
+import Switch from '../components/table/Switch';
+import FormModal from '../components/table/modals/ModalBeneficiario';
+import ViewModal from '../components/table/views/ViewBeneficiario';
+import CardItem from '../components/table/CardItem';
 
-const CRUDDonador = () => {
+const CRUDTable = () => {
     const [data, setData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,7 +41,7 @@ const CRUDDonador = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:3002/donadores');
+            const response = await axios.get('http://localhost:3002/beneficiarios');
             setData(response.data);
             setFilteredData(response.data);
         } catch (error) {
@@ -60,7 +60,7 @@ const CRUDDonador = () => {
 
     const handleUpdate = async (updatedItem) => {
         try {
-            await axios.put(`http://localhost:3002/donadores/${updatedItem._id}`, updatedItem);
+            await axios.put(`http://localhost:3002/beneficiarios/${updatedItem._id}`, updatedItem);
             fetchData();
             closeModal();
         } catch (error) {
@@ -70,7 +70,7 @@ const CRUDDonador = () => {
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/donadores/${id}`);
+            await axios.delete(`http://localhost:3002/beneficiarios/${id}`);
             fetchData();
         } catch (error) {
             console.error('Error deleting item:', error);
@@ -127,7 +127,7 @@ const CRUDDonador = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Nombre</TableCell>
+                                <TableCell>Beneficiario</TableCell>
                                 <TableCell>Teléfono</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
@@ -138,11 +138,11 @@ const CRUDDonador = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="text-black">{item.tipoDocumen.split(' ')[0]}</p>
+                                                <p className="ext-black">{item.tipoDocumento.split(' ')[0]}</p>
                                                 <p className="text-xs text-gray-600">{item.identificacion}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Nombre">
+                                        <TableCell label="Beneficiario">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
                                                 <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
@@ -216,17 +216,17 @@ const CRUDDonador = () => {
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+                    <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
         </div>
     );
 };
 
-export default CRUDDonador;
+export default CRUDTable;

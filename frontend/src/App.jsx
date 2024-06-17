@@ -2,15 +2,15 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import CRUDTable from './components/CrudEjemplo';
+import CRUDTable from './context/CrudEjemplo';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
-import { Donadores, Donaciones, Ayudantes, Beneficiarios, Dashboard, Proyectos } from './pages';
+
 
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
-import CRUDDonador from './components/CrudDonador';
-import CRUDProyecto from './components/CrudProyectos';
+import CRUDDonador from './context/CrudDonador';
+import CRUDProyecto from './context/CrudProyectos';
 
 
 const App = () => {
@@ -38,13 +38,13 @@ const App = () => {
           <div className="p-4">
             <Routes>
               {/* Dashboard */}
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" />
 
               {/* Tables */}
-              <Route path="/donaciones" element={<Donaciones />} />
+              <Route path="/donaciones" />
               <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
-              <Route path="/ayudantes" element={<Ayudantes />} />
+              <Route path="/ayudantes"/>
               <Route path="/proyectos" element={<CRUDProyecto />} />
              
   
