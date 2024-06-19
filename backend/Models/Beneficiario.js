@@ -39,7 +39,9 @@ const beneficiarioSchema = new Schema({
   },
   cantidadFamiliares: {
     type: Number,
-    required: true
+    required: true,
+    min: [1, 'La cantidad de familiares debe ser al menos 1'],
+    max: [10, 'La cantidad de familiares no puede exceder de 10']
   },
   estado: {
     type: String,

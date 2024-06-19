@@ -11,6 +11,7 @@ import { useStateContext } from './context/ContextProvider';
 import './App.css';
 import CRUDDonador from './context/CrudDonador';
 import CRUDProyecto from './context/CrudProyectos';
+import CRUDAyudante from './context/CrudAyudante';
 
 
 const App = () => {
@@ -44,7 +45,7 @@ const App = () => {
               <Route path="/donaciones" />
               <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
-              <Route path="/ayudantes"/>
+              <Route path="/ayudantes" element={<CRUDAyudante/>}/>
               <Route path="/proyectos" element={<CRUDProyecto />} />
              
   

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
-const ModalBeneficiario = ({ onClose, item, fetchData }) => {
+const ModalAyudante = ({ onClose, item, fetchData }) => {
     const [formData, setFormData] = useState({
         tipoDocumento: 'C.C',
         identificacion: '',
@@ -9,7 +9,8 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
         telefono: '',
         correoElectronico: '',
         direccion: '',
-        cantidadFamiliares: 1,
+        rol: 'alfabetizador',
+        institucion: '',
         estado: 'activo'
     });
 
@@ -26,7 +27,8 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                 telefono: item.telefono || '',
                 correoElectronico: item.correoElectronico || '',
                 direccion: item.direccion || '',
-                cantidadFamiliares: item.cantidadFamiliares || 1,
+                rol: item.rol || 'alfabetizador',
+                institucion: item.institucion || '',
                 estado: item.estado || 'activo'
             });
         } else {
@@ -37,7 +39,8 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                 telefono: '',
                 correoElectronico: '',
                 direccion: '',
-                cantidadFamiliares: 1,
+                rol: 'alfabetizador',
+                institucion: '',
                 estado: 'activo'
             });
         }
@@ -87,13 +90,6 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                     error = 'La dirección solo puede contener letras, números, espacios y los caracteres , . - #';
                 }
                 break;
-            case 'cantidadFamiliares':
-                if (isNaN(value) || value <= 0) {
-                    error = 'La cantidad de familiares debe ser un número mayor a 0.';
-                } else if (value > 10) {
-                    error = 'La cantidad de familiares no puede exceder de 10.';
-                }
-                break;
             default:
                 break;
         }
@@ -114,9 +110,9 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
         e.preventDefault();
         try {
             if (item) {
-                await axios.put(`http://localhost:3002/beneficiarios/${item._id}`, formData);
+                await axios.put(`http://localhost:3002/ayudantes/${item._id}`, formData);
             } else {
-                await axios.post('http://localhost:3002/beneficiarios', formData);
+                await axios.post('http://localhost:3002/ayudantes', formData);
             }
             fetchData();
             onClose();
@@ -130,7 +126,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
             <div ref={modalRef} className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
                 <div className="p-8 flex gap-8">
                     <div className="flex-1">
-                        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
+                        <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
                                 <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
@@ -209,16 +205,28 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                                 {errors.direccion && <p className="text-red-500 text-xs italic">{errors.direccion}</p>}
                             </div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Rol</label>
+                                <select
+                                    name="rol"
+                                    value={formData.rol}
+                                    onChange={handleChange}
+                                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                    required
+                                >
+                                    <option value="alfabetizador">Alfabetizador</option>
+                                    <option value="voluntario">Voluntario</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
                                 <input
-                                    type="number"
-                                    name="cantidadFamiliares"
-                                    value={formData.cantidadFamiliares}
+                                    type="text"
+                                    name="institucion"
+                                    value={formData.institucion}
                                     onChange={handleChange}
                                     className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                     required
                                 />
-                                {errors.cantidadFamiliares && <p className="text-red-500 text-xs italic">{errors.cantidadFamiliares}</p>}
                             </div>
                             <div>
                                 <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
@@ -227,24 +235,25 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
                                     value={formData.estado}
                                     onChange={handleChange}
                                     className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                    required
                                 >
                                     <option value="activo">Activo</option>
                                     <option value="inactivo">Inactivo</option>
                                 </select>
                             </div>
-                            <div className="flex justify-end space-x-4">
-                                <button
-                                    type="submit"
-                                    className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white font-bold py-2 px-6  focus:outline-none focus:shadow-outline rounded-lg"
-                                >
-                                    {item ? 'Actualizar' : 'Agregar'}
-                                </button>
+                            <div className="flex items-center justify-end">
                                 <button
                                     type="button"
                                     onClick={onClose}
-                                    className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                    className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2"
                                 >
                                     Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                >
+                                    {item ? 'Guardar' : 'Agregar'}
                                 </button>
                             </div>
                         </form>
@@ -255,4 +264,4 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
     );
 };
 
-export default ModalBeneficiario;
+export default ModalAyudante;
