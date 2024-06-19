@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useBeneficiarios } from '../../../context/BeneficiariosContext'; // Importar el contexto
 import axios from 'axios';
 
 const ModalBeneficiario = ({ onClose, item, fetchData }) => {
+    const { createBeneficiario, updateBeneficiario } = useBeneficiarios(); // Obtener métodos del contexto
     const [formData, setFormData] = useState({
         tipoDocumento: 'C.C',
         identificacion: '',
@@ -48,9 +50,9 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
         e.preventDefault();
         try {
             if (item) {
-                await axios.put(`http://localhost:3002/beneficiarios/${item._id}`, formData);
+                await updateBeneficiario(item._id, formData); // Utilizar método del contexto para actualizar
             } else {
-                await axios.post('http://localhost:3002/beneficiarios', formData);
+                await createBeneficiario(formData); // Utilizar método del contexto para crear
             }
             fetchData();
             onClose();

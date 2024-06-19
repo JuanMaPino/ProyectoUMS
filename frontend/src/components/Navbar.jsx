@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
 import { BsChatLeft } from 'react-icons/bs';
 import { RiNotification3Line } from 'react-icons/ri';
@@ -37,6 +37,20 @@ const Navbar = () => {
   const { activeMenu, setActiveMenu, isClicked, handleClick } = useStateContext();
   const [showChat, setShowChat] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    // Verificación inicial en caso de que la ventana ya esté en un tamaño pequeño al cargar
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleChatClick = () => {
     setShowChat(!showChat);
@@ -49,13 +63,17 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between p-2  relative bg-white shadow-md">
-      <NavButton
-        title="Menu"
-        customFunc={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
-        color="blue"
-        icon={<AiOutlineMenu />}
-      />
+    <div className="flex justify-between p-2 relative bg-white shadow-md">
+      <div>
+        {!isSmallScreen && (
+          <NavButton
+            title="Menu"
+            customFunc={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
+            color="blue"
+            icon={<AiOutlineMenu />}
+          />
+        )}
+      </div>
       <div className="flex items-center gap-4">
         <NavButton
           title="Chat"

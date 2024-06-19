@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useProjects } from '../../../context/ProyectosContext';
 
-const ModalProyecto = ({ onClose, item, fetchData }) => {
+const ModalProyecto = ({ onClose, item }) => {
+    const { createProject, updateProject } = useProjects();
     const [formData, setFormData] = useState({
         codigo: '',
         nombre: '',
@@ -41,12 +42,11 @@ const ModalProyecto = ({ onClose, item, fetchData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (item) {
-                await axios.put(`http://localhost:3002/proyectos/${item._id}`, formData);
+            if (item && item._id) {
+                await updateProject(item._id, formData);
             } else {
-                await axios.post('http://localhost:3002/proyectos', formData);
+                await createProject(formData);
             }
-            fetchData();
             onClose();
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
