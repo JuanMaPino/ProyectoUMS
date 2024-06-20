@@ -1,39 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useDonadores } from '../../../context/DonadoresContext';
 
-const ModalDonador = ({ onClose, item, fetchData }) => {
+const ModalDonador = ({ onClose, item }) => {
+    const { createDonador, updateDonador } = useDonadores();
     const [formData, setFormData] = useState({
-        tipoDocumento: 'C.C',
         identificacion: '',
         nombre: '',
         tipoDonador: 'Natural',
+        tipoDocumen: 'C.C',
         telefono: '',
-        correoElectronico: '',
         direccion: '',
+        correoElectronico: '',
         estado: 'activo'
     });
 
     useEffect(() => {
         if (item) {
             setFormData({
-                tipoDocumento: item.tipoDocumento || 'C.C',
                 identificacion: item.identificacion || '',
                 nombre: item.nombre || '',
                 tipoDonador: item.tipoDonador || 'Natural',
+                tipoDocumen: item.tipoDocumen || 'C.C',
                 telefono: item.telefono || '',
-                correoElectronico: item.correoElectronico || '',
                 direccion: item.direccion || '',
+                correoElectronico: item.correoElectronico || '',
                 estado: item.estado || 'activo'
             });
         } else {
             setFormData({
-                tipoDocumento: 'C.C',
                 identificacion: '',
                 nombre: '',
                 tipoDonador: 'Natural',
+                tipoDocumen: 'C.C',
                 telefono: '',
-                correoElectronico: '',
                 direccion: '',
+                correoElectronico: '',
                 estado: 'activo'
             });
         }
@@ -47,12 +48,11 @@ const ModalDonador = ({ onClose, item, fetchData }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            if (item) {
-                await axios.put(`http://localhost:3002/donadores/${item._id}`, formData);
+            if (item && item._id) {
+                await updateDonador(item._id, formData);
             } else {
-                await axios.post('http://localhost:3002/donadores', formData);
+                await createDonador(formData);
             }
-            fetchData();
             onClose();
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
@@ -67,22 +67,9 @@ const ModalDonador = ({ onClose, item, fetchData }) => {
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donador' : 'Agregar Donador'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
-                            <select
-                                name="tipoDocumento"
-                                value={formData.tipoDocumento}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="C.C">Cédula de ciudadanía</option>
-                                <option value="NIT">NIT</option>
-                            </select>
-                        </div>
-                        <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
                             <input
-                                type="text"
+                                type="number"
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
@@ -102,15 +89,17 @@ const ModalDonador = ({ onClose, item, fetchData }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
-                            <input
-                                type="text"
-                                name="telefono"
-                                value={formData.telefono}
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donador</label>
+                            <select
+                                name="tipoDonador"
+                                value={formData.tipoDonador}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
-                            />
+                            >
+                                <option value="Natural">Natural</option>
+                                <option value="Empresa">Empresa</option>
+                            </select>
                         </div>
                     </form>
                 </div>
@@ -118,14 +107,26 @@ const ModalDonador = ({ onClose, item, fetchData }) => {
                 <div className="flex-1">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
-                            <input
-                                type="email"
-                                name="correoElectronico"
-                                value={formData.correoElectronico}
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
+                            <select
+                                name="tipoDocumen"
+                                value={formData.tipoDocumen}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
+                            >
+                                <option value="C.C">C.C</option>
+                                <option value="NIT">NIT</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
+                            <input
+                                type="text"
+                                name="telefono"
+                                value={formData.telefono}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                             />
                         </div>
                         <div>
@@ -140,17 +141,15 @@ const ModalDonador = ({ onClose, item, fetchData }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donador</label>
-                            <select
-                                name="tipoDonador"
-                                value={formData.tipoDonador}
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
+                            <input
+                                type="email"
+                                name="correoElectronico"
+                                value={formData.correoElectronico}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
-                            >
-                                <option value="Natural">Natural</option>
-                                <option value="Empresa">Empresa</option>
-                            </select>
+                            />
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>

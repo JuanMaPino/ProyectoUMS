@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
 import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
@@ -12,7 +13,7 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
-import CardItem from '../components/table/CardItem';
+import CardItem from '../components/table/CardItems/CardItem';
 
 const CRUDTable = () => {
     const { 
@@ -93,123 +94,122 @@ const CRUDTable = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
-    return (
-        <div>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <div className="flex items-center gap-2">
-                    <CreateButton onClick={handleCreateClick} />
-                    <SearchBar onSearch={handleSearch} />
-                </div>
-            </div>
-            {filteredData.length === 0 ? (
-                <p className="text-center">No hay registros disponibles</p>
-            ) : (
-                <div>
-                    <div className="hidden md:block">
-                        <Table>
-                            <TableHead>
-                                <TableCell>Identificación</TableCell>
-                                <TableCell>Beneficiario</TableCell>
-                                <TableCell>Teléfono</TableCell>
-                                <TableCell>Estatus</TableCell>
-                                <TableCell>Estado</TableCell>
-                                <TableCell>Acciones</TableCell>
-                            </TableHead>
-                            <TableBody>
-                                {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Identificación">
-                                            <div>
-                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell label="Beneficiario">
-                                            <div>
-                                                <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                            {item.estado}
-                                        </TableCell>
-                                        <TableCell label="Estado">
-                                            <Switch
-                                                name="estado"
-                                                checked={item.estado === 'activo'}
-                                                onChange={() => disableBeneficiario(item._id)}
-                                            />
-                                        </TableCell>
-                                        <TableCell label="Acciones">
-                                            <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiPlaneFill />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
-                                            </div>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                            <Pagination
-                                totalItems={filteredData.length}
-                                itemsPerPage={itemsPerPage}
-                                currentPage={currentPage}
-                                onPageChange={setCurrentPage}
-                            />
-                        </Table>
-                    </div>
-                    <div className="md:hidden">
-                        {currentData.map((item, index) => (
-                            <CardItem
-                                key={index}
-                                item={item}
-                                onEdit={handleEditButtonClick}
-                                onView={handleViewButtonClick}
-                                onDelete={handleDeleteButtonClick}
-                                onSwitchChange={disableBeneficiario}
-                                isActive={item.estado === 'activo'}
-                            />
-                        ))}
-                        <Pagination
-                            totalItems={filteredData.length}
-                            itemsPerPage={itemsPerPage}
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                        />
-                    </div>
-                </div>
-            )}
-            {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <FormModal onClose={closeModal} item={selectedItem} onSave={handleCreateOrUpdate} />
-                </div>
-            )}
-            {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewModal onClose={closeViewModal} item={selectedItem} />
-                </div>
-            )}
-            
+  return (
+    <div>
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+        <div className="flex items-center gap-2">
+          <CreateButton onClick={handleCreateClick} />
+          <SearchBar onSearch={handleSearch} />
         </div>
-    );
+      </div>
+      {filteredData.length === 0 ? (
+        <p className="text-center">No hay registros disponibles</p>
+      ) : (
+        <div>
+          <div className="hidden md:block">
+            <Table>
+              <TableHead>
+                <TableCell>Identificación</TableCell>
+                <TableCell>Beneficiario</TableCell>
+                <TableCell>Teléfono</TableCell>
+                <TableCell>Estatus</TableCell>
+                <TableCell>Estado</TableCell>
+                <TableCell>Acciones</TableCell>
+              </TableHead>
+              <TableBody>
+                {currentData.map((item, index) => (
+                  <TableRow key={index} isActive={item.estado === 'activo'}>
+                    <TableCell label="Identificación">
+                      <div>
+                        <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
+                        <p className="text-xs text-gray-600">{item.identificacion}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell label="Beneficiario">
+                      <div>
+                        <p className="text-black">{item.nombre}</p>
+                        <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                      </div>
+                    </TableCell>
+                    <TableCell label="Teléfono">{item.telefono}</TableCell>
+                    <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
+                      {item.estado}
+                    </TableCell>
+                    <TableCell label="Estado">
+                      <Switch
+                        name="estado"
+                        checked={item.estado === 'activo'}
+                        onChange={() => handleSwitchChange(item._id)}
+                      />
+                    </TableCell>
+                    <TableCell label="Acciones">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleViewButtonClick(item)}
+                          className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
+                        >
+                          <RiEyeLine />
+                        </button>
+                        <button
+                          onClick={() => handleEditButtonClick(item)}
+                          className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                          disabled={item.estado !== 'activo'}
+                        >
+                          <RiPlaneFill />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteButtonClick(item._id)}
+                          className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                          disabled={item.estado !== 'activo'}
+                        >
+                          <RiDeleteBin6Line />
+                        </button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              <Pagination
+                totalItems={filteredData.length}
+                itemsPerPage={itemsPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+              />
+            </Table>
+          </div>
+          <div className="md:hidden">
+            {currentData.map((item, index) => (
+              <CardItem
+                key={index}
+                item={item}
+                onEdit={handleEditButtonClick}
+                onView={handleViewButtonClick}
+                onDelete={handleDeleteButtonClick}
+                onSwitchChange={handleSwitchChange}
+                isActive={item.estado === 'activo'}
+              />
+            ))}
+            <Pagination
+              totalItems={filteredData.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        </div>
+      )}
+      {showModalForm && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+          <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+        </div>
+      )}
+      {showViewModal && selectedItem && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+          <ViewModal onClose={closeViewModal} item={selectedItem} />
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default CRUDTable;

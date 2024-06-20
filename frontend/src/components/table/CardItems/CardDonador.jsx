@@ -1,29 +1,27 @@
 import React from 'react';
 import { RiDeleteBin6Line, RiPlaneFill, RiEyeLine } from 'react-icons/ri';
-import Switch from './Switch'; // Asegúrate de importar tu componente de Switch adecuadamente
+import Switch from '../Switch'; // Ajusta la ruta según tu estructura
 
-const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) => {
+const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) => {
     const cardClass = isActive ? "shadow-inner bg-gradient-to-r from-gray-200 from-35% via-sky-300 via-55% to-blue-500 shadow-inner" : "bg-gradient-to-r from-gray-200 from-35% via-red-300 to-red-600 shadow-inner animate-pulse";
 
     const handleEditClick = () => {
         if (item.estado === 'activo') {
             onEdit(item);
         }
-        // Puedes agregar un mensaje o alerta aquí si deseas
     };
 
     const handleDeleteClick = () => {
         if (item.estado === 'activo') {
             onDelete(item._id);
         }
-        // Puedes agregar un mensaje o alerta aquí si deseas
     };
 
     return (
         <div className={`rounded-lg ml-4 p-4 mb-4 ${cardClass}`}>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">ID:</span>
-                <span className="ml-2">{item.identificacion}</span>
+                <span className="ml-2">{item.tipoDocumen.split(' ')[0]} {item.identificacion}</span>
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Nombre:</span>
@@ -32,6 +30,14 @@ const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) 
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Teléfono:</span>
                 <span className="ml-2">{item.telefono}</span>
+            </div>
+            <div className="flex items-center mb-2">
+                <span className="font-semibold">Correo Electrónico:</span>
+                <span className="ml-2">{item.correoElectronico}</span>
+            </div>
+            <div className="flex items-center mb-2">
+                <span className="font-semibold">Dirección:</span>
+                <span className="ml-2">{item.direccion}</span>
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Estatus:</span>
@@ -58,7 +64,7 @@ const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) 
                     onClick={handleEditClick}
                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                     disabled={item.estado !== 'activo'}
-                    title={item.estado !== 'activo' ? 'No se puede editar un beneficiario inactivo' : ''}
+                    title={item.estado !== 'activo' ? 'No se puede editar un donador inactivo' : ''}
                 >
                     <RiPlaneFill />
                 </button>
@@ -66,7 +72,7 @@ const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) 
                     onClick={handleDeleteClick}
                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                     disabled={item.estado !== 'activo'}
-                    title={item.estado !== 'activo' ? 'No se puede eliminar un beneficiario inactivo' : ''}
+                    title={item.estado !== 'activo' ? 'No se puede eliminar un donador inactivo' : ''}
                 >
                     <RiDeleteBin6Line />
                 </button>
@@ -75,4 +81,4 @@ const CardItem = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) 
     );
 };
 
-export default CardItem;
+export default CardDonador;

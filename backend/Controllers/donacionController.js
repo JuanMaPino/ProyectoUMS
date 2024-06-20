@@ -11,9 +11,19 @@ exports.obtenerTodasLasDonaciones = async (req, res) => {
 
 exports.crearDonacion = async (req, res) => {
   try {
-    const nuevaDonacion = await Donacion.create(req.body);
+    const nuevaDonacion = new Donacion(req.body);
+    await nuevaDonacion.save();
     res.status(201).json(nuevaDonacion);
   } catch (error) {
+    if (error.code === 11000) {
+  
+      if (error.keyValue && error.keyValue.identificacion) {
+        return res.status(400).json({ error: 'Este documento ya está registrado.' });
+      }
+      if (error.keyValue && error.keyValue.correoElectronico) {
+        return res.status(400).json({ error: 'Este correo electrónico ya está registrado.' });
+      }
+    }
     res.status(400).json({ error: error.message });
   }
 };

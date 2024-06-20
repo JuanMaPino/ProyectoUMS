@@ -21,10 +21,7 @@ const donadorSchema = new Schema({
     required: true,
     enum: ['C.C', 'NIT']
   },  
-  Documento: {
-    type: String,
-    required: true
-  },
+
   telefono: {
     type: Number
   },
