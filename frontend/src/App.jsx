@@ -15,8 +15,9 @@ import { useStateContext } from './context/ContextProvider';
 import './App.css';
 import CRUDDonador from './pages/CrudDonador';
 import CRUDProyecto from './pages/CrudProyectos';
+import CRUDAyudante from './pages/CrudAyudante';
+import { AyudanteProvider } from './context/AyudantesContext';
 import CRUDDonacion from './pages/CrudDonacion';
-
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -24,6 +25,7 @@ const App = () => {
   return (
     <div className="flex relative dark:bg-main-dark-bg">
       <BrowserRouter>
+        <AyudanteProvider>
         <ProjectProvider>
         <BeneficiarioProvider>
         <DonadorProvider>
@@ -52,7 +54,7 @@ const App = () => {
               <Route path="/donaciones" element={<CRUDDonacion />} />
               <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
-              <Route path="/ayudantes"/>
+              <Route path="/ayudantes" element={<CRUDAyudante/>}/>
               <Route path="/proyectos" element={<CRUDProyecto />} />
              
   
@@ -66,6 +68,7 @@ const App = () => {
         </DonadorProvider>
         </BeneficiarioProvider>
         </ProjectProvider>
+        </AyudanteProvider>
       </BrowserRouter>
     </div>
   );

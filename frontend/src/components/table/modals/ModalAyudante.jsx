@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { useBeneficiarios } from '../../../context/BeneficiariosContext';
+import { useAyudantes } from '../../../context/AyudantesContext';
 
-const ModalBeneficiario = ({ onClose, item }) => {
-    const { createBeneficiario, updateBeneficiario } = useBeneficiarios(); // Obtener métodos del contexto
+const ModalAyudante = ({ onClose, item }) => {
+    const { createAyudante, updateAyudante } = useAyudantes(); // Obtener métodos del contexto
     const [formData, setFormData] = useState({
         tipoDocumento: 'C.C',
         identificacion: '',
         nombre: '',
         telefono: '',
-        correoElectronico: '',
+        rol: 'alfabetizador', // Valor por defecto
         direccion: '',
-        cantidadFamiliares: 1,
+        correoElectronico: '',
+        institucion: '',
         estado: 'activo'
     });
 
@@ -21,9 +22,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 identificacion: item.identificacion || '',
                 nombre: item.nombre || '',
                 telefono: item.telefono || '',
-                correoElectronico: item.correoElectronico || '',
+                rol: item.rol || 'alfabetizador',
                 direccion: item.direccion || '',
-                cantidadFamiliares: item.cantidadFamiliares || 1,
+                correoElectronico: item.correoElectronico || '',
+                institucion: item.institucion || '',
                 estado: item.estado || 'activo'
             });
         } else {
@@ -32,9 +34,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 identificacion: '',
                 nombre: '',
                 telefono: '',
-                correoElectronico: '',
+                rol: 'alfabetizador', // Valor por defecto
                 direccion: '',
-                cantidadFamiliares: 1,
+                correoElectronico: '',
+                institucion: '',
                 estado: 'activo'
             });
         }
@@ -49,9 +52,9 @@ const ModalBeneficiario = ({ onClose, item }) => {
         e.preventDefault();
         try {
             if (item && item._id) {
-                await updateBeneficiario(item._id, formData); // Utilizar método del contexto para actualizar
+                await updateAyudante(item._id, formData); // Utilizar método del contexto para actualizar
             } else {
-                await createBeneficiario(formData); // Utilizar método del contexto para crear
+                await createAyudante(formData); // Utilizar método del contexto para crear
             }
             onClose();
         } catch (error) {
@@ -60,11 +63,11 @@ const ModalBeneficiario = ({ onClose, item }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-1 mr-1 ml-7">
+        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
             <div className="p-8 flex gap-8">
                 {/* Columna izquierda */}
                 <div className="flex-1">
-                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
+                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
@@ -118,14 +121,17 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 <div className="flex-1">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
-                            <input
-                                type="email"
-                                name="correoElectronico"
-                                value={formData.correoElectronico}
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Rol</label>
+                            <select
+                                name="rol"
+                                value={formData.rol}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                            />
+                                required
+                            >
+                                <option value="alfabetizador">Alfabetizador</option>
+                                <option value="voluntario">Voluntario</option>
+                            </select>
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
@@ -139,11 +145,22 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
                             <input
-                                type="number"
-                                name="cantidadFamiliares"
-                                value={formData.cantidadFamiliares}
+                                type="email"
+                                name="correoElectronico"
+                                value={formData.correoElectronico}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
+                            <input
+                                type="text"
+                                name="institucion"
+                                value={formData.institucion}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
@@ -156,24 +173,25 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 value={formData.estado}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
                             >
                                 <option value="activo">Activo</option>
                                 <option value="inactivo">Inactivo</option>
                             </select>
                         </div>
-                        <div className="flex justify-end space-x-4">
-                            <button
-                                type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-2 px-6 focus:outline-none focus:shadow-outline rounded-lg"
-                            >
-                                {item ? 'Actualizar' : 'Agregar'}
-                            </button>
+                        <div className="flex justify-between mt-4">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                             >
                                 Cancelar
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            >
+                                Guardar
                             </button>
                         </div>
                     </form>
@@ -183,4 +201,4 @@ const ModalBeneficiario = ({ onClose, item }) => {
     );
 };
 
-export default ModalBeneficiario;
+export default ModalAyudante;

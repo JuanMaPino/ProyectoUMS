@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri'; // Importar RiAddLine para el botón
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
 import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -16,100 +16,86 @@ import ViewModal from '../components/table/views/ViewBeneficiario';
 import CardItem from '../components/table/CardItems/CardItem';
 
 const CRUDTable = () => {
-  const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios(); // Extraer métodos del contexto
-  const [filteredData, setFilteredData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [showModalForm, setShowModalForm] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+    const { 
+        createBeneficiario, 
+        updateBeneficiario, 
+        getAllBeneficiarios, 
+        disableBeneficiario, 
+        deleteBeneficiario, 
+        beneficiarios, 
+        errors 
+    } = useBeneficiarios(); // Use the context
 
-  const itemsPerPage = 6;
+    const [filteredData, setFilteredData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [showModalForm, setShowModalForm] = useState(false);
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+    const itemsPerPage = 5;
 
-  useEffect(() => {
-    const filtered = beneficiarios.filter(item =>
-      item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page on new search
-  }, [beneficiarios, searchTerm]);
+    useEffect(() => {
+        const filtered = beneficiarios.filter(item =>
+            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        );
+        setFilteredData(filtered);
+        setCurrentPage(1); // Reset to first page on new search
+    }, [beneficiarios, searchTerm]);
 
-  const fetchData = async () => {
-    try {
-      // Ya no se usa axios directamente aquí, se usa el método del contexto
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
+    const handleCreateClick = () => {
+        setSelectedItem(null);
+        setShowModalForm(true);
+    };
 
-  const handleCreateClick = () => {
-    setSelectedItem(null);
-    setShowModalForm(true);
-  };
+    const handleSearch = (query) => {
+        setSearchTerm(query);
+    };
 
-  const handleSearch = (query) => {
-    setSearchTerm(query);
-  };
+    const handleCreateOrUpdate = async (item) => {
+        if (item._id) {
+            await updateBeneficiario(item._id, item);
+        } else {
+            await createBeneficiario(item);
+        }
+        closeModal();
+    };
 
-  const handleUpdate = async (updatedItem) => {
-    try {
-      await updateBeneficiario(updatedItem._id, updatedItem); // Utilizar método del contexto para actualizar
-      closeModal();
-    } catch (error) {
-      console.error('Error updating item:', error);
-    }
-  };
+    const handleDeleteButtonClick = async (id) => {
+        try {
+            await deleteBeneficiario(id);
+        } catch (error) {
+            console.error('Error deleting beneficiario:', error);
+        }
+    };
 
-  const handleDeleteButtonClick = async (id) => {
-    try {
-      await deleteBeneficiario(id); // Utilizar método del contexto para eliminar
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
-  };
+    const handleViewButtonClick = (item) => {
+        setSelectedItem(item);
+        setShowViewModal(true);
+    };
 
-  const handleViewButtonClick = (item) => {
-    setSelectedItem(item);
-    setShowViewModal(true);
-  };
+    const handleEditButtonClick = (item) => {
+        setSelectedItem(item);
+        setShowModalForm(true);
+    };
 
-  const handleEditButtonClick = (item) => {
-    setSelectedItem(item);
-    setShowModalForm(true);
-  };
+    const closeModal = () => {
+        setSelectedItem(null);
+        setShowModalForm(false);
+    };
 
-  const handleSwitchChange = async (id) => {
-    const item = beneficiarios.find(item => item._id === id);
-    if (item) {
-      const updatedItem = {
-        ...item,
-        estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-      };
-      await handleUpdate(updatedItem);
-    }
-  };
+    const closeViewModal = () => {
+        setSelectedItem(null);
+        setShowViewModal(false);
+    };
 
-  const closeModal = () => {
-    setSelectedItem(null);
-    setShowModalForm(false);
-  };
-
-  const closeViewModal = () => {
-    setSelectedItem(null);
-    setShowViewModal(false);
-  };
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className='ml-3'>
+    <div>
       <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
         <div className="flex items-center gap-2">
           <CreateButton onClick={handleCreateClick} />
@@ -126,7 +112,7 @@ const CRUDTable = () => {
                 <TableCell>Identificación</TableCell>
                 <TableCell>Beneficiario</TableCell>
                 <TableCell>Teléfono</TableCell>
-                <TableCell>Condición</TableCell>
+                <TableCell>Estatus</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableHead>
@@ -141,7 +127,7 @@ const CRUDTable = () => {
                     </TableCell>
                     <TableCell label="Beneficiario">
                       <div>
-                        <p className="text-black">{item.nombre.substring(0, 18) + '...'}</p>
+                        <p className="text-black">{item.nombre}</p>
                         <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                       </div>
                     </TableCell>
@@ -157,7 +143,7 @@ const CRUDTable = () => {
                       />
                     </TableCell>
                     <TableCell label="Acciones">
-                      <div className="flex gap-1 mr-3">
+                      <div className="flex gap-2">
                         <button
                           onClick={() => handleViewButtonClick(item)}
                           className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
@@ -209,13 +195,6 @@ const CRUDTable = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
-            {/* Botón flotante para crear */}
-            <button
-              onClick={handleCreateClick}
-              className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500  hover:from-blue-300  hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-            >
-              <RiAddLine size={24} />
-            </button>
           </div>
         </div>
       )}
