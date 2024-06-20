@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { useAyudantes } from '../context/AyudantesContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,12 +10,21 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import FormModal from '../components/table/modals/ModalProyecto'; // Adapted for Proyecto
-import ViewModal from '../components/table/views/ViewProyecto'; // Adapted for Proyecto
+import FormModal from '../components/table/modals/ModalAyudante';
+import ViewModal from '../components/table/views/ViewAyudante';
 import CardItem from '../components/table/CardItem';
 
-const CRUDProyecto = () => {
-    const [data, setData] = useState([]);
+const CRUDAyudante = () => {
+    const { 
+        createAyudante, 
+        updateAyudante, 
+        getAllAyudantes, 
+        disableAyudante, 
+        deleteAyudante, 
+        ayudantes, 
+        errors 
+    } = useAyudantes(); // Use the context
+
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -23,31 +32,17 @@ const CRUDProyecto = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 5;
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const filtered = data.filter(item =>
-            item.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const filtered = ayudantes.filter(item =>
+            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [data, searchTerm]);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://localhost:3002/proyectos');
-            setData(response.data);
-            setFilteredData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    }, [ayudantes, searchTerm]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -58,22 +53,20 @@ const CRUDProyecto = () => {
         setSearchTerm(query);
     };
 
-    const handleUpdate = async (updatedItem) => {
-        try {
-            await axios.put(`http://localhost:3002/proyectos/${updatedItem._id}`, updatedItem);
-            fetchData();
-            closeModal();
-        } catch (error) {
-            console.error('Error updating item:', error);
+    const handleCreateOrUpdate = async (item) => {
+        if (item._id) {
+            await updateAyudante(item._id, item);
+        } else {
+            await createAyudante(item);
         }
+        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/proyectos/${id}`);
-            fetchData();
+            await deleteAyudante(id);
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error('Error deleting ayudante:', error);
         }
     };
 
@@ -85,17 +78,6 @@ const CRUDProyecto = () => {
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
         setShowModalForm(true);
-    };
-
-    const handleSwitchChange = async (id) => {
-        const item = data.find(item => item._id === id);
-        if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
-            await handleUpdate(updatedItem);
-        }
     };
 
     const closeModal = () => {
@@ -126,27 +108,35 @@ const CRUDProyecto = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Código</TableCell>
-                                <TableCell>Nombre</TableCell>
-                                <TableCell>Descripción</TableCell>
-                                <TableCell>Fecha de Inicio</TableCell>
-                                <TableCell>Fecha de Fin</TableCell>
+                                <TableCell>Identificación</TableCell>
+                                <TableCell>Ayudante</TableCell>
+                                <TableCell>Teléfono</TableCell>
+                                <TableCell>Rol</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Código">{item.codigo}</TableCell>
-                                        <TableCell label="Nombre">{item.nombre}</TableCell>
-                                        <TableCell label="Descripción">{item.descripcion}</TableCell>
-                                        <TableCell label="Fecha de Inicio">{new Date(item.fechaInicio).toLocaleDateString()}</TableCell>
-                                        <TableCell label="Fecha de Fin">{new Date(item.fechaFin).toLocaleDateString()}</TableCell>
+                                        <TableCell label="Identificación">
+                                            <div>
+                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
+                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Ayudante">
+                                            <div>
+                                                <p className="text-black">{item.nombre}</p>
+                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
+                                        <TableCell label="Rol">{item.rol}</TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => handleSwitchChange(item._id)}
+                                                onChange={() => disableAyudante(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -192,7 +182,7 @@ const CRUDProyecto = () => {
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onSwitchChange={disableAyudante}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
@@ -207,7 +197,7 @@ const CRUDProyecto = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={closeModal} item={selectedItem} onSave={handleCreateOrUpdate} />
                 </div>
             )}
             {showViewModal && selectedItem && (
@@ -215,8 +205,9 @@ const CRUDProyecto = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
+            
         </div>
     );
 };
 
-export default CRUDProyecto;
+export default CRUDAyudante;

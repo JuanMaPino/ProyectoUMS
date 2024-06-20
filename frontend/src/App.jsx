@@ -2,17 +2,20 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import CRUDTable from './context/CrudEjemplo';
+import CRUDTable from './pages/CrudEjemplo';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
 
+import { ProjectProvider } from './context/ProyectosContext';
+import { BeneficiarioProvider } from './context/BeneficiariosContext';
+import { DonadorProvider } from './context/DonadoresContext';
 
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
-import CRUDDonador from './context/CrudDonador';
-import CRUDProyecto from './context/CrudProyectos';
-import CRUDAyudante from './context/CrudAyudante';
-
+import CRUDDonador from './pages/CrudDonador';
+import CRUDProyecto from './pages/CrudProyectos';
+import CRUDAyudante from './pages/CrudAyudante';
+import { AyudanteProvider } from './context/AyudantesContext';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -20,7 +23,10 @@ const App = () => {
   return (
     <div className="flex relative dark:bg-main-dark-bg">
       <BrowserRouter>
-
+        <AyudanteProvider>
+        <ProjectProvider>
+        <BeneficiarioProvider>
+        <DonadorProvider>
         {activeMenu ? (
           <div className="w-[5%] fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
             <Sidebar />
@@ -55,6 +61,10 @@ const App = () => {
             </Routes>
           </div>
         </div>
+        </DonadorProvider>
+        </BeneficiarioProvider>
+        </ProjectProvider>
+        </AyudanteProvider>
       </BrowserRouter>
     </div>
   );

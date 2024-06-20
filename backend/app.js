@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const connectDB = require('./Config/database');
+const morgan = require('morgan');
 const beneficiarioRoutes = require('./Routes/beneficiarioRoutes');
 const ayudanteRoutes = require('./Routes/ayudanteRoutes');
 const donadorRoutes = require('./Routes/donadorRoutes');
@@ -10,6 +11,7 @@ const proyectoRoutes = require('./Routes/proyectoRoutes');
 const app = express();
 const PORT = process.env.PORT || 3002;
 app.use(require('cors')());
+app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/beneficiarios', beneficiarioRoutes);

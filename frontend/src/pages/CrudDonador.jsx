@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -15,8 +15,16 @@ import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItem';
 
 const CRUDDonador = () => {
-    const [data, setData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
+    const {
+        donadores,
+        errors,
+        createDonador,
+        updateDonador,
+        deleteDonador,
+        disableDonador,
+        getDonadorByIdentificacion,
+    } = useDonadores();
+
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
@@ -30,23 +38,11 @@ const CRUDDonador = () => {
     }, []);
 
     useEffect(() => {
-        const filtered = data.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [data, searchTerm]);
+    }, [searchTerm]);
 
     const fetchData = async () => {
-        try {
-            const response = await axios.get('http://localhost:3002/donadores');
-            setData(response.data);
-            setFilteredData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+        // Aquí no se necesita ya que el contexto DonadorProvider maneja la carga inicial
     };
 
     const handleCreateClick = () => {
@@ -60,8 +56,7 @@ const CRUDDonador = () => {
 
     const handleUpdate = async (updatedItem) => {
         try {
-            await axios.put(`http://localhost:3002/donadores/${updatedItem._id}`, updatedItem);
-            fetchData();
+            await updateDonador(updatedItem._id, updatedItem);
             closeModal();
         } catch (error) {
             console.error('Error updating item:', error);
@@ -70,8 +65,7 @@ const CRUDDonador = () => {
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/donadores/${id}`);
-            fetchData();
+            await deleteDonador(id);
         } catch (error) {
             console.error('Error deleting item:', error);
         }
@@ -88,13 +82,13 @@ const CRUDDonador = () => {
     };
 
     const handleSwitchChange = async (id) => {
-        const item = data.find(item => item._id === id);
+        const item = donadores.find(item => item._id === id);
         if (item) {
             const updatedItem = {
                 ...item,
                 estado: item.estado === 'activo' ? 'inactivo' : 'activo'
             };
-            await handleUpdate(updatedItem);
+            await disableDonador(id); // Utilizando la función de cambio de estado del contexto
         }
     };
 
@@ -109,6 +103,14 @@ const CRUDDonador = () => {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
+    const filteredData = searchTerm
+        ? donadores.filter(item =>
+            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (item.telefono && item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase()))
+        )
+        : donadores;
+
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
     return (
@@ -119,7 +121,7 @@ const CRUDDonador = () => {
                     <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
-            {filteredData.length === 0 ? (
+            {donadores.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (
                 <div>
@@ -217,7 +219,7 @@ const CRUDDonador = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <ModalDonador onClose={closeModal} item={selectedItem} />
                 </div>
             )}
             {showViewModal && selectedItem && (

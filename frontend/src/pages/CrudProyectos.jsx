@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -10,12 +9,24 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import FormModal from '../components/table/modals/ModalBeneficiario';
-import ViewModal from '../components/table/views/ViewBeneficiario';
+import FormModal from '../components/table/modals/ModalProyecto'; // Adapted for Proyecto
+import ViewModal from '../components/table/views/ViewProyecto'; // Adapted for Proyecto
 import CardItem from '../components/table/CardItem';
+import { useProjects } from '../context/ProyectosContext'; // Import the context
 
-const CRUDTable = () => {
-    const [data, setData] = useState([]);
+
+
+const CRUDProyecto = () => {
+    const { 
+        createProject, 
+        updateProject, 
+        getAllProjects, 
+        disableProject, 
+        deleteProject, // Utilizar deleteProject desde el contexto
+        projects, 
+        errors 
+
+    } = useProjects(); // Use the context
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -24,30 +35,17 @@ const CRUDTable = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const itemsPerPage = 6;
+    
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const filtered = data.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const filtered = projects.filter(item =>
+            item.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            item.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [data, searchTerm]);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://localhost:3002/beneficiarios');
-            setData(response.data);
-            setFilteredData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    }, [projects, searchTerm]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -58,22 +56,20 @@ const CRUDTable = () => {
         setSearchTerm(query);
     };
 
-    const handleUpdate = async (updatedItem) => {
-        try {
-            await axios.put(`http://localhost:3002/beneficiarios/${updatedItem._id}`, updatedItem);
-            fetchData();
-            closeModal();
-        } catch (error) {
-            console.error('Error updating item:', error);
+    const handleCreateOrUpdate = async (item) => {
+        if (item._id) {
+            await updateProject(item._id, item);
+        } else {
+            await createProject(item);
         }
+        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/beneficiarios/${id}`);
-            fetchData();
+            await deleteProject(id);
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error('Error deleting project:', error);
         }
     };
 
@@ -85,17 +81,6 @@ const CRUDTable = () => {
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
         setShowModalForm(true);
-    };
-
-    const handleSwitchChange = async (id) => {
-        const item = data.find(item => item._id === id);
-        if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
-            await handleUpdate(updatedItem);
-        }
     };
 
     const closeModal = () => {
@@ -126,37 +111,30 @@ const CRUDTable = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Identificación</TableCell>
-                                <TableCell>Beneficiario</TableCell>
-                                <TableCell>Teléfono</TableCell>
-                                <TableCell>Estatus</TableCell>
+                                <TableCell>Código</TableCell>
+                                <TableCell>Nombre</TableCell>
+                                <TableCell>Descripción</TableCell>
+                                <TableCell>Fechas</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Identificación">
+                                        <TableCell label="Código">{item.codigo}</TableCell>
+                                        <TableCell label="Nombre">{item.nombre}</TableCell>
+                                        <TableCell label="Descripción">{item.descripcion}</TableCell>
+                                        <TableCell label="Fechas">
                                             <div>
-                                                <p className="ext-black">{item.tipoDocumento.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                                <span className="block">Inicio: {new Date(item.fechaInicio).toLocaleDateString()}</span>
+                                                <span className="block">Fin: {new Date(item.fechaFin).toLocaleDateString()}</span>
                                             </div>
-                                        </TableCell>
-                                        <TableCell label="Beneficiario">
-                                            <div>
-                                                <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                            {item.estado}
                                         </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => handleSwitchChange(item._id)}
+                                                onChange={() => disableProject(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -202,7 +180,7 @@ const CRUDTable = () => {
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onSwitchChange={disableProject}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
@@ -216,17 +194,24 @@ const CRUDTable = () => {
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <FormModal onClose={closeModal} item={selectedItem} onSave={handleCreateOrUpdate} />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
+                </div>
+            )}
+            {errors.length > 0 && (
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-red-500 text-white text-center">
+                    {errors.map((error, index) => (
+                        <p key={index}>{error}</p>
+                    ))}
                 </div>
             )}
         </div>
     );
 };
 
-export default CRUDTable;
+export default CRUDProyecto;

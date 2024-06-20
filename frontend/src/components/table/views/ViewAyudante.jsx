@@ -1,11 +1,11 @@
 import React from 'react';
 
-const ViewModal = ({ onClose, item }) => {
+const ViewAyudante = ({ onClose, item }) => {
     return (
         <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md mx-auto">
-            <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles del Beneficiario</h2>
+            <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles del Ayudante</h2>
             <div className="grid grid-cols-2 gap-4">
-            <div>
+                <div>
                     <p className="text-gray-700"><span className="font-medium">Tipo de documento:</span></p>
                     <p className="text-gray-800">{item.tipoDocumento}</p>
                 </div>
@@ -22,14 +22,6 @@ const ViewModal = ({ onClose, item }) => {
                     <p className="text-gray-800">{item.telefono}</p>
                 </div>
                 <div>
-                    <p className="text-gray-700"><span className="font-medium">Rol:</span></p>
-                    <p className="text-gray-800">{item.rol}</p>
-                </div>
-                <div>
-                    <p className="text-gray-700"><span className="font-medium">Estado:</span></p>
-                    <p className="text-gray-800">{item.estado}</p>
-                </div>
-                <div>
                     <p className="text-gray-700"><span className="font-medium">Correo Electrónico:</span></p>
                     <p className="text-gray-800">{item.correoElectronico}</p>
                 </div>
@@ -41,11 +33,19 @@ const ViewModal = ({ onClose, item }) => {
                     <p className="text-gray-700"><span className="font-medium">Institución:</span></p>
                     <p className="text-gray-800">{item.institucion}</p>
                 </div>
+                <div>
+                    <p className="text-gray-700"><span className="font-medium">Rol:</span></p>
+                    <p className="text-gray-800">{item.rol}</p>
+                </div>
+                <div>
+                    <p className="text-gray-700"><span className="font-medium">Estado:</span></p>
+                    <p className="text-gray-800">{item.estado}</p>
+                </div>
             </div>
-            <div className="mt-6 flex justify-center">
+            <div className="flex justify-center mt-6">
                 <button
                     onClick={onClose}
-                    className="bg-gradient-to-tr  from-yellow-400 from-10% to-orange-600 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
+                    className="bg-gradient-to-r from-yellow-300 to-yellow-400 hover:from-yellow-400 hover:to-yellow-500 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                 >
                     Cerrar
                 </button>
@@ -54,4 +54,4 @@ const ViewModal = ({ onClose, item }) => {
     );
 };
 
-export default ViewModal;
+export default ViewAyudante;

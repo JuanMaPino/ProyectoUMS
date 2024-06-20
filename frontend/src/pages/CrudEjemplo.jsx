@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,12 +10,21 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import FormModal from '../components/table/modals/ModalAyudante';
-import ViewModal from '../components/table/views/ViewAyudante';
+import FormModal from '../components/table/modals/ModalBeneficiario';
+import ViewModal from '../components/table/views/ViewBeneficiario';
 import CardItem from '../components/table/CardItem';
 
 const CRUDTable = () => {
-    const [data, setData] = useState([]);
+    const { 
+        createBeneficiario, 
+        updateBeneficiario, 
+        getAllBeneficiarios, 
+        disableBeneficiario, 
+        deleteBeneficiario, 
+        beneficiarios, 
+        errors 
+    } = useBeneficiarios(); // Use the context
+
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -23,31 +32,17 @@ const CRUDTable = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 5;
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        const filtered = data.filter(item =>
+        const filtered = beneficiarios.filter(item =>
             item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [data, searchTerm]);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('http://localhost:3002/ayudantes');
-            setData(response.data);
-            setFilteredData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
+    }, [beneficiarios, searchTerm]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -58,22 +53,20 @@ const CRUDTable = () => {
         setSearchTerm(query);
     };
 
-    const handleUpdate = async (updatedItem) => {
-        try {
-            await axios.put(`http://localhost:3002/ayudantes/${updatedItem._id}`, updatedItem);
-            fetchData();
-            closeModal();
-        } catch (error) {
-            console.error('Error updating item:', error);
+    const handleCreateOrUpdate = async (item) => {
+        if (item._id) {
+            await updateBeneficiario(item._id, item);
+        } else {
+            await createBeneficiario(item);
         }
+        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await axios.delete(`http://localhost:3002/ayudantes/${id}`);
-            fetchData();
+            await deleteBeneficiario(id);
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error('Error deleting beneficiario:', error);
         }
     };
 
@@ -85,17 +78,6 @@ const CRUDTable = () => {
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
         setShowModalForm(true);
-    };
-
-    const handleSwitchChange = async (id) => {
-        const item = data.find(item => item._id === id);
-        if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
-            await handleUpdate(updatedItem);
-        }
     };
 
     const closeModal = () => {
@@ -127,8 +109,8 @@ const CRUDTable = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Ayudante</TableCell>
-                                <TableCell>Rol</TableCell>
+                                <TableCell>Beneficiario</TableCell>
+                                <TableCell>Teléfono</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
@@ -138,17 +120,17 @@ const CRUDTable = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="ext-black">{item.tipoDocumento.split(' ')[0]}</p>
+                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
                                                 <p className="text-xs text-gray-600">{item.identificacion}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Ayudante">
+                                        <TableCell label="Beneficiario">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
                                                 <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.rol}</TableCell>
+                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
                                         <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
                                             {item.estado}
                                         </TableCell>
@@ -156,7 +138,7 @@ const CRUDTable = () => {
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => handleSwitchChange(item._id)}
+                                                onChange={() => disableBeneficiario(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -202,7 +184,7 @@ const CRUDTable = () => {
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onSwitchChange={disableBeneficiario}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
@@ -216,15 +198,16 @@ const CRUDTable = () => {
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <FormModal onClose={closeModal} item={selectedItem} onSave={handleCreateOrUpdate} />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
+            
         </div>
     );
 };
