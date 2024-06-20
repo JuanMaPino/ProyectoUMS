@@ -62,7 +62,7 @@ const ModalBeneficiario = ({ onClose, item, fetchData }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
+        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-1 mr-1 ml-7">
             <div className="p-8 flex gap-8">
                 {/* Columna izquierda */}
                 <div className="flex-1">

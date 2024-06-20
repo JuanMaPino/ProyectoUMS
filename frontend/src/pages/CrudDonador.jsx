@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
 import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -12,17 +12,15 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
-import CardItem from '../components/table/CardItem';
+import CardItem from '../components/table/CardItems/CardDonador';
 
 const CRUDDonador = () => {
     const {
         donadores,
-        errors,
         createDonador,
         updateDonador,
         deleteDonador,
         disableDonador,
-        getDonadorByIdentificacion,
     } = useDonadores();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -214,12 +212,19 @@ const CRUDDonador = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
+                        {/* Botón flotante para crear */}
+                        <button
+                            onClick={handleCreateClick}
+                            className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+                        >
+                            <RiAddLine size={24} />
+                        </button>
                     </div>
                 </div>
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalDonador onClose={closeModal} item={selectedItem} />
+                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (

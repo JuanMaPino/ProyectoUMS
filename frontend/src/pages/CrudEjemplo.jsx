@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri'; // Importar RiAddLine para el botón
 import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -13,7 +13,7 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
-import CardItem from '../components/table/CardItem';
+import CardItem from '../components/table/CardItems/CardItem';
 
 const CRUDTable = () => {
   const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios(); // Extraer métodos del contexto
@@ -109,7 +109,7 @@ const CRUDTable = () => {
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div>
+    <div className='ml-3'>
       <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
         <div className="flex items-center gap-2">
           <CreateButton onClick={handleCreateClick} />
@@ -126,7 +126,7 @@ const CRUDTable = () => {
                 <TableCell>Identificación</TableCell>
                 <TableCell>Beneficiario</TableCell>
                 <TableCell>Teléfono</TableCell>
-                <TableCell>Estatus</TableCell>
+                <TableCell>Condición</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableHead>
@@ -141,7 +141,7 @@ const CRUDTable = () => {
                     </TableCell>
                     <TableCell label="Beneficiario">
                       <div>
-                        <p className="text-black">{item.nombre}</p>
+                        <p className="text-black">{item.nombre.substring(0, 18) + '...'}</p>
                         <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                       </div>
                     </TableCell>
@@ -157,7 +157,7 @@ const CRUDTable = () => {
                       />
                     </TableCell>
                     <TableCell label="Acciones">
-                      <div className="flex gap-2">
+                      <div className="flex gap-1 mr-3">
                         <button
                           onClick={() => handleViewButtonClick(item)}
                           className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
@@ -209,6 +209,13 @@ const CRUDTable = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
+            {/* Botón flotante para crear */}
+            <button
+              onClick={handleCreateClick}
+              className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500  hover:from-blue-300  hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+            >
+              <RiAddLine size={24} />
+            </button>
           </div>
         </div>
       )}
