@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 const donacionSchema = new mongoose.Schema({
-  documento:{
-    type:Number,
-    required:true
-  },
   fecha: {
     type: String,
     required: true
@@ -18,10 +14,7 @@ const donacionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  donador: {
-    type: String,
-    required: true
-  }
+  donador: { type: mongoose.Schema.Types.ObjectId, ref: 'Donador'}
 });
 
 const Donacion= mongoose.model('Donacion', donacionSchema);

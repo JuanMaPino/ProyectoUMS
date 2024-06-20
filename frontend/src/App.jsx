@@ -8,12 +8,14 @@ import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components'
 import { ProjectProvider } from './context/ProyectosContext';
 import { BeneficiarioProvider } from './context/BeneficiariosContext';
 import { DonadorProvider } from './context/DonadoresContext';
+import { DonacionesProvider } from './context/DonacionesContext';
 
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
 import CRUDDonador from './pages/CrudDonador';
 import CRUDProyecto from './pages/CrudProyectos';
+import CRUDDonacion from './pages/CrudDonacion';
 
 
 const App = () => {
@@ -25,6 +27,7 @@ const App = () => {
         <ProjectProvider>
         <BeneficiarioProvider>
         <DonadorProvider>
+        <DonacionesProvider>
         {activeMenu ? (
           <div className="w-[5%] fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
             <Sidebar />
@@ -46,7 +49,7 @@ const App = () => {
               <Route path="/" />
 
               {/* Tables */}
-              <Route path="/donaciones" />
+              <Route path="/donaciones" element={<CRUDDonacion />} />
               <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
               <Route path="/ayudantes"/>
@@ -59,6 +62,7 @@ const App = () => {
             </Routes>
           </div>
         </div>
+        </DonacionesProvider>
         </DonadorProvider>
         </BeneficiarioProvider>
         </ProjectProvider>
