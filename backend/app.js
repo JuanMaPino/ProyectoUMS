@@ -6,7 +6,8 @@ const beneficiarioRoutes = require('./Routes/beneficiarioRoutes');
 const ayudanteRoutes = require('./Routes/ayudanteRoutes');
 const donadorRoutes = require('./Routes/donadorRoutes');
 const donacionRoutes = require('./Routes/donacionRoutes');
-const proyectoRoutes = require('./Routes/proyectoRoutes');  
+const proyectoRoutes = require('./Routes/proyectoRoutes'); 
+const insumoRoutes = require('./Routes/insumoRoutes'); 
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -18,7 +19,8 @@ app.use('/beneficiarios', beneficiarioRoutes);
 app.use('/ayudantes', ayudanteRoutes);
 app.use('/donadores', donadorRoutes);
 app.use('/donaciones', donacionRoutes);
-app.use('/proyectos', proyectoRoutes);  
+app.use('/proyectos', proyectoRoutes); 
+app.use('/insumos', insumoRoutes) 
 
 connectDB().then(() => {
   app.listen(PORT, () => {

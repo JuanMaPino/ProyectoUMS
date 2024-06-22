@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlineMenu } from 'react-icons/ai';
+import { FiSun, FiMoon } from 'react-icons/fi'
+import { AiOutlineMenu, } from 'react-icons/ai';
 import { BsChatLeft } from 'react-icons/bs';
 import { RiNotification3Line } from 'react-icons/ri';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { useStateContext } from '../context/ContextProvider';
+import { useDarkMode } from '../context/DarkModeContext';
 import logoums from '../assets/logoums.png'; // Asegúrate de tener la imagen en esta ruta
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
@@ -13,7 +15,7 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
       type="button"
       onClick={customFunc}
       style={{ color }}
-      className="relative text-xl rounded-full p-3 hover:bg-light-gray"
+      className="relative text-xl rounded-full p-3 hover:bg-light-gray dark:hover:bg-gray-600"
     >
       {dotColor && (
         <span
@@ -27,14 +29,15 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 );
 
 const MessageBox = ({ title, message }) => (
-  <div className="absolute top-16 right-0 w-72 bg-white p-4 shadow-lg rounded-lg">
-    <h3 className="font-bold mb-2">{title}</h3>
-    <p>{message}</p>
+  <div className="absolute top-16 right-0 w-72 bg-white dark:bg-gray-800 p-4 shadow-lg rounded-lg">
+    <h3 className="font-bold mb-2 text-gray-800 dark:text-gray-200">{title}</h3>
+    <p className="text-gray-600 dark:text-gray-400">{message}</p>
   </div>
 );
 
 const Navbar = () => {
   const { activeMenu, setActiveMenu, isClicked, handleClick } = useStateContext();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [showChat, setShowChat] = useState(false);
   const [showNotification, setShowNotification] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
@@ -63,7 +66,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="flex justify-between p-2 relative bg-white shadow-md">
+    <div className={`flex justify-between p-2 relative bg-white dark:bg-gray-800 shadow-md`}>
       <div>
         {!isSmallScreen && (
           <NavButton
@@ -89,9 +92,15 @@ const Navbar = () => {
           color="blue"
           icon={<RiNotification3Line />}
         />
+        <NavButton
+          title="Toggle Dark Mode"
+          customFunc={toggleDarkMode}
+          color="blue"
+          icon={isDarkMode ? <FiSun /> : <FiMoon/>}
+        />
         <TooltipComponent content="Profile" position="BottomCenter">
           <div
-            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
+            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray dark:hover:bg-gray-600 rounded-lg"
             onClick={() => handleClick('userProfile')}
           >
             <img src={logoums} className="rounded-full w-8 h-8" alt="user-profile" />

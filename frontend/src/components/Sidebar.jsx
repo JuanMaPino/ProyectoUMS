@@ -2,11 +2,13 @@ import React, { useEffect } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { links } from '../data/dummy';
 import { useStateContext } from '../context/ContextProvider';
+import { useDarkMode } from '../context/DarkModeContext';
 import UMSLogo from '../assets/logoums.png'; // Asegúrate de tener la imagen en esta ruta
 import '../assets/sideBar.css';
 
 const Sidebar = () => {
   const { activeMenu, setActiveMenu } = useStateContext();
+  const { isDarkMode } = useDarkMode();
   const iconSize = activeMenu ? "text-3xl" : "text-4xl"; // Tamaño de los iconos basado en el estado de activeMenu
 
   useEffect(() => {
@@ -31,7 +33,7 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white shadow-lg transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%] '}`}>
+    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%] '}`}>
       <div className="flex flex-col h-full">
         <div className={`flex items-center justify-between p-4 ${activeMenu ? '' : 'justify-center'}`}>
           <Link to="/" onClick={handleMenuToggle} className={`flex items-center gap-3 font-extrabold text-blue-500 dark:text-white ${activeMenu ? '' : 'justify-center'}`}>
