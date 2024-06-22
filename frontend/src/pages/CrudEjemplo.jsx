@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri'; // Importar iconos necesarios
 import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -14,88 +13,103 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
 import CardItem from '../components/table/CardItems/CardItem';
+import FloatingButton from '../components/FloatingButton'; // Importar el nuevo componente
 
 const CRUDTable = () => {
-    const { 
-        createBeneficiario, 
-        updateBeneficiario, 
-        getAllBeneficiarios, 
-        disableBeneficiario, 
-        deleteBeneficiario, 
-        beneficiarios, 
-        errors 
-    } = useBeneficiarios(); // Use the context
+  const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios(); // Extraer métodos del contexto
+  const [filteredData, setFilteredData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showModalForm, setShowModalForm] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
-    const [filteredData, setFilteredData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [showModalForm, setShowModalForm] = useState(false);
-    const [showViewModal, setShowViewModal] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
+  const itemsPerPage = 6;
 
-    const itemsPerPage = 5;
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-        const filtered = beneficiarios.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredData(filtered);
-        setCurrentPage(1); // Reset to first page on new search
-    }, [beneficiarios, searchTerm]);
+  useEffect(() => {
+    const filtered = beneficiarios.filter(item =>
+      item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredData(filtered);
+    setCurrentPage(1); // Reset to first page on new search
+  }, [beneficiarios, searchTerm]);
 
-    const handleCreateClick = () => {
-        setSelectedItem(null);
-        setShowModalForm(true);
-    };
+  const fetchData = async () => {
+    try {
+      // Ya no se usa axios directamente aquí, se usa el método del contexto
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
-    const handleSearch = (query) => {
-        setSearchTerm(query);
-    };
+  const handleCreateClick = () => {
+    setSelectedItem(null);
+    setShowModalForm(true);
+  };
 
-    const handleCreateOrUpdate = async (item) => {
-        if (item._id) {
-            await updateBeneficiario(item._id, item);
-        } else {
-            await createBeneficiario(item);
-        }
-        closeModal();
-    };
+  const handleSearch = (query) => {
+    setSearchTerm(query);
+  };
 
-    const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteBeneficiario(id);
-        } catch (error) {
-            console.error('Error deleting beneficiario:', error);
-        }
-    };
+  const handleUpdate = async (updatedItem) => {
+    try {
+      await updateBeneficiario(updatedItem._id, updatedItem); // Utilizar método del contexto para actualizar
+      closeModal();
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
+  };
 
-    const handleViewButtonClick = (item) => {
-        setSelectedItem(item);
-        setShowViewModal(true);
-    };
+  const handleDeleteButtonClick = async (id) => {
+    try {
+      await deleteBeneficiario(id); // Utilizar método del contexto para eliminar
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
 
-    const handleEditButtonClick = (item) => {
-        setSelectedItem(item);
-        setShowModalForm(true);
-    };
+  const handleViewButtonClick = (item) => {
+    setSelectedItem(item);
+    setShowViewModal(true);
+  };
 
-    const closeModal = () => {
-        setSelectedItem(null);
-        setShowModalForm(false);
-    };
+  const handleEditButtonClick = (item) => {
+    setSelectedItem(item);
+    setShowModalForm(true);
+  };
 
-    const closeViewModal = () => {
-        setSelectedItem(null);
-        setShowViewModal(false);
-    };
+  const handleSwitchChange = async (id) => {
+    const item = beneficiarios.find(item => item._id === id);
+    if (item) {
+      const updatedItem = {
+        ...item,
+        estado: item.estado === 'activo' ? 'inactivo' : 'activo'
+      };
+      await handleUpdate(updatedItem);
+    }
+  };
 
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+  const closeModal = () => {
+    setSelectedItem(null);
+    setShowModalForm(false);
+  };
+
+  const closeViewModal = () => {
+    setSelectedItem(null);
+    setShowViewModal(false);
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div>
+    <div className='ml-3'>
       <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
         <div className="flex items-center gap-2">
           <CreateButton onClick={handleCreateClick} />
@@ -112,7 +126,7 @@ const CRUDTable = () => {
                 <TableCell>Identificación</TableCell>
                 <TableCell>Beneficiario</TableCell>
                 <TableCell>Teléfono</TableCell>
-                <TableCell>Estatus</TableCell>
+                <TableCell>Condición</TableCell>
                 <TableCell>Estado</TableCell>
                 <TableCell>Acciones</TableCell>
               </TableHead>
@@ -127,12 +141,12 @@ const CRUDTable = () => {
                     </TableCell>
                     <TableCell label="Beneficiario">
                       <div>
-                        <p className="text-black">{item.nombre}</p>
+                        <p className="text-black">{item.nombre.substring(0, 18) + '...'}</p>
                         <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                       </div>
                     </TableCell>
                     <TableCell label="Teléfono">{item.telefono}</TableCell>
-                    <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
+                    <TableCell label="Estatus" className="py-1 px-2 text-black text-center">
                       {item.estado}
                     </TableCell>
                     <TableCell label="Estado">
@@ -143,7 +157,7 @@ const CRUDTable = () => {
                       />
                     </TableCell>
                     <TableCell label="Acciones">
-                      <div className="flex gap-2">
+                      <div className="flex gap-1 mr-3">
                         <button
                           onClick={() => handleViewButtonClick(item)}
                           className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
@@ -199,15 +213,16 @@ const CRUDTable = () => {
         </div>
       )}
       {showModalForm && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-          <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <FormModal onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createBeneficiario} item={selectedItem} />
         </div>
       )}
-      {showViewModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+      {showViewModal && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <ViewModal onClose={closeViewModal} item={selectedItem} />
         </div>
       )}
+      <FloatingButton onClick={handleCreateClick} />
     </div>
   );
 };

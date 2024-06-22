@@ -4,6 +4,7 @@ const connectDB = require('./Config/database');
 const morgan = require('morgan');
 const beneficiarioRoutes = require('./Routes/beneficiarioRoutes');
 const ayudanteRoutes = require('./Routes/ayudanteRoutes');
+const tareaRoutes = require('./Routes/tareaRoutes'); 
 const donadorRoutes = require('./Routes/donadorRoutes');
 const donacionRoutes = require('./Routes/donacionRoutes');
 const proyectoRoutes = require('./Routes/proyectoRoutes');  
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use('/beneficiarios', beneficiarioRoutes);
 app.use('/ayudantes', ayudanteRoutes);
+app.use('/tareas', tareaRoutes);  
 app.use('/donadores', donadorRoutes);
 app.use('/donaciones', donacionRoutes);
 app.use('/proyectos', proyectoRoutes);  

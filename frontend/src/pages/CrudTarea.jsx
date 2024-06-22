@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
-import { useAyudantes } from '../context/AyudantesContext'; // Importar el contexto y el hook
+import { useTareas } from '../context/TareasContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,22 +10,21 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import FormModal from '../components/table/modals/ModalAyudante';
-import ViewModal from '../components/table/views/ViewAyudante';
-import CardAyudante from '../components/table/CardItems/CardAyudante';
-import FloatingButton from '../components/FloatingButton'
+import FormModal from '../components/table/modals/ModalTarea';
+import ViewModal from '../components/table/views/ViewTarea';
+import CardTarea from '../components/table/CardItems/CardTarea';
+import FloatingButton from '../components/FloatingButton';
 
-
-const CRUDAyudante = () => {
+const CRUDTarea = () => {
     const {
-        createAyudante,
-        updateAyudante,
-        getAllAyudantes,
-        disableAyudante,
-        deleteAyudante,
-        ayudantes,
+        createTarea,
+        updateTarea,
+        getAllTareas,
+        disableTarea,
+        deleteTarea,
+        tareas,
         errors
-    } = useAyudantes(); // Use the context
+    } = useTareas();
 
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,14 +36,15 @@ const CRUDAyudante = () => {
     const itemsPerPage = 5;
 
     useEffect(() => {
-        const filtered = ayudantes.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const filtered = tareas.filter(item =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            item.accion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (item.ayudante && item.ayudante.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+            (item.ayudante && item.ayudante.identificacion.toLowerCase().includes(searchTerm.toLowerCase()))
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [ayudantes, searchTerm]);
+    }, [tareas, searchTerm]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -57,18 +57,18 @@ const CRUDAyudante = () => {
 
     const handleCreateOrUpdate = async (item) => {
         if (item._id) {
-            await updateAyudante(item._id, item);
+            await updateTarea(item._id, item);
         } else {
-            await createAyudante(item);
+            await createTarea(item);
         }
         closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await deleteAyudante(id);
+            await deleteTarea(id);
         } catch (error) {
-            console.error('Error deleting ayudante:', error);
+            console.error('Error deleting tarea:', error);
         }
     };
 
@@ -110,35 +110,45 @@ const CRUDAyudante = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Identificación</TableCell>
+                                <TableCell>Nombre</TableCell>
+                                <TableCell>Acción</TableCell>
+                               
+                                <TableCell>Fecha</TableCell>
                                 <TableCell>Ayudante</TableCell>
-                                <TableCell>Teléfono</TableCell>
-                                <TableCell>Rol</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Identificación">
+                                        <TableCell label="Nombre">
                                             <div>
-                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                                <p className="text-black">{item.nombre}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Acción">
+                                            <div>
+                                                <p className="text-black">{item.accion}</p>
+                                            </div>
+                                        </TableCell>
+                                        
+                                        <TableCell label="Fecha">
+                                            <div>
+                                                <p className="text-black">{item.fecha}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell label="Ayudante">
                                             <div>
-                                                <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                                <p className="text-black">
+                                                    {item.ayudante ? `${item.ayudante.nombre} (${item.ayudante.identificacion})` : '(Sin ayudante)'}
+                                                </p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Rol">{item.rol}</TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => disableAyudante(item._id)}
+                                                onChange={() => disableTarea(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -178,13 +188,13 @@ const CRUDAyudante = () => {
                     </div>
                     <div className="md:hidden">
                         {currentData.map((item, index) => (
-                            <CardAyudante
+                            <CardTarea
                                 key={index}
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={disableAyudante}
+                                onSwitchChange={disableTarea}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
@@ -199,7 +209,7 @@ const CRUDAyudante = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={closeModal} item={selectedItem} />
                 </div>
             )}
             {showViewModal && selectedItem && (
@@ -207,8 +217,9 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-           <FloatingButton onClick={handleCreateClick} />
+            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };
-export default CRUDAyudante;
+
+export default CRUDTarea;
