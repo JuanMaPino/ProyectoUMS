@@ -2,22 +2,23 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import CRUDTable from './pages/CrudEjemplo';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
 
 import { ProjectProvider } from './context/ProyectosContext';
 import { BeneficiarioProvider } from './context/BeneficiariosContext';
 import { DonadorProvider } from './context/DonadoresContext';
 import { DonacionesProvider } from './context/DonacionesContext';
-
+import { AyudanteProvider } from './context/AyudantesContext';
+import { TareaProvider } from './context/TareasContext';
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
+import CRUDTable from './pages/CrudEjemplo';
 import CRUDDonador from './pages/CrudDonador';
 import CRUDProyecto from './pages/CrudProyectos';
 import CRUDAyudante from './pages/CrudAyudante';
-import { AyudanteProvider } from './context/AyudantesContext';
 import CRUDDonacion from './pages/CrudDonacion';
+import CRUDTarea from './pages/CrudTarea';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -26,6 +27,7 @@ const App = () => {
     <div className="flex relative dark:bg-main-dark-bg">
       <BrowserRouter>
         <AyudanteProvider>
+        <TareaProvider>
         <ProjectProvider>
         <BeneficiarioProvider>
         <DonadorProvider>
@@ -55,6 +57,7 @@ const App = () => {
               <Route path="/donadores" element={<CRUDDonador />} />
               <Route path="/beneficiarios" element={<CRUDTable />} />
               <Route path="/ayudantes" element={<CRUDAyudante/>}/>
+              <Route path="/tareas" element={<CRUDTarea/>}/>
               <Route path="/proyectos" element={<CRUDProyecto />} />
              
   
@@ -68,6 +71,7 @@ const App = () => {
         </DonadorProvider>
         </BeneficiarioProvider>
         </ProjectProvider>
+        </TareaProvider>
         </AyudanteProvider>
       </BrowserRouter>
     </div>

@@ -10,7 +10,9 @@ import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import FormModal from '../components/table/modals/ModalDonacion';
 import ViewModal from '../components/table/views/ViewDonacion';
-import CardItem from '../components/table/CardItem';
+import CardItem from '../components/table/CardItems/CardItem';
+import FloatingButton from '../components/FloatingButton';
+
 import { useDonaciones } from '../context/DonacionesContext';
 import { useDonadores } from '../context/DonadoresContext';
 
@@ -184,6 +186,7 @@ const CRUDDonaciones = () => {
                     ))}
                 </div>
             )}
+            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };
