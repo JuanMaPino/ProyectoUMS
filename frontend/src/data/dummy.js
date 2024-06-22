@@ -500,6 +500,10 @@ export const links = [
         icon: <IoMdContacts />,
       },
       {
+        name: 'tareas',
+        icon: <IoMdContacts />,
+      },
+      {
         name: 'Proyectos',
         icon: <RiContactsLine/>
       },

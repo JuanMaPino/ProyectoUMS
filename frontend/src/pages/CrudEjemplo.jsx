@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri'; // Importar RiAddLine para el botón
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri'; // Importar iconos necesarios
 import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -14,6 +13,7 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
 import CardItem from '../components/table/CardItems/CardItem';
+import FloatingButton from '../components/FloatingButton'; // Importar el nuevo componente
 
 const CRUDTable = () => {
   const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios(); // Extraer métodos del contexto
@@ -146,7 +146,7 @@ const CRUDTable = () => {
                       </div>
                     </TableCell>
                     <TableCell label="Teléfono">{item.telefono}</TableCell>
-                    <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
+                    <TableCell label="Estatus" className="py-1 px-2 text-black text-center">
                       {item.estado}
                     </TableCell>
                     <TableCell label="Estado">
@@ -209,26 +209,20 @@ const CRUDTable = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
-            {/* Botón flotante para crear */}
-            <button
-              onClick={handleCreateClick}
-              className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500  hover:from-blue-300  hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-            >
-              <RiAddLine size={24} />
-            </button>
           </div>
         </div>
       )}
       {showModalForm && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-          <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <FormModal onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createBeneficiario} item={selectedItem} />
         </div>
       )}
-      {showViewModal && selectedItem && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
+      {showViewModal && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <ViewModal onClose={closeViewModal} item={selectedItem} />
         </div>
       )}
+      <FloatingButton onClick={handleCreateClick} />
     </div>
   );
 };

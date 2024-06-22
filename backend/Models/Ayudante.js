@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const ayudanteSchema = new Schema({
   tipoDocumento: {
     type: String,
-    enum: ['Cedula de ciudadania', 'Tarjeta de identidad'],
+    enum: ['C.C', 'T.I'],
     required: true
   },
   identificacion: {

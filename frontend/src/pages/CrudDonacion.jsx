@@ -11,6 +11,11 @@ import SearchBar from '../components/table/SearchBar';
 import FormModal from '../components/table/modals/ModalDonacion';
 import ViewModal from '../components/table/views/ViewDonacion';
 import CardItem from '../components/table/CardItems/CardItem';
+<<<<<<< HEAD
+=======
+import FloatingButton from '../components/FloatingButton';
+
+>>>>>>> ef12309bd345b17cc59e2c0450b55ed7710ff44c
 import { useDonaciones } from '../context/DonacionesContext';
 import { useDonadores } from '../context/DonadoresContext';
 
@@ -188,6 +193,7 @@ const CRUDDonaciones = () => {
                     ))}
                 </div>
             )}
+            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };

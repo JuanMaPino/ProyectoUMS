@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
-import CRUDTable from './pages/CrudEjemplo';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
 
 import { Bar } from 'react-chartjs-2';
@@ -22,6 +21,7 @@ import DDashboard from './pages/dashboard';
 import Dashboard from './pages/dashboard'; // Importar el componente Dashboard aquí
 import CRUDDonador from './pages/CrudDonador';
 import CRUDProyecto from './pages/CrudProyectos';
+import CRUDAyudante from './pages/CrudAyudante';
 import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import { GrDashboard } from 'react-icons/gr';

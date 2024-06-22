@@ -53,6 +53,15 @@ export const BeneficiarioProvider = ({ children }) => {
         }
     };
 
+    const disableBeneficiario = async (id) => {
+        try {
+            const res = await disableBeneficiarioRequest(id);
+            setBeneficiarios(beneficiarios.map(p => p._id === id ? res.data : p));
+        } catch (error) {
+            setErrors(error.response.data);
+        }
+    };
+
     // Función para eliminar un beneficiario
     const deleteBeneficiario = async (id) => {
         try {
@@ -85,6 +94,7 @@ export const BeneficiarioProvider = ({ children }) => {
                 errors,
                 createBeneficiario,
                 updateBeneficiario,
+                disableBeneficiario,
                 deleteBeneficiario
             }}
         >
