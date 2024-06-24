@@ -13,6 +13,7 @@ import Switch from '../components/table/Switch';
 import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
+import FloatingButton from '../components/FloatingButton';
 
 const CRUDDonador = () => {
     const {
@@ -212,13 +213,7 @@ const CRUDDonador = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        {/* Botón flotante para crear */}
-                        <button
-                            onClick={handleCreateClick}
-                            className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                        >
-                            <RiAddLine size={24} />
-                        </button>
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}

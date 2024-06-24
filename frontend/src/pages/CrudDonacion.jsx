@@ -171,6 +171,7 @@ const CRUDDonaciones = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}
@@ -191,7 +192,7 @@ const CRUDDonaciones = () => {
                     ))}
                 </div>
             )}
-            <FloatingButton onClick={handleCreateClick} />
+            
         </div>
     );
 };
