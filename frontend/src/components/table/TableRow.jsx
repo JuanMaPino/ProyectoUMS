@@ -5,7 +5,7 @@ const TableRow = ({ children, isActive, className, isMonetario, tipo, ...props }
     let rowClass;
     
     if (isMonetario) {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% via-green-300 to-green-500 shadow-inner";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% via-sky-300 to-blue-500 shadow-inner";
     } else if (tipo === 'Material') {
         rowClass = "bg-gradient-to-r from-gray-200 from-40% via-sky-300 to-blue-500 shadow-inner";
     } else if (isActive) {

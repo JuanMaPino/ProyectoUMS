@@ -14,6 +14,7 @@ import FormModal from '../components/table/modals/ModalTarea';
 import ViewModal from '../components/table/views/ViewTarea';
 import CardTarea from '../components/table/CardItems/CardTarea';
 import FloatingButton from '../components/FloatingButton';
+import { useAyudantes } from '../context/AyudantesContext';
 
 const CRUDTarea = () => {
     const {
@@ -26,6 +27,8 @@ const CRUDTarea = () => {
         errors
     } = useTareas();
 
+    const { ayudantes, error: ayudantesError } = useAyudantes();
+
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -36,15 +39,26 @@ const CRUDTarea = () => {
     const itemsPerPage = 5;
 
     useEffect(() => {
-        const filtered = tareas.filter(item =>
-            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.accion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (item.ayudante && item.ayudante.nombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
-            (item.ayudante && item.ayudante.identificacion.toLowerCase().includes(searchTerm.toLowerCase()))
-        );
-        setFilteredData(filtered);
-        setCurrentPage(1); // Reset to first page on new search
-    }, [tareas, searchTerm]);
+        if (ayudantes && tareas) {
+            const combinedData = tareas.map(tarea => {
+                const ayudante = ayudantes.find(d => d._id === tarea.ayudante);
+                return {
+                    ...tarea,
+                    ayudanteIdentificacion: ayudante ? ayudante.rol : 'Desconocido',
+                    ayudanteNombre: ayudante ? ayudante.nombre : 'Desconocido'
+                };
+            });
+
+            const filtered = combinedData.filter(item =>
+                item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.accion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (item.ayudanteNombre && item.ayudanteNombre.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                (item.ayudanteIdentificacion && item.ayudanteIdentificacion.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            setFilteredData(filtered);
+            setCurrentPage(1); // Reset to first page on new search
+        }
+    }, [tareas, ayudantes, searchTerm]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -112,7 +126,6 @@ const CRUDTarea = () => {
                             <TableHead>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Acción</TableCell>
-                               
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Ayudante</TableCell>
                                 <TableCell>Estado</TableCell>
@@ -131,7 +144,6 @@ const CRUDTarea = () => {
                                                 <p className="text-black">{item.accion}</p>
                                             </div>
                                         </TableCell>
-                                        
                                         <TableCell label="Fecha">
                                             <div>
                                                 <p className="text-black">{item.fecha}</p>
@@ -140,7 +152,7 @@ const CRUDTarea = () => {
                                         <TableCell label="Ayudante">
                                             <div>
                                                 <p className="text-black">
-                                                    {item.ayudante ? `${item.ayudante.nombre} (${item.ayudante.identificacion})` : '(Sin ayudante)'}
+                                                    {item.ayudanteNombre} ({item.ayudanteIdentificacion})
                                                 </p>
                                             </div>
                                         </TableCell>

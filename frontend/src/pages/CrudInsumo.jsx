@@ -155,13 +155,15 @@ const CRUDInsumos = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => handleEditButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800 p-2"
+                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                    disabled={item.estado !== 'activo'}
                                                 >
                                                     <RiPlaneFill />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700 p-2"
+                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                    disabled={item.estado !== 'activo'}
                                                 >
                                                     <RiDeleteBin6Line />
                                                 </button>
@@ -186,6 +188,7 @@ const CRUDInsumos = () => {
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
+                                isActive={item.estado === 'activo'}
                             />
                         ))}
                         <Pagination

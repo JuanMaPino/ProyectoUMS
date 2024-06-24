@@ -17,6 +17,7 @@ import { InsumoProvider } from './context/InsumosContext';
 import { useStateContext } from './context/ContextProvider';
 
 import './App.css';
+import CRUDTable from './pages/CrudEjemplo'
 import DDashboard from './pages/dashboard';
 import Dashboard from './pages/dashboard'; // Importar el componente Dashboard aquí
 import CRUDDonador from './pages/CrudDonador';
@@ -24,8 +25,11 @@ import CRUDProyecto from './pages/CrudProyectos';
 import CRUDAyudante from './pages/CrudAyudante';
 import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
+import CRUDTarea from './pages/CrudTarea';
 import { GrDashboard } from 'react-icons/gr';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { AyudanteProvider } from './context/AyudantesContext';
+import { TareaProvider } from './context/TareasContext';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -39,39 +43,44 @@ const App = () => {
               <DonadorProvider>
                 <DonacionesProvider>
                   <InsumoProvider>
-                    {activeMenu ? (
-                      <div className="w-[5%] fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
-                        <Sidebar />
-                      </div>
-                    ) : (
-                      <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
-                        <Sidebar />
-                      </div>
-                    )}
+                    <AyudanteProvider>
+                      <TareaProvider>
+                        {activeMenu ? (
+                          <div className="w-[5%] fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
+                            <Sidebar />
+                          </div>
+                        ) : (
+                          <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
+                            <Sidebar />
+                          </div>
+                        )}
 
-                    <div className={`dark:bg-main-bg bg-main-bg min-h-screen w-full transition-all duration-300 ${activeMenu ? 'md:ml-[15%]' : 'md:ml-20'}`}>
-                      <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
-                        <Navbar />
-                      </div>
+                        <div className={`dark:bg-main-bg bg-main-bg min-h-screen w-full transition-all duration-300 ${activeMenu ? 'md:ml-[15%]' : 'md:ml-20'}`}>
+                          <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
+                            <Navbar />
+                          </div>
 
-                      <div className="p-4">
-                        <Routes>
-                          {/* Dashboard */}
-                          <Route path="/dashboard" element={<Dashboard />} /> {/* Ruta para Dashboard */}
+                          <div className="p-4">
+                            <Routes>
+                              {/* Dashboard */}
+                              <Route path="/dashboard" element={<Dashboard />} /> {/* Ruta para Dashboard */}
 
-                          {/* Demás rutas */}
-                          <Route path="/donaciones" element={<CRUDDonacion />} />
-                          <Route path="/donadores" element={<CRUDDonador />} />
-                          <Route path="/beneficiarios" element={<CRUDTable />} />
-                          <Route path="/proyectos" element={<CRUDProyecto />} />
-                          <Route path="/insumos" element={<CRUDInsumos />} />
-                          <Route path="/ayudantes" />
+                              {/* Demás rutas */}
+                              <Route path="/donaciones" element={<CRUDDonacion />} />
+                              <Route path="/donadores" element={<CRUDDonador />} />
+                              <Route path="/beneficiarios" element={<CRUDTable />} />
+                              <Route path="/proyectos" element={<CRUDProyecto />} />
+                              <Route path="/insumos" element={<CRUDInsumos />} />
+                              <Route path="/ayudantes" element={< CRUDAyudante />} />
+                              <Route path="/tareas" element={< CRUDTarea />} />
 
-                          {/* Ejemplo de gráfico */}
-                          <Route path="/line-chart" element={<LineChart />} />
-                        </Routes>
-                      </div>
-                    </div>
+                              {/* Ejemplo de gráfico */}
+                              <Route path="/line-chart" element={<LineChart />} />
+                            </Routes>
+                          </div>
+                        </div>
+                      </TareaProvider>
+                    </AyudanteProvider>
                   </InsumoProvider>
                 </DonacionesProvider>
               </DonadorProvider>

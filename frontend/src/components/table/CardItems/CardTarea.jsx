@@ -39,7 +39,7 @@ const CardTarea = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive })
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Ayudante</span>
-                <span className="ml-2">{item.ayudante.nombre} ({item.ayudante.identificacion})</span>
+                <span className="ml-2">{item.ayudanteNombre} ({item.ayudanteIdentificacion})</span>
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Condición:</span>
