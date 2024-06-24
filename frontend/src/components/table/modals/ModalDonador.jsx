@@ -13,6 +13,7 @@ const ModalDonador = ({ onClose, item }) => {
         correoElectronico: '',
         estado: 'activo'
     });
+    const [validationErrors, setValidationErrors] = useState({});
 
     useEffect(() => {
         if (item) {
@@ -40,13 +41,47 @@ const ModalDonador = ({ onClose, item }) => {
         }
     }, [item]);
 
+    const validateField = (name, value) => {
+        let error = '';
+        if (name === 'identificacion' && !/^\d{5,10}$/.test(value)) {
+            error = 'La identificación debe tener entre 5 y 10 dígitos numéricos.';
+        } else if (name === 'correoElectronico' && !/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
+            error = 'Correo electrónico no válido.';
+        } else if (name === 'nombre' && !/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
+            error = 'El nombre solo puede contener letras y espacios.';
+        }else if (name === 'telefono' && !/^\d{8,12}$/.test(value)) {
+            error = 'El telefono debe tener entre 8 a 12 dígitos numéricos.';
+        }
+
+        setValidationErrors(prevState => ({ ...prevState, [name]: error }));
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
+        validateField(name, value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        const requiredFields = ['identificacion', 'nombre', 'direccion', 'correoElectronico', 'telefono'];
+        const errors = {};
+
+        requiredFields.forEach(field => {
+            if (!formData[field]) {
+                errors[field] = 'Este campo es obligatorio';
+            }
+        });
+
+        setValidationErrors(errors);
+
+        const hasErrors = Object.values(errors).some(error => error) || Object.values(validationErrors).some(error => error);
+        if (hasErrors) {
+            console.error('Validation errors:', validationErrors);
+            return;
+        }
+
         try {
             if (item && item._id) {
                 await updateDonador(item._id, formData);
@@ -67,29 +102,31 @@ const ModalDonador = ({ onClose, item }) => {
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donador' : 'Agregar Donador'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<p className="text-red-500 text-sm">*</p></label>
                             <input
                                 type="number"
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${validationErrors.identificacion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {validationErrors.identificacion && <p className="text-red-500 text-sm">{validationErrors.identificacion}</p>}
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<p className="text-red-500 text-sm">*</p></label>
                             <input
                                 type="text"
                                 name="nombre"
                                 value={formData.nombre}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${validationErrors.nombre ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {validationErrors.nombre && <p className="text-red-500 text-sm">{validationErrors.nombre}</p>}
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donador</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donador<p className="text-red-500 text-sm">*</p></label>
                             <select
                                 name="tipoDonador"
                                 value={formData.tipoDonador}
@@ -107,7 +144,7 @@ const ModalDonador = ({ onClose, item }) => {
                 <div className="flex-1">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento<p className="text-red-500 text-sm">*</p></label>
                             <select
                                 name="tipoDocumen"
                                 value={formData.tipoDocumen}
@@ -120,17 +157,19 @@ const ModalDonador = ({ onClose, item }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono<p className="text-red-500 text-sm">*</p></label>
                             <input
                                 type="text"
                                 name="telefono"
                                 value={formData.telefono}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${validationErrors.telefono ? 'border-red-500' : ''}`}
+                                required
                             />
+                            {validationErrors.telefono && <p className="text-red-500 text-sm">{validationErrors.telefono}</p>}
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Dirección<p className="text-red-500 text-sm">*</p></label>
                             <input
                                 type="text"
                                 name="direccion"
@@ -141,15 +180,16 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico<p className="text-red-500 text-sm">*</p></label>
                             <input
                                 type="email"
                                 name="correoElectronico"
                                 value={formData.correoElectronico}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${validationErrors.correoElectronico ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {validationErrors.correoElectronico && <p className="text-red-500 text-sm">{validationErrors.correoElectronico}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
@@ -166,7 +206,7 @@ const ModalDonador = ({ onClose, item }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
                             </button>

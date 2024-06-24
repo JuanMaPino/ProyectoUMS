@@ -511,6 +511,10 @@ export const links = [
       {
         name: 'Insumos',
         icon: <RiShoppingBasket2Line/>
+      },
+      {
+        name: 'Actividades',
+        icon: <IoMdArchive/>
       }
     ],
   },
