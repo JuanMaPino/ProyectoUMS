@@ -14,6 +14,10 @@ const donacionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  cantidad: {
+    type: Number,
+    required: true
+  },
   donador: { type: mongoose.Schema.Types.ObjectId, ref: 'Donador'}
 });
 
