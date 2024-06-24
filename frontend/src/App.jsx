@@ -26,10 +26,12 @@ import CRUDAyudante from './pages/CrudAyudante';
 import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
+import CRUDActividad from './pages/CrudActividad';
 import { GrDashboard } from 'react-icons/gr';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
+import { ActividadProvider } from './context/ActividadContext';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -38,6 +40,7 @@ const App = () => {
     <DarkModeProvider>
       <div className="flex relative dark:bg-main-dark-bg">
         <BrowserRouter>
+        <ActividadProvider>
           <ProjectProvider>
             <BeneficiarioProvider>
               <DonadorProvider>
@@ -73,6 +76,7 @@ const App = () => {
                               <Route path="/insumos" element={<CRUDInsumos />} />
                               <Route path="/ayudantes" element={< CRUDAyudante />} />
                               <Route path="/tareas" element={< CRUDTarea />} />
+                              <Route path="/actividades" element={< CRUDActividad />} />
 
                               {/* Ejemplo de gráfico */}
                               <Route path="/line-chart" element={<LineChart />} />
@@ -86,9 +90,11 @@ const App = () => {
               </DonadorProvider>
             </BeneficiarioProvider>
           </ProjectProvider>
+          </ActividadProvider>
         </BrowserRouter>
       </div>
     </DarkModeProvider>
+  
   );
 };
 

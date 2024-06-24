@@ -510,6 +510,10 @@ export const links = [
       {
         name: 'Insumos',
         icon: <IoMdArchive/>
+      },
+      {
+        name: 'Actividades',
+        icon: <IoMdArchive/>
       }
     ],
   },

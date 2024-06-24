@@ -22,6 +22,10 @@ const ViewDonacion = ({ onClose, item }) => {
                     <p className="text-gray-800">{item.donacion}</p>
                 </div>
                 <div>
+                    <label className="block text-gray-700"><span className="font-semibold">Cantidad:</span></label>
+                    <p className="text-gray-800">{item.cantidad}</p>
+                </div>
+                <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre del Donador:</span></label>
                     <p className="text-gray-800">{item.donadorNombre}</p>
                 </div>

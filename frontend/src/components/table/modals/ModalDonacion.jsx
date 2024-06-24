@@ -11,26 +11,32 @@ const ModalDonacion = ({ onClose, item }) => {
         donador: '',
         fecha: '',
         tipo: 'Monetaria',
-        donacion: ''
+        donacion: '',
+        cantidad: ''
     });
+    const [selectedDonador, setSelectedDonador] = useState(null); // Nuevo estado para almacenar el donador seleccionado
 
     useEffect(() => {
         if (item) {
             setFormData({
                 documento: item.documento || '',
-                donador: item.donador || '',
+                donador: item.donador ? item.donador._id : '', // Actualización para usar _id del donador
                 fecha: item.fecha || '',
                 tipo: item.tipo || 'Monetaria',
-                donacion: item.donacion || ''
+                donacion: item.donacion || '',
+                cantidad: item.cantidad || ''
             });
+            setSelectedDonador(item.donador); // Actualización para establecer el donador seleccionado
         } else {
             setFormData({
                 documento: '',
                 donador: '',
                 fecha: '',
                 tipo: 'Monetaria',
-                donacion: ''
+                donacion: '',
+                cantidad: ''
             });
+            setSelectedDonador(null); // Limpiar donador seleccionado cuando no hay item
         }
     }, [item]);
 
@@ -53,7 +59,9 @@ const ModalDonacion = ({ onClose, item }) => {
     };
 
     const handleSelectChange = (selectedOption) => {
+        const selectedDonador = donadores.find(donador => donador._id === selectedOption.value);
         setFormData(prevState => ({ ...prevState, donador: selectedOption.value }));
+        setSelectedDonador(selectedDonador);
     };
 
     const handleSubmit = async (e) => {
@@ -72,7 +80,7 @@ const ModalDonacion = ({ onClose, item }) => {
 
     const documentOptions = donadores.map(donador => ({
         value: donador._id,
-        label: donador.identificacion.toString()
+        label: `${donador.nombre} - ${donador.identificacion}` 
     }));
 
     return (
@@ -85,13 +93,21 @@ const ModalDonacion = ({ onClose, item }) => {
                             <label className="block text-gray-700 text-sm font-medium mb-2">Documento</label>
                             <Select
                                 name="donador"
-                                value={documentOptions.find(option => option.value === formData.identificacion)}
+                                value={documentOptions.find(option => option.value === formData.donador)}
                                 onChange={handleSelectChange}
                                 options={documentOptions}
                                 className="shadow-sm border rounded w-full text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
                             />
                         </div>
+                        {selectedDonador && (
+                            <>
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Donador</label>
+                                    <p className="text-gray-800">{selectedDonador.nombre}</p>
+                                </div>
+                            </>
+                        )}
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Fecha</label>
                             <input
@@ -122,6 +138,17 @@ const ModalDonacion = ({ onClose, item }) => {
                                 type="text"
                                 name="donacion"
                                 value={formData.donacion}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad</label>
+                            <input
+                                type="number"
+                                name="cantidad"
+                                value={formData.cantidad}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
