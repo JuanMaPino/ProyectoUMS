@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
-import { useActividades } from '../context/ActividadContext'; // Ajusta la ruta según tu estructura
+import { useActividades } from '../context/ActividadContext'; 
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,10 +10,9 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import ModalActividad from '../components/table/modals/ModalActividad'; // Ajustar el nombre del modal según tu estructura
-import ViewActividad from '../components/table/views/ViewActividad'; // Ajustar el nombre del componente según tu estructura
-import CardItem from '../components/table/CardItems/CardActividad'; // Ajustar el nombre del componente según tu estructura
-
+import ModalActividad from '../components/table/modals/ModalActividad'; 
+import ViewActividad from '../components/table/views/ViewActividad'; 
+import CardItem from '../components/table/CardItems/CardActividad';
 const CRUDActividad = () => {
     const {
         actividades,
@@ -80,13 +79,13 @@ const CRUDActividad = () => {
     };
 
     const handleSwitchChange = async (id) => {
-        const item = actividades.find(item => item.id_actividad === id);
+        const item = actividades.find(item => item._id === id);
         if (item) {
             const updatedItem = {
                 ...item,
                 estado: item.estado === 'activo' ? 'inactivo' : 'activo'
             };
-            await disableActividad(id); // Utilizando la función de cambio de estado del contexto
+            await disableActividad(id);
         }
     };
 

@@ -3,7 +3,7 @@ import { useActividades } from '../../../context/ActividadContext';
 import { RiCloseLine } from 'react-icons/ri';
 
 const ModalActividad = ({ onClose, item }) => {
-    const { createActividad, updateActividad } = useActividades();
+    const { createActividad, updateActividad, actividades} = useActividades();
     const [formData, setFormData] = useState({
         id_actividad: '',
         nombre: '',
@@ -42,12 +42,33 @@ const ModalActividad = ({ onClose, item }) => {
         }
     }, [item]);
 
+    const checkIfExists = (id_Actividad) => {
+        return actividades.some(actividad => {
+            if (actividad.id_actividad && id_Actividad) {
+                return actividad.id_actividad.toString().toLowerCase().trim() === id_Actividad.toString().toLowerCase().trim();
+            }
+            return false;
+        });
+    }
+    
+
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
         if (name === 'id_actividad') {
-            // Validación de longitud y solo números en el campo ID
-            if (/^\d{0,10}$/.test(value)) {
+
+            if (checkIfExists(value)){
+                setErrors(prevState => ({
+                    ...prevState,
+                    [name]: 'La actividad ya existe.'
+                }));
+                setFormData(prevState => ({
+                    ...prevState,
+                    [name]: value
+                }));
+            }
+            else if (/^\d{0,10}$/.test(value)) {
                 setErrors(prevState => ({
                     ...prevState,
                     [name]: null
@@ -63,7 +84,7 @@ const ModalActividad = ({ onClose, item }) => {
                 }));
             }
         } else if (name === 'nombre' || name === 'descripcion') {
-            // Validación de solo letras en campos nombre y descripción
+         
             if (/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
                 setErrors(prevState => ({
                     ...prevState,
@@ -94,7 +115,7 @@ const ModalActividad = ({ onClose, item }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validaciones
+        
         const validationErrors = {};
         if (!formData.id_actividad) validationErrors.id_actividad = 'Este campo es obligatorio';
         else if (!/^\d{5,10}$/.test(formData.id_actividad)) validationErrors.id_actividad = 'El campo ID debe contener entre 5 y 10 dígitos numéricos.';
@@ -106,18 +127,22 @@ const ModalActividad = ({ onClose, item }) => {
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
+            show_alert('Por favor, corrija los errores antes de enviar.', 'error');
             return;
         }
 
         try {
             if (item && item._id) {
-                await updateActividad(item._id, formData);
+                await updateDonador(item._id, formData);
+                show_alert('Donador actualizado con éxito', 'success');
             } else {
-                await createActividad(formData);
+                await createDonador(formData);
+                show_alert('Donador creado con éxito', 'success');
             }
             onClose();
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
+            show_alert('Error al guardar el donador. Por favor, inténtelo de nuevo.', 'error');
         }
     };
 

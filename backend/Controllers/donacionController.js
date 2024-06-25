@@ -1,5 +1,6 @@
 const Donacion = require('../Models/Donacion');
 
+
 exports.obtenerTodasLasDonaciones = async (req, res) => {
   try {
     const donaciones = await Donacion.find();
@@ -55,13 +56,18 @@ exports.actualizarDonacion = async (req, res) => {
   }
 };
 
-exports.eliminarDonacion = async (req, res) => {
+exports.anularDonacion = async (req, res) => {
   try {
-    const donacion = await Donacion.findByIdAndDelete(req.params.id);
+    const donacion = await Donacion.findById(req.params.id);
     if (!donacion) {
-      return res.status(404).json({ error: 'Donacion no encontrada' });
+      return res.status(404).json({ error: 'Donación no encontrada' });
     }
-    res.status(204).end();
+    if (donacion.estado === 'anulada') {
+      return res.status(400).json({ error: 'La donación ya está anulada' });
+    }
+    donacion.estado = 'anulada';
+    await donacion.save();
+    res.status(200).json(donacion);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

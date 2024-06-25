@@ -4,7 +4,7 @@ import { useDonaciones } from '../../../context/DonacionesContext';
 import { getAllDonadoresRequest } from '../../../api/ApiDonador';
 
 const ModalDonacion = ({ onClose, item }) => {
-    const { createDonacion, updateDonacion } = useDonaciones();
+    const { createDonacion, updateDonacion, } = useDonaciones();
     const [donadores, setDonadores] = useState([]);
     const [formData, setFormData] = useState({
         documento: '',
@@ -13,6 +13,7 @@ const ModalDonacion = ({ onClose, item }) => {
         tipo: 'Monetaria',
         donacion: '',
         cantidad: ''
+        
     });
     const [selectedDonador, setSelectedDonador] = useState(null);
     const [validationErrors, setValidationErrors] = useState({});
@@ -53,6 +54,9 @@ const ModalDonacion = ({ onClose, item }) => {
 
         fetchDonadores();
     }, []);
+
+
+    
 
     const validateField = (name, value) => {
         let error = '';

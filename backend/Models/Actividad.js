@@ -27,16 +27,12 @@ const actividadSchema = new Schema({
 
   },
 
-  tarea: {
-    type: String,
-    required: true,
-    
-  },
-  insumo: {
-    type: String,
-    required: true,
-   
-  },
+  tarea: 
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Tarea'}
+  ,
+  insumo: 
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Insumo'}
+    ,
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],

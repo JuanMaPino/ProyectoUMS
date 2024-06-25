@@ -21,6 +21,7 @@ const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive 
         }
     };
 
+
     return (
         <div className={`rounded-lg ml-4 p-4 mb-4 ${cardClass}`}>
             <div className="flex items-center mb-2">
