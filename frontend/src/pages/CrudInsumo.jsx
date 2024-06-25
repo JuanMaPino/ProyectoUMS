@@ -29,13 +29,12 @@ const CRUDInsumos = () => {
     }, []);
 
     useEffect(() => {
-        // Filtro de insumos basado en nombre y fecha
         const filtered = insumos.filter(item =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             new Date(item.fecha).toLocaleDateString().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
-        setCurrentPage(1); // Resetea a la primera página al cambiar el término de búsqueda
+        setCurrentPage(1);
     }, [insumos, searchTerm]);
 
     const handleCreateClick = () => {
@@ -53,7 +52,7 @@ const CRUDInsumos = () => {
         } else {
             await createInsumo(item);
         }
-        getAllInsumos(); // Vuelve a cargar todos los insumos después de la operación de crear o actualizar
+        getAllInsumos();
         syncInsumosWithDonaciones(); // Actualiza la cantidad de insumos según las donaciones
         closeModal();
     };
@@ -102,23 +101,29 @@ const CRUDInsumos = () => {
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
     const syncInsumosWithDonaciones = async () => {
-        // Lógica para sincronizar los insumos con las cantidades de donaciones
         try {
-            const response = await fetch('ruta-a-tu-api/donaciones'); // Ejemplo de ruta a la API de donaciones
+            const response = await fetch('ruta-a-tu-api/donaciones'); // Ajusta la ruta a tu API de donaciones
             const donaciones = await response.json();
 
+            const responseMonetarias = await fetch('ruta-a-tu-api/donaciones-monetarias'); // Ajusta la ruta a tu API de donaciones monetarias
+            const donacionesMonetarias = await responseMonetarias.json();
+
             const updatedInsumos = insumos.map(insumo => {
-                const totalCantidad = donaciones
+                const totalCantidadDonaciones = donaciones
                     .filter(donacion => donacion.nombre.toLowerCase() === insumo.nombre.toLowerCase())
                     .reduce((acc, donacion) => acc + donacion.cantidad, 0);
-                
+
+                const totalCantidadMonetarias = donacionesMonetarias
+                    .filter(donacion => donacion.nombre.toLowerCase() === insumo.nombre.toLowerCase())
+                    .reduce((acc, donacion) => acc + donacion.cantidad, 0);
+
                 return {
                     ...insumo,
-                    cantidad: totalCantidad
+                    cantidad: totalCantidadDonaciones + totalCantidadMonetarias
                 };
             });
 
-            setFilteredData(updatedInsumos); // Actualiza los insumos con las cantidades actualizadas
+            setFilteredData(updatedInsumos);
         } catch (error) {
             console.error('Error syncing insumos with donaciones:', error);
         }
@@ -141,7 +146,6 @@ const CRUDInsumos = () => {
                                 <TableCell>Nombre de Insumo</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Cantidad</TableCell>
-                                <TableCell>Condición</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
@@ -159,9 +163,7 @@ const CRUDInsumos = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell label="Cantidad">{item.cantidad}</TableCell>
-                                        <TableCell label="Condición" className={`py-1 px-2 text-black text-center`}>
-                                            {item.condicion}
-                                        </TableCell>
+                                        
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -176,13 +178,6 @@ const CRUDInsumos = () => {
                                                     className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
                                                 >
                                                     <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
                                                 </button>
                                             </div>
                                         </TableCell>
