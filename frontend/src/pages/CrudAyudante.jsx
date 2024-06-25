@@ -15,7 +15,6 @@ import ViewModal from '../components/table/views/ViewAyudante';
 import CardAyudante from '../components/table/CardItems/CardAyudante';
 import FloatingButton from '../components/FloatingButton'
 
-
 const CRUDAyudante = () => {
     const {
         createAyudante,
@@ -25,7 +24,7 @@ const CRUDAyudante = () => {
         deleteAyudante,
         ayudantes,
         errors
-    } = useAyudantes(); // Use the context
+    } = useAyudantes(); // Usar el contexto
 
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -37,6 +36,10 @@ const CRUDAyudante = () => {
     const itemsPerPage = 5;
 
     useEffect(() => {
+        fetchData();
+    }, []);
+
+    useEffect(() => {
         const filtered = ayudantes.filter(item =>
             item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -45,6 +48,14 @@ const CRUDAyudante = () => {
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
     }, [ayudantes, searchTerm]);
+
+    const fetchData = async () => {
+        try {
+            await getAllAyudantes();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -199,7 +210,7 @@ const CRUDAyudante = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={closeModal} onSubmit={handleCreateOrUpdate} item={selectedItem} />
                 </div>
             )}
             {showViewModal && selectedItem && (
@@ -207,7 +218,7 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-           <FloatingButton onClick={handleCreateClick} />
+            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };

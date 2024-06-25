@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAyudantes } from '../../../context/AyudantesContext';
 
 const ModalAyudante = ({ onClose, item }) => {
-    const { createAyudante, updateAyudante } = useAyudantes(); // Obtener métodos del contexto
+    const { createAyudante, updateAyudante, ayudantes } = useAyudantes(); // Obtener métodos del contexto
     const [formData, setFormData] = useState({
         tipoDocumento: 'C.C',
         identificacion: '',
@@ -14,6 +14,7 @@ const ModalAyudante = ({ onClose, item }) => {
         institucion: '',
         estado: 'activo'
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (item) {
@@ -43,18 +44,73 @@ const ModalAyudante = ({ onClose, item }) => {
         }
     }, [item]);
 
+    const checkIfExists = (identificacion) => {
+        return ayudantes.some(ayudante => {
+            if (ayudante.identificacion && identificacion) {
+                return ayudante.identificacion.toString().toLowerCase().trim() === identificacion.toString().toLowerCase().trim();
+            }
+
+            return false;
+        });
+    };
+
+    const handleValidation = (name, value) => {
+        const newErrors = { ...errors };
+
+        if (name === 'identificacion') {
+            if (!value) newErrors.identificacion = 'Este campo es obligatorio';
+            else if (!/^\d{8,10}$/.test(value)) newErrors.identificacion = 'El documento debe contener entre 8 y 10 dígitos numéricos';
+            else if (checkIfExists(value)) newErrors.identificacion = 'El ayudante ya existe.';
+            else delete newErrors.identificacion;
+        } else if (name === 'nombre') {
+            if (!value) newErrors.nombre = 'Este campo es obligatorio';
+            else if (!/^[a-zA-Z\s]+$/.test(value)) newErrors.nombre = 'El nombre solo debe contener letras y espacios';
+            else delete newErrors.nombre;
+        } else if (name === 'telefono') {
+            if (!value) newErrors.telefono = 'Este campo es obligatorio';
+            else if (value.toString().length !== 10) newErrors.telefono = 'El teléfono debe tener 10 dígitos numéricos';
+            else delete newErrors.telefono;
+        } else if (name === 'correoElectronico') {
+            if (value && !/.+@.+\..+/.test(value)) newErrors.correoElectronico = 'Ingrese un correo electrónico válido';
+            else delete newErrors.correoElectronico;
+        } else if (name === 'direccion') {
+            if (!value) newErrors.direccion = 'Este campo es obligatorio';
+            else if (value.length < 5) newErrors.direccion = 'La dirección debe tener al menos 5 caracteres';
+            else delete newErrors.direccion;
+        } else if (name === 'institucion') {
+            if (!value) newErrors.institucion = 'Este campo es obligatorio';
+            else if (value.length < 3) newErrors.institucion = 'La institución debe tener al menos 3 caracteres';
+            else delete newErrors.institucion;
+        }
+
+        setErrors(newErrors);
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({ ...prevState, [name]: value }));
+
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        handleValidation(name, value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        Object.keys(formData).forEach(key => handleValidation(key, formData[key]));
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
+
         try {
             if (item && item._id) {
-                await updateAyudante(item._id, formData); // Utilizar método del contexto para actualizar
+                await updateAyudante(item._id, formData);
             } else {
-                await createAyudante(formData); // Utilizar método del contexto para crear
+                await createAyudante(formData);
             }
             onClose();
         } catch (error) {
@@ -65,7 +121,6 @@ const ModalAyudante = ({ onClose, item }) => {
     return (
         <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
             <div className="p-8 flex gap-8">
-                {/* Columna izquierda */}
                 <div className="flex-1">
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -89,9 +144,10 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
@@ -100,9 +156,10 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="nombre"
                                 value={formData.nombre}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
@@ -111,13 +168,13 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="telefono"
                                 value={formData.telefono}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.telefono ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
                         </div>
                     </form>
                 </div>
-                {/* Columna derecha */}
                 <div className="flex-1">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -140,9 +197,10 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="direccion"
                                 value={formData.direccion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.direccion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
@@ -151,9 +209,9 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="correoElectronico"
                                 value={formData.correoElectronico}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.correoElectronico ? 'border-red-500' : ''}`}
                             />
+                            {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
@@ -162,9 +220,10 @@ const ModalAyudante = ({ onClose, item }) => {
                                 name="institucion"
                                 value={formData.institucion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.institucion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.institucion && <p className="text-red-500 text-sm mt-1">{errors.institucion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
@@ -179,17 +238,17 @@ const ModalAyudante = ({ onClose, item }) => {
                                 <option value="inactivo">Inactivo</option>
                             </select>
                         </div>
-                        <div className="flex justify-between mt-4">
+                        <div className="flex justify-end mt-6">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="bg-red-500 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="px-4 py-2 mr-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 focus:outline-none focus:ring focus:border-blue-300"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring focus:border-blue-300"
                             >
                                 Guardar
                             </button>

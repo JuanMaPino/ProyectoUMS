@@ -4,7 +4,7 @@ import { FiSettings } from 'react-icons/fi';
 import { TooltipComponent } from '@syncfusion/ej2-react-popups';
 import { Navbar, Footer, Sidebar, ThemeSettings, LineChart } from './components';
 
-import { Bar } from 'react-chartjs-2';
+
 import { CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 
 

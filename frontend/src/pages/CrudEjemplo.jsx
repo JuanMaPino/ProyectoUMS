@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri'; // Importar iconos necesarios
-import { useBeneficiarios } from '../context/BeneficiariosContext'; // Importar el contexto y el hook
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { useBeneficiarios } from '../context/BeneficiariosContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -13,10 +13,10 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
 import CardItem from '../components/table/CardItems/CardItem';
-import FloatingButton from '../components/FloatingButton'; // Importar el nuevo componente
+import FloatingButton from '../components/FloatingButton';
 
 const CRUDTable = () => {
-  const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios(); // Extraer métodos del contexto
+  const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
   const [filteredData, setFilteredData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [showModalForm, setShowModalForm] = useState(false);
@@ -37,12 +37,12 @@ const CRUDTable = () => {
       item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredData(filtered);
-    setCurrentPage(1); // Reset to first page on new search
+    setCurrentPage(1);
   }, [beneficiarios, searchTerm]);
 
   const fetchData = async () => {
     try {
-      // Ya no se usa axios directamente aquí, se usa el método del contexto
+      // Método del contexto para obtener los datos
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -59,7 +59,7 @@ const CRUDTable = () => {
 
   const handleUpdate = async (updatedItem) => {
     try {
-      await updateBeneficiario(updatedItem._id, updatedItem); // Utilizar método del contexto para actualizar
+      await updateBeneficiario(updatedItem._id, updatedItem);
       closeModal();
     } catch (error) {
       console.error('Error updating item:', error);
@@ -68,7 +68,7 @@ const CRUDTable = () => {
 
   const handleDeleteButtonClick = async (id) => {
     try {
-      await deleteBeneficiario(id); // Utilizar método del contexto para eliminar
+      await deleteBeneficiario(id);
     } catch (error) {
       console.error('Error deleting item:', error);
     }
@@ -209,6 +209,7 @@ const CRUDTable = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
+            <FloatingButton onClick={handleCreateClick} />
           </div>
         </div>
       )}
@@ -222,7 +223,6 @@ const CRUDTable = () => {
           <ViewModal onClose={closeViewModal} item={selectedItem} />
         </div>
       )}
-      <FloatingButton onClick={handleCreateClick} />
     </div>
   );
 };
