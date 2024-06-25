@@ -13,7 +13,7 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalAyudante';
 import ViewModal from '../components/table/views/ViewAyudante';
 import CardAyudante from '../components/table/CardItems/CardAyudante';
-import FloatingButton from '../components/FloatingButton'
+import FloatingButton from '../components/FloatingButton';
 
 const CRUDAyudante = () => {
     const {
@@ -93,7 +93,7 @@ const CRUDAyudante = () => {
         setShowModalForm(true);
     };
 
-    const closeModal = () => {
+    const handleCloseModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);
     };
@@ -101,6 +101,12 @@ const CRUDAyudante = () => {
     const closeViewModal = () => {
         setSelectedItem(null);
         setShowViewModal(false);
+    };
+
+    const handleRoleChange = async (id) => {
+        const updatedItem = ayudantes.find(item => item._id === id);
+        updatedItem.rol = updatedItem.rol === 'alfabetizador' ? 'voluntario' : 'alfabetizador';
+        await updateAyudante(id, updatedItem);
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -144,7 +150,15 @@ const CRUDAyudante = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Rol">{item.rol}</TableCell>
+                                        <TableCell label="Rol">
+                                            <button
+                                                className={`py-1 px-2 rounded-lg transition-colors text-white ${item.rol === 'alfabetizador' ? 'bg-blue-500 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-700'}`}
+                                                onClick={() => handleRoleChange(item._id)}
+                                                disabled={item.estado !== 'activo'}
+                                            >
+                                                {item.rol === 'alfabetizador' ? 'Alfabetizador' : 'Voluntario'}
+                                            </button>
+                                        </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -211,7 +225,7 @@ const CRUDAyudante = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={handleCloseModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (
@@ -219,8 +233,9 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-           <FloatingButton onClick={handleCreateClick} />
+            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };
+
 export default CRUDAyudante;
