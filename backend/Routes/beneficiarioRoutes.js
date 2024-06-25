@@ -1,4 +1,3 @@
-// Routes/beneficiarioRoutes.js
 const express = require('express');
 const router = express.Router();
 const beneficiarioController = require('../Controllers/beneficiarioController');

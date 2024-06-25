@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useBeneficiarios } from '../../../context/BeneficiariosContext';
+import { RiCloseLine } from 'react-icons/ri';
 
 const ModalBeneficiario = ({ onClose, item }) => {
-    const { createBeneficiario, updateBeneficiario } = useBeneficiarios(); // Obtener métodos del contexto
+    const { createBeneficiario, updateBeneficiario, beneficiarios } = useBeneficiarios();
     const [formData, setFormData] = useState({
         tipoDocumento: 'C.C',
         identificacion: '',
@@ -10,9 +11,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
         telefono: '',
         correoElectronico: '',
         direccion: '',
-        cantidadFamiliares: 1,
+        cantidadFamiliares: 0,
         estado: 'activo'
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (item) {
@@ -23,7 +25,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 telefono: item.telefono || '',
                 correoElectronico: item.correoElectronico || '',
                 direccion: item.direccion || '',
-                cantidadFamiliares: item.cantidadFamiliares || 1,
+                cantidadFamiliares: item.cantidadFamiliares || 0,
                 estado: item.estado || 'activo'
             });
         } else {
@@ -34,24 +36,79 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 telefono: '',
                 correoElectronico: '',
                 direccion: '',
-                cantidadFamiliares: 1,
+                cantidadFamiliares: 0,
                 estado: 'activo'
             });
         }
     }, [item]);
 
+    const checkIfExists = (identificacion) => {
+        return beneficiarios.some(beneficiario => {
+            if (beneficiario.identificacion && identificacion) {
+                return beneficiario.identificacion.toString().toLowerCase().trim() === identificacion.toString().toLowerCase().trim();
+            }
+
+            return false;
+        });
+    };
+
+    const handleValidation = (name, value) => {
+        const newErrors = { ...errors };
+
+        if (name === 'identificacion') {
+            if (!value) newErrors.identificacion = 'Este campo es obligatorio';
+            else if (!/^\d{8,10}$/.test(value)) newErrors.identificacion = 'El documento debe contener entre 8 y 10 dígitos numéricos';
+            else if (checkIfExists(value)) newErrors.identificacion = 'El beneficiario ya existe.';
+            else delete newErrors.identificacion;
+        } else if (name === 'nombre') {
+            if (!value) newErrors.nombre = 'Este campo es obligatorio';
+            else if (!/^[a-zA-Z\s]+$/.test(value)) newErrors.nombre = 'El nombre solo debe contener letras y espacios';
+            else delete newErrors.nombre;
+        } else if (name === 'telefono') {
+            if (!value) newErrors.telefono = 'Este campo es obligatorio';
+            else if (value.toString().length !== 10) newErrors.telefono = 'El teléfono debe tener 10 dígitos numéricos';
+            else delete newErrors.telefono;
+        } else if (name === 'correoElectronico') {
+            if (value && !/.+@.+\..+/.test(value)) newErrors.correoElectronico = 'Ingrese un correo electrónico válido';
+            else delete newErrors.correoElectronico;
+        } else if (name === 'direccion') {
+            if (!value) newErrors.direccion = 'Este campo es obligatorio';
+            else if (value.length < 5) newErrors.direccion = 'La dirección debe tener al menos 5 caracteres';
+            else delete newErrors.direccion;
+        } else if (name === 'cantidadFamiliares') {
+            if (!value) newErrors.cantidadFamiliares = 'Este campo es obligatorio';
+            else if (value < 0 || value > 10) newErrors.cantidadFamiliares = 'Cantidad de familiares debe estar entre 0 y 10';
+            else delete newErrors.cantidadFamiliares;
+        }
+
+        setErrors(newErrors);
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({ ...prevState, [name]: value }));
+
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+
+        handleValidation(name, value);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        Object.keys(formData).forEach(key => handleValidation(key, formData[key]));
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
+
         try {
             if (item && item._id) {
-                await updateBeneficiario(item._id, formData); // Utilizar método del contexto para actualizar
+                await updateBeneficiario(item._id, formData);
             } else {
-                await createBeneficiario(formData); // Utilizar método del contexto para crear
+                await createBeneficiario(formData);
             }
             onClose();
         } catch (error) {
@@ -60,9 +117,8 @@ const ModalBeneficiario = ({ onClose, item }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-1 mr-1 ml-7">
+        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
             <div className="p-8 flex gap-8">
-                {/* Columna izquierda */}
                 <div className="flex-1">
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -86,9 +142,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
@@ -97,9 +154,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 name="nombre"
                                 value={formData.nombre}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
@@ -108,13 +166,13 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 name="telefono"
                                 value={formData.telefono}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.telefono ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
                         </div>
                     </form>
                 </div>
-                {/* Columna derecha */}
                 <div className="flex-1">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
@@ -126,6 +184,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                             />
+                            {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
@@ -134,9 +193,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 name="direccion"
                                 value={formData.direccion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.direccion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
@@ -145,9 +205,10 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                 name="cantidadFamiliares"
                                 value={formData.cantidadFamiliares}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadFamiliares ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.cantidadFamiliares && <p className="text-red-500 text-sm mt-1">{errors.cantidadFamiliares}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
@@ -164,7 +225,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-2 px-6 focus:outline-none focus:shadow-outline rounded-lg"
+                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
                             </button>
