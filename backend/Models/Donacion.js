@@ -18,6 +18,11 @@ const donacionSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  estado: {
+    type: String,
+    enum: ['activa', 'anulada'],
+    default: 'activa'
+  },
   donador: { type: mongoose.Schema.Types.ObjectId, ref: 'Donador'}
 });
 

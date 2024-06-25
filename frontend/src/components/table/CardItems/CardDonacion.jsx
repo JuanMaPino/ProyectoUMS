@@ -19,6 +19,8 @@ const CardTarea = ({ item, onEdit, onView, onDelete, onSwitchChange, isMonetario
         // Puedes agregar un mensaje o alerta aquí si deseas
     };
 
+    
+
     return (
         <div className={`rounded-lg ml-4 p-4 mb-4 ${cardClass}`}>
             <div className="flex items-center mb-2">

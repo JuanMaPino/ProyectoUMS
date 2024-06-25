@@ -1,4 +1,5 @@
 const Donador = require('../Models/Donador');
+const Donacion = require('../Models/Donacion');
 
 exports.obtenerTodosLosDonadores = async (req, res) => {
   try {
@@ -53,11 +54,17 @@ exports.actualizarDonador = async (req, res) => {
 };
 
 exports.eliminarDonador = async (req, res) => {
+  const { _id } = req.params;
   try {
-    const donador = await Donador.findByIdAndDelete(req.params.id);
-    if (!donador) {
-      return res.status(404).json({ error: 'donador no encontrado' });
+    const donadorConDonacion = await Donacion.findOne({ donador: _id });
+    if (donadorConDonacion.length > 0) {
+      return res.status(400).json({ message: 'No se puede eliminar el donador porque tiene donaciones asociadas' });
     }
+    const donador = await Donador.findByIdAndDelete(id);
+    if (!donador) {
+      return res.status(404).json({ error: 'Donador no encontrado' });
+    }
+    await donador.remove();
     res.status(204).end();
   } catch (error) {
     res.status(500).json({ error: error.message });

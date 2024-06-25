@@ -2,7 +2,7 @@ import { createContext, useState, useContext, useEffect } from 'react';
 import {
     createDonacionRequest,
     updateDonacionRequest,
-    deleteDonacionRequest,
+    anularDonacionRequest,
     getAllDonacionesRequest,
     getDonacionByIdRequest
     // Agrega aquí las importaciones de las funciones de API necesarias
@@ -55,17 +55,21 @@ export const DonacionesProvider = ({ children }) => {
         }
     };
 
-    // Función para eliminar una donación por su ID
-    const deleteDonacion = async (id) => {
+
+    const anularDonacion = async (id) => {
         try {
-            await deleteDonacionRequest(id); // Implementa esta función en tu API
-            setDonaciones(donaciones.filter(d => d._id !== id));
+            const res = await anularDonacionRequest(id);
+            setDonaciones(donacines.map(d => d._id === id ? res.data : d));
+            handleResponse(res)
+            return { success: true };
         } catch (error) {
-            setErrors(error.response.data);
+            const errorMessage = error.response.data?.message || 'An error occurred';
+            setErrors([errorMessage]);
+            handleError(error)
+            return { success: false, error: errorMessage };
         }
     };
 
-    // Función para obtener todas las donaciones
     const getAllDonaciones = async () => {
         try {
             const res = await getAllDonacionesRequest(); // Implementa esta función en tu API
@@ -92,7 +96,7 @@ export const DonacionesProvider = ({ children }) => {
         <DonacionesContext.Provider value={{
             createDonacion,
             updateDonacion,
-            deleteDonacion,
+            anularDonacion,
             getAllDonaciones,
             donaciones,
             selectedDonacion,

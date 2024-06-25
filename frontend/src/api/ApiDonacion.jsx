@@ -6,4 +6,5 @@ export const createDonacionRequest = (donacion) => axios.post(`${API}/`, donacio
 export const updateDonacionRequest = (id, donacion) => axios.put(`${API}/${id}`, donacion);
 export const getDonacionByIdRequest = (id) => axios.get(`${API}/${id}`);
 export const getAllDonacionesRequest = () => axios.get(`${API}/`);
-export const deleteDonacionRequest = (id) => axios.delete(`${API}/${id}`);
+export const anularDonacionRequest = (id) => axios.patch(`${API}/${id}/anular`);
+

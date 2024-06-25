@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiEyeLine } from 'react-icons/ri';
+import { RiEyeLine , RiDeleteBin6Line} from 'react-icons/ri';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -17,7 +17,14 @@ import { useDonaciones } from '../context/DonacionesContext';
 import { useDonadores } from '../context/DonadoresContext';
 
 const CRUDDonaciones = () => {
-    const { createDonacion, updateDonacion, getAllDonaciones, deleteDonacion, donaciones, errors: donacionesErrors } = useDonaciones();
+    const { 
+        createDonacion, 
+        updateDonacion, 
+        getAllDonaciones,  
+        anularDonacion,  
+        donaciones, 
+        errors: donacionesErrors 
+    } = useDonaciones();
     const { donadores, errors: donadoresErrors } = useDonadores();
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -45,8 +52,8 @@ const CRUDDonaciones = () => {
         const filtered = combinedData.filter(item =>
             item.fecha.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.donacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.donadorIdentificacion.toString().includes(searchTerm)
+            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||// Busca también en el nombre del donador
+            item.donadorIdentificacion.toString().includes(searchTerm) 
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
@@ -73,7 +80,6 @@ const CRUDDonaciones = () => {
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteDonacion(id);
-            syncInsumosWithDonaciones(); // Actualizar insumos después de eliminar la donación
         } catch (error) {
             console.error('Error deleting donacion:', error);
         }
@@ -148,6 +154,14 @@ const CRUDDonaciones = () => {
                                                     className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
                                                 >
                                                     <RiEyeLine />
+                                                </button>
+                                                <button
+                                                  name="estado"
+                                                  checked={item.estado === 'activa'}
+                                                   onChange={() => handleSwitchChange(item._id)} 
+                                                    className={`rounded-lg transition-colors text-white bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                >
+                                                    <RiDeleteBin6Line />
                                                 </button>
                                             </div>
                                         </TableCell>

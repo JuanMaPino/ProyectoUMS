@@ -514,7 +514,7 @@ export const links = [
       },
       {
         name: 'Actividades',
-        icon: <IoMdArchive/>
+        icon: <ri-folder-line/>
       }
     ],
   },
