@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiAddLine } from 'react-icons/ri';
 import { useInsumos } from '../context/InsumosContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -7,7 +7,6 @@ import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
 import Pagination from '../components/table/Pagination';
-import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalInsumo';
@@ -15,7 +14,7 @@ import ViewModal from '../components/table/views/ViewInsumo';
 import CardItem from '../components/table/CardItems/CardItem';
 
 const CRUDInsumos = () => {
-    const { insumos, createInsumo, updateInsumo, deleteInsumo, fetchInsumos } = useInsumos();
+    const { insumos, createInsumo, updateInsumo, deleteInsumo, getAllInsumos } = useInsumos();
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -26,13 +25,13 @@ const CRUDInsumos = () => {
     const itemsPerPage = 6;
 
     useEffect(() => {
-        fetchInsumos();
+        getAllInsumos();
     }, []);
 
     useEffect(() => {
         const filtered = insumos.filter(item =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.fecha.toLowerCase().includes(searchTerm.toLowerCase())
+            new Date(item.fecha).toLocaleDateString().includes(searchTerm.toLowerCase())
         );
         setFilteredData(filtered);
         setCurrentPage(1);
@@ -53,13 +52,15 @@ const CRUDInsumos = () => {
         } else {
             await createInsumo(item);
         }
-        fetchInsumos();
+        getAllInsumos();
+        syncInsumosWithDonaciones(); // Actualiza la cantidad de insumos según las donaciones
         closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteInsumo(id);
+            syncInsumosWithDonaciones(); // Actualiza la cantidad de insumos después de eliminar
         } catch (error) {
             console.error('Error deleting insumo:', error);
         }
@@ -99,11 +100,39 @@ const CRUDInsumos = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
+    const syncInsumosWithDonaciones = async () => {
+        try {
+            const response = await fetch('ruta-a-tu-api/donaciones'); // Ajusta la ruta a tu API de donaciones
+            const donaciones = await response.json();
+
+            const responseMonetarias = await fetch('ruta-a-tu-api/donaciones-monetarias'); // Ajusta la ruta a tu API de donaciones monetarias
+            const donacionesMonetarias = await responseMonetarias.json();
+
+            const updatedInsumos = insumos.map(insumo => {
+                const totalCantidadDonaciones = donaciones
+                    .filter(donacion => donacion.nombre.toLowerCase() === insumo.nombre.toLowerCase())
+                    .reduce((acc, donacion) => acc + donacion.cantidad, 0);
+
+                const totalCantidadMonetarias = donacionesMonetarias
+                    .filter(donacion => donacion.nombre.toLowerCase() === insumo.nombre.toLowerCase())
+                    .reduce((acc, donacion) => acc + donacion.cantidad, 0);
+
+                return {
+                    ...insumo,
+                    cantidad: totalCantidadDonaciones + totalCantidadMonetarias
+                };
+            });
+
+            setFilteredData(updatedInsumos);
+        } catch (error) {
+            console.error('Error syncing insumos with donaciones:', error);
+        }
+    };
+
     return (
         <div className='ml-3'>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <div className="flex items-center gap-2">
-                    <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
@@ -114,58 +143,41 @@ const CRUDInsumos = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Nombre de insumo</TableCell>
+                                <TableCell>Nombre de Insumo</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Cantidad</TableCell>
-                                <TableCell>Condición</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                    <TableCell label="Nombre Insumo">
-                                      <div>
-                                        <p className="text-black">{item.nombre}</p>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell label="Fecha">    
-                                      <div>
-                                      <span className="block">{new Date(item.fecha).toLocaleDateString()}</span>
-                                      </div>
-                                    </TableCell>
-                                    <TableCell label="Cantidad">{item.cantidad}</TableCell>
-                                    <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                      {item.estado}
-                                    </TableCell>
-                                    <TableCell label="Estado">
-                                      <Switch
-                                        name="estado"
-                                        checked={item.estado === 'activo'}
-                                        onChange={() => handleSwitchChange(item._id)}
-                                      />
-                                    </TableCell>
-                                    <TableCell label="Acciones">
+                                        <TableCell label="Nombre de Insumo">
+                                            <div>
+                                                <p className="text-black">{item.nombre}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Fecha">
+                                            <div>
+                                                <span className="block">{new Date(item.fecha).toLocaleDateString()}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Cantidad">{item.cantidad}</TableCell>
+                                        
+                                        <TableCell label="Estado">
+                                            <Switch
+                                                name="estado"
+                                                checked={item.estado === 'activo'}
+                                                onChange={() => handleSwitchChange(item._id)}
+                                            />
+                                        </TableCell>
+                                        <TableCell label="Acciones">
                                             <div className="flex gap-1 mr-3">
                                                 <button
                                                     onClick={() => handleViewButtonClick(item)}
                                                     className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
                                                 >
                                                     <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiPlaneFill />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
                                                 </button>
                                             </div>
                                         </TableCell>
@@ -197,7 +209,6 @@ const CRUDInsumos = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        {/* Botón flotante para crear */}
                         <button
                             onClick={handleCreateClick}
                             className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"

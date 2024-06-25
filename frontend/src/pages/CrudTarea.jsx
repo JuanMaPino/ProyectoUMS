@@ -216,6 +216,7 @@ const CRUDTarea = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}
@@ -229,7 +230,6 @@ const CRUDTarea = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };

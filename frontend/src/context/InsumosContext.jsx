@@ -1,5 +1,3 @@
-// InsumoContext.js
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
     createInsumoRequest,
@@ -17,10 +15,10 @@ export const InsumoProvider = ({ children }) => {
     const [errors, setErrors] = useState([]);
     
     useEffect(() => {
-        fetchInsumos();
+        getAllInsumos();
     }, []);
 
-    const fetchInsumos = async () => {
+    const getAllInsumos = async () => {
         try {
             const response = await getAllInsumosRequest();
             setInsumos(response.data);
@@ -76,7 +74,7 @@ export const InsumoProvider = ({ children }) => {
                 createInsumo,
                 updateInsumo,
                 deleteInsumo,
-                fetchInsumos
+                getAllInsumos
             }}
         >
             {children}

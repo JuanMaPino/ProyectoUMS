@@ -12,6 +12,7 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalProyecto'; // Adapted for Proyecto
 import ViewModal from '../components/table/views/ViewProyecto'; // Adapted for Proyecto
 import CardItem from '../components/table/CardItems/CardItem';
+import FloatingButton from '../components/FloatingButton';
 import { useProjects } from '../context/ProyectosContext'; // Import the context
 
 const CRUDProyecto = () => {
@@ -186,13 +187,7 @@ const CRUDProyecto = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        {/* Botón flotante para crear */}
-                        <button
-                            onClick={handleCreateClick}
-                            className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                        >
-                            <RiAddLine size={24} />
-                        </button>
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}

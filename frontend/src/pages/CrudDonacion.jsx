@@ -45,8 +45,8 @@ const CRUDDonaciones = () => {
         const filtered = combinedData.filter(item =>
             item.fecha.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.donacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||// Busca también en el nombre del donador
-            item.donadorIdentificacion.toString().includes(searchTerm) 
+            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.donadorIdentificacion.toString().includes(searchTerm)
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
@@ -73,6 +73,7 @@ const CRUDDonaciones = () => {
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteDonacion(id);
+            syncInsumosWithDonaciones(); // Actualizar insumos después de eliminar la donación
         } catch (error) {
             console.error('Error deleting donacion:', error);
         }
@@ -117,24 +118,29 @@ const CRUDDonaciones = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Documento</TableCell>
-                                <TableCell>Donador</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Tipo</TableCell>
-                                <TableCell>Donación</TableCell>
+                                <TableCell>Insumo</TableCell>
+                                <TableCell>Cantidad</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow 
-                                        key={index} 
-                                        isMonetario={item.tipo === 'Monetaria'} 
+                                    <TableRow
+                                        key={index}
+                                        isMonetario={item.tipo === 'Monetaria'}
                                         tipo={item.tipo}
-                                    > 
-                                        <TableCell>{item.donadorIdentificacion}</TableCell>
-                                        <TableCell>{item.donadorNombre}</TableCell> {/* Muestra el nombre del donador */}
+                                    >
+                                        <TableCell label="Documento">
+                                            <div>
+                                                <p className="text-black">{item.donadorIdentificacion.toString().substring(0, 18) + '...'}</p>
+                                                <p className="text-xs text-gray-600">{item.donadorNombre.toString().substring(0, 18) + '...'}</p>
+                                            </div>
+                                        </TableCell>
                                         <TableCell>{item.fecha}</TableCell>
                                         <TableCell>{item.tipo}</TableCell>
                                         <TableCell>{item.donacion}</TableCell>
+                                        <TableCell>{item.cantidad}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <button
@@ -162,7 +168,7 @@ const CRUDDonaciones = () => {
                                 key={index}
                                 item={item}
                                 onView={handleViewButtonClick}
-                                isMonetario={item.tipo === 'Monetaria' || 'Material'} 
+                                isMonetario={item.tipo === 'Monetaria' || 'Material'}
                             />
                         ))}
                         <Pagination
@@ -171,6 +177,7 @@ const CRUDDonaciones = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}
@@ -191,7 +198,6 @@ const CRUDDonaciones = () => {
                     ))}
                 </div>
             )}
-            <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };

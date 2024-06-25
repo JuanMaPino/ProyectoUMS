@@ -2,9 +2,10 @@ import React from 'react';
 import { AiOutlineCalendar, AiOutlineShoppingCart, AiOutlineAreaChart, AiOutlineBarChart, AiOutlineStock,AiOutlineIdcard } from 'react-icons/ai';
 import { FiShoppingBag, FiEdit, FiPieChart, FiBarChart, FiCreditCard, FiStar, FiShoppingCart } from 'react-icons/fi';
 import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft } from 'react-icons/bs';
+
 import { BiColorFill } from 'react-icons/bi';
 import { IoMdContacts, IoMdArchive } from 'react-icons/io';
-import { RiContactsLine, RiStockLine } from 'react-icons/ri';
+import { RiContactsLine, RiStockLine, RiHandCoinLine, RiHeartAddLine, RiTeamLine,  RiListCheck3, RiContactsBookLine, RiShoppingBasket2Line } from 'react-icons/ri';
 import { MdOutlineSupervisorAccount } from 'react-icons/md';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { TiTick } from 'react-icons/ti';
@@ -485,11 +486,11 @@ export const links = [
     links: [
       {
         name: 'donadores',
-        icon: <IoMdContacts />,
+        icon: <RiHandCoinLine />,
       },
       {
         name: 'donaciones',
-        icon: <AiOutlineShoppingCart />,
+        icon: <RiHeartAddLine />,
       },
       {
         name: 'beneficiarios',
@@ -497,18 +498,22 @@ export const links = [
       },
       {
         name: 'ayudantes',
-        icon: <IoMdContacts />,
+        icon: <RiTeamLine />,
       },
       {
         name: 'tareas',
-        icon: <IoMdContacts />,
+        icon: <RiListCheck3 />,
       },
       {
         name: 'Proyectos',
-        icon: <RiContactsLine/>
+        icon: <RiContactsBookLine/>
       },
       {
         name: 'Insumos',
+        icon: <RiShoppingBasket2Line/>
+      },
+      {
+        name: 'Actividades',
         icon: <IoMdArchive/>
       }
     ],

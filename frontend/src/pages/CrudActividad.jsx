@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
-import { useAyudantes } from '../context/AyudantesContext'; // Importar el contexto y el hook
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
+import { useActividades } from '../context/ActividadContext'; // Ajusta la ruta según tu estructura
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,51 +10,37 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import FormModal from '../components/table/modals/ModalAyudante';
-import ViewModal from '../components/table/views/ViewAyudante';
-import CardAyudante from '../components/table/CardItems/CardAyudante';
-import FloatingButton from '../components/FloatingButton'
+import ModalActividad from '../components/table/modals/ModalActividad'; // Ajustar el nombre del modal según tu estructura
+import ViewActividad from '../components/table/views/ViewActividad'; // Ajustar el nombre del componente según tu estructura
+import CardItem from '../components/table/CardItems/CardActividad'; // Ajustar el nombre del componente según tu estructura
 
-const CRUDAyudante = () => {
+const CRUDActividad = () => {
     const {
-        createAyudante,
-        updateAyudante,
-        getAllAyudantes,
-        disableAyudante,
-        deleteAyudante,
-        ayudantes,
-        errors
-    } = useAyudantes(); // Usar el contexto
+        actividades,
+        createActividad,
+        updateActividad,
+        deleteActividad,
+        disableActividad,
+    } = useActividades();
 
-    const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 5;
+    const itemsPerPage = 6;
 
     useEffect(() => {
         fetchData();
     }, []);
 
     useEffect(() => {
-        const filtered = ayudantes.filter(item =>
-            item.identificacion.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
-    }, [ayudantes, searchTerm]);
+    }, [searchTerm]);
 
     const fetchData = async () => {
-        try {
-            await getAllAyudantes();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
+        // Aquí no se necesita ya que el contexto ActividadProvider maneja la carga inicial
     };
 
     const handleCreateClick = () => {
@@ -66,20 +52,20 @@ const CRUDAyudante = () => {
         setSearchTerm(query);
     };
 
-    const handleCreateOrUpdate = async (item) => {
-        if (item._id) {
-            await updateAyudante(item._id, item);
-        } else {
-            await createAyudante(item);
+    const handleUpdate = async (updatedItem) => {
+        try {
+            await updateActividad(updatedItem.id_actividad, updatedItem);
+            closeModal();
+        } catch (error) {
+            console.error('Error updating item:', error);
         }
-        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await deleteAyudante(id);
+            await deleteActividad(id);
         } catch (error) {
-            console.error('Error deleting ayudante:', error);
+            console.error('Error deleting item:', error);
         }
     };
 
@@ -93,6 +79,17 @@ const CRUDAyudante = () => {
         setShowModalForm(true);
     };
 
+    const handleSwitchChange = async (id) => {
+        const item = actividades.find(item => item.id_actividad === id);
+        if (item) {
+            const updatedItem = {
+                ...item,
+                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
+            };
+            await disableActividad(id); // Utilizando la función de cambio de estado del contexto
+        }
+    };
+
     const closeModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);
@@ -104,6 +101,13 @@ const CRUDAyudante = () => {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
+    const filteredData = searchTerm
+        ? actividades.filter(item =>
+            item.id_actividad.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : actividades;
+
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
     return (
@@ -114,7 +118,7 @@ const CRUDAyudante = () => {
                     <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
-            {filteredData.length === 0 ? (
+            {actividades.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (
                 <div>
@@ -122,9 +126,10 @@ const CRUDAyudante = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Ayudante</TableCell>
-                                <TableCell>Teléfono</TableCell>
-                                <TableCell>Rol</TableCell>
+                                <TableCell>Nombre</TableCell>
+                                <TableCell>Tipo</TableCell>
+
+                                <TableCell>Insumo</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
@@ -133,23 +138,21 @@ const CRUDAyudante = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                                <p className="text-black">{item.id_actividad}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Ayudante">
+                                        <TableCell label="Nombre">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Rol">{item.rol}</TableCell>
+                                        <TableCell label="Tipo">{item.tipo}</TableCell>
+                                        <TableCell label="Insumo">{item.insumo}</TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => disableAyudante(item._id)}
+                                                onChange={() => handleSwitchChange(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -189,13 +192,13 @@ const CRUDAyudante = () => {
                     </div>
                     <div className="md:hidden">
                         {currentData.map((item, index) => (
-                            <CardAyudante
+                            <CardItem
                                 key={index}
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={disableAyudante}
+                                onSwitchChange={handleSwitchChange}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
@@ -205,22 +208,28 @@ const CRUDAyudante = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        <FloatingButton onClick={handleCreateClick} />
+                        {/* Botón flotante para crear */}
+                        <button
+                            onClick={handleCreateClick}
+                            className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
+                        >
+                            <RiAddLine size={24} />
+                        </button>
                     </div>
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ModalActividad onClose={closeModal} item={selectedItem} fetchData={fetchData} />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <ViewModal onClose={closeViewModal} item={selectedItem} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ViewActividad onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-           <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };
-export default CRUDAyudante;
+
+export default CRUDActividad;
