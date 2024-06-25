@@ -76,7 +76,7 @@ const ModalDonacion = ({ onClose, item }) => {
         if (name === 'cantidad' && (value <= 0 || isNaN(value))) {
             error = 'La cantidad debe ser un número mayor a 0.';
         } else if (name === 'donacion' && !/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
-            error = 'La donacion solo puede contener letras y espacios.';
+            error = 'La donación solo puede contener letras y espacios.';
         }
         setValidationErrors(prevState => ({ ...prevState, [name]: error }));
     };
@@ -175,7 +175,7 @@ const ModalDonacion = ({ onClose, item }) => {
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donacion<p className="text-red-500 text-sm">*</p></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donación<p className="text-red-500 text-sm">*</p></label>
                             <select
                                 name="tipo"
                                 value={formData.tipo}
