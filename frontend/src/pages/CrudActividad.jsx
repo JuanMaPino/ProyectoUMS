@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
-import { useActividades } from '../context/ActividadContext'; 
+import { useActividades } from '../context/ActividadContext';
+import { useInsumos } from '../context/InsumosContext';
+import { useTareas } from '../context/TareasContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -10,9 +12,10 @@ import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
-import ModalActividad from '../components/table/modals/ModalActividad'; 
-import ViewActividad from '../components/table/views/ViewActividad'; 
+import ModalActividad from '../components/table/modals/ModalActividad';
+import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
+
 const CRUDActividad = () => {
     const {
         actividades,
@@ -21,6 +24,9 @@ const CRUDActividad = () => {
         deleteActividad,
         disableActividad,
     } = useActividades();
+
+    const { insumos } = useInsumos();
+    const { tareas } = useTareas();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -31,16 +37,8 @@ const CRUDActividad = () => {
     const itemsPerPage = 6;
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
         setCurrentPage(1); // Reset to first page on new search
     }, [searchTerm]);
-
-    const fetchData = async () => {
-        // Aquí no se necesita ya que el contexto ActividadProvider maneja la carga inicial
-    };
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -51,20 +49,20 @@ const CRUDActividad = () => {
         setSearchTerm(query);
     };
 
-    const handleUpdate = async (updatedItem) => {
-        try {
-            await updateActividad(updatedItem.id_actividad, updatedItem);
-            closeModal();
-        } catch (error) {
-            console.error('Error updating item:', error);
+    const handleCreateOrUpdate = async (item) => {
+        if (item._id) {
+            await updateActividad(item._id, item);
+        } else {
+            await createActividad(item);
         }
+        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteActividad(id);
         } catch (error) {
-            console.error('Error deleting item:', error);
+            console.error('Error deleting actividad:', error);
         }
     };
 
@@ -85,7 +83,7 @@ const CRUDActividad = () => {
                 ...item,
                 estado: item.estado === 'activo' ? 'inactivo' : 'activo'
             };
-            await disableActividad(id);
+            await disableActividad(id); 
         }
     };
 
@@ -126,9 +124,8 @@ const CRUDActividad = () => {
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Nombre</TableCell>
-                                <TableCell>Tipo</TableCell>
-
-                                <TableCell>Insumo</TableCell>
+                                <TableCell>Descripción</TableCell>
+                                <TableCell>Tarea</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
@@ -145,8 +142,20 @@ const CRUDActividad = () => {
                                                 <p className="text-black">{item.nombre}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Tipo">{item.tipo}</TableCell>
-                                        <TableCell label="Insumo">{item.insumo}</TableCell>
+                                        <TableCell label="Descripción">
+                                            <div>
+                                                <p className="text-black">{item.descripcion}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Tarea">
+                                            <div>
+                                                <p className="text-black">
+                                                    {tareas.find(t => t._id === item.tarea)?.nombre || 'Desconocido'}
+                                                </p>
+                                            </div>
+                                        </TableCell>
+
+
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -219,12 +228,12 @@ const CRUDActividad = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalActividad onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <ModalActividad onClose={closeModal} item={selectedItem} tareas={tareas} insumos={insumos} />
                 </div>
             )}
             {showViewModal && selectedItem && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewActividad onClose={closeViewModal} item={selectedItem} />
+                    <ViewActividad onClose={closeViewModal} item={selectedItem} tareas={tareas} insumos={insumos} />
                 </div>
             )}
         </div>
