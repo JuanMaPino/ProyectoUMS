@@ -209,6 +209,7 @@ const CRUDTable = () => {
               currentPage={currentPage}
               onPageChange={setCurrentPage}
             />
+            <FloatingButton onClick={handleCreateClick} />
           </div>
         </div>
       )}
@@ -222,7 +223,6 @@ const CRUDTable = () => {
           <ViewModal onClose={closeViewModal} item={selectedItem} />
         </div>
       )}
-      <FloatingButton onClick={handleCreateClick} />
     </div>
   );
 };

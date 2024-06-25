@@ -194,12 +194,13 @@ const CRUDAyudante = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
+                        <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={closeModal} item={selectedItem} OnSave={handleCreateOrUpdate} />
                 </div>
             )}
             {showViewModal && selectedItem && (
@@ -207,7 +208,6 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-           <FloatingButton onClick={handleCreateClick} />
         </div>
     );
 };

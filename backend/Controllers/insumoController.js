@@ -1,5 +1,4 @@
-// Controllers/insumoController.js
-const Insumo = require('../models/Insumo');
+const Insumo = require('../Models/Insumo');
 
 exports.getAllInsumos = async (req, res) => {
   try {
