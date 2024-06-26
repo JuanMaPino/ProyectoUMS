@@ -6,8 +6,8 @@ import {
     getBeneficiarioByIdRequest,
     getAllBeneficiariosRequest,
     disableBeneficiarioRequest,
-    deleteBeneficiarioRequest // Agregado para la eliminación de beneficiario
-} from '../api/ApiBeneficiario'; // Asegúrate de ajustar la ruta según tu estructura de archivos
+    deleteBeneficiarioRequest
+} from '../api/ApiBeneficiario'; // Ajusta la ruta según tu estructura de archivos
 
 // Definición del contexto
 const BeneficiarioContext = createContext();
@@ -25,6 +25,7 @@ export const BeneficiarioProvider = ({ children }) => {
         try {
             const response = await getAllBeneficiariosRequest();
             setBeneficiarios(response.data);
+            setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
             handleErrors(error);
         }
@@ -35,6 +36,7 @@ export const BeneficiarioProvider = ({ children }) => {
         try {
             const response = await createBeneficiarioRequest(data);
             setBeneficiarios([...beneficiarios, response.data]);
+            setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
             handleErrors(error);
         }
@@ -48,17 +50,22 @@ export const BeneficiarioProvider = ({ children }) => {
                 beneficiario._id === response.data._id ? response.data : beneficiario
             );
             setBeneficiarios(updatedBeneficiarios);
+            setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
             handleErrors(error);
         }
     };
 
+    // Función para deshabilitar un beneficiario
     const disableBeneficiario = async (id) => {
         try {
-            const res = await disableBeneficiarioRequest(id);
-            setBeneficiarios(beneficiarios.map(p => p._id === id ? res.data : p));
+            const response = await disableBeneficiarioRequest(id);
+            setBeneficiarios(beneficiarios.map(beneficiario =>
+                beneficiario._id === id ? response.data : beneficiario
+            ));
+            setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
-            setErrors(error.response.data);
+            handleErrors(error);
         }
     };
 
@@ -68,6 +75,7 @@ export const BeneficiarioProvider = ({ children }) => {
             await deleteBeneficiarioRequest(id);
             const updatedBeneficiarios = beneficiarios.filter(beneficiario => beneficiario._id !== id);
             setBeneficiarios(updatedBeneficiarios);
+            setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
             handleErrors(error);
         }

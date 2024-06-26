@@ -1,9 +1,8 @@
-// Controllers/proyectoController.js
 const Proyecto = require('../Models/Proyecto');
 
 exports.obtenerTodosLosProyectos = async (req, res) => {
   try {
-    const proyectos = await Proyecto.find();
+    const proyectos = await Proyecto.find().populate('tipo');
     res.json(proyectos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -14,6 +13,8 @@ exports.crearProyecto = async (req, res) => {
   try {
     const nuevoProyecto = new Proyecto(req.body);
     await nuevoProyecto.save();
+    // Realiza la población de tipo después de guardar para devolver el proyecto completo
+    await nuevoProyecto.populate('tipo').execPopulate();
     res.status(201).json(nuevoProyecto);
   } catch (error) {
     if (error.code === 11000) {
@@ -27,7 +28,7 @@ exports.crearProyecto = async (req, res) => {
 
 exports.obtenerProyectoPorId = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findById(req.params.id);
+    const proyecto = await Proyecto.findById(req.params.id).populate('tipo');
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -39,7 +40,7 @@ exports.obtenerProyectoPorId = async (req, res) => {
 
 exports.actualizarProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const proyecto = await Proyecto.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('tipo');
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -51,7 +52,7 @@ exports.actualizarProyecto = async (req, res) => {
 
 exports.eliminarProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findByIdAndDelete(req.params.id);
+    const proyecto = await Proyecto.findByIdAndDelete(req.params.id).populate('tipo');
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -63,7 +64,7 @@ exports.eliminarProyecto = async (req, res) => {
 
 exports.cambiarEstadoProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findById(req.params.id);
+    const proyecto = await Proyecto.findById(req.params.id).populate('tipo');
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -77,7 +78,7 @@ exports.cambiarEstadoProyecto = async (req, res) => {
 
 exports.obtenerProyectoPorCodigo = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findOne({ codigo: req.params.codigo });
+    const proyecto = await Proyecto.findOne({ codigo: req.params.codigo }).populate('tipo');
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }

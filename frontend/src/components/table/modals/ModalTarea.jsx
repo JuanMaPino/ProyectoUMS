@@ -132,123 +132,122 @@ const ModalTarea = ({ onClose, item }) => {
         <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
             <div className="p-8">
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Tarea' : 'Agregar Tarea'}</h2>
-                <div className="flex space-x-8">
-                    <form onSubmit={handleSubmit} className=" space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
-                            <input
-                                type="text"
-                                name="nombre"
-                                value={formData.nombre}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.nombre && <p className="text-red-500 text-xs italic">{errors.nombre}</p>}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex space-x-8">
+                        <div className="w-1/2">
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                                <input
+                                    type="text"
+                                    name="nombre"
+                                    value={formData.nombre}
+                                    onChange={handleChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
+                                    required
+                                />
+                                {errors.nombre && <p className="text-red-500 text-xs italic">{errors.nombre}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Acción</label>
+                                <input
+                                    type="text"
+                                    name="accion"
+                                    value={formData.accion}
+                                    onChange={handleChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.accion ? 'border-red-500' : ''}`}
+                                    required
+                                />
+                                {errors.accion && <p className="text-red-500 text-xs italic">{errors.accion}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Horas</label>
+                                <input
+                                    type="number"
+                                    name="cantidadHoras"
+                                    value={formData.cantidadHoras}
+                                    onChange={handleChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadHoras ? 'border-red-500' : ''}`}
+                                    required
+                                />
+                                {errors.cantidadHoras && <p className="text-red-500 text-xs italic">{errors.cantidadHoras}</p>}
+                            </div>
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Fecha</label>
+                                <input
+                                    type="date"
+                                    name="fecha"
+                                    value={formData.fecha}
+                                    onChange={handleChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
+                                    required
+                                />
+                                {errors.fecha && <p className="text-red-500 text-xs italic">{errors.fecha}</p>}
+                            </div>
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Acción</label>
-                            <input
-                                type="text"
-                                name="accion"
-                                value={formData.accion}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.accion ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.accion && <p className="text-red-500 text-xs italic">{errors.accion}</p>}
+                        <div className="w-1/2">
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Ayudante</label>
+                                <select
+                                    name="ayudante"
+                                    value={formData.ayudante}
+                                    onChange={handleAyudanteChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.ayudante ? 'border-red-500' : ''}`}
+                                    required
+                                >
+                                    <option value="">Seleccionar Ayudante</option>
+                                    {ayudantes.map(a => (
+                                        <option key={a._id} value={a._id}>
+                                            {a.identificacion} - {a.nombre}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.ayudante && <p className="text-red-500 text-xs italic">{errors.ayudante}</p>}
+                            </div>
+                            {formData.ayudante && (
+                                <>
+                                    <div>
+                                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Ayudante</label>
+                                        <input
+                                            type="text"
+                                            name="nombreAyudante"
+                                            value={formData.nombreAyudante}
+                                            readOnly
+                                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-gray-700 text-sm font-medium mb-2">Rol del Ayudante</label>
+                                        <input
+                                            type="text"
+                                            name="rolAyudante"
+                                            value={formData.rolAyudante}
+                                            readOnly
+                                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
+                                        />
+                                    </div>
+                                </>
+                            )}
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Horas</label>
-                            <input
-                                type="number"
-                                name="cantidadHoras"
-                                value={formData.cantidadHoras}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadHoras ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.cantidadHoras && <p className="text-red-500 text-xs italic">{errors.cantidadHoras}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Fecha</label>
-                            <input
-                                type="date"
-                                name="fecha"
-                                value={formData.fecha}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.fecha && <p className="text-red-500 text-xs italic">{errors.fecha}</p>}
-                        </div>
-                    </form>
-                    <form onSubmit={handleSubmit} className=" space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Ayudante</label>
-                            <select
-                                name="ayudante"
-                                value={formData.ayudante}
-                                onChange={handleAyudanteChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.ayudante ? 'border-red-500' : ''}`}
-                                required
-                            >
-                                <option value="">Seleccionar Ayudante</option>
-                                {ayudantes.map(a => (
-                                    <option key={a._id} value={a._id}>
-                                        {a.identificacion} - {a.nombre}
-                                    </option>
-                                ))}
-                            </select>
-                            {errors.ayudante && <p className="text-red-500 text-xs italic">{errors.ayudante}</p>}
-                        </div>
-                        {formData.ayudante && (
-                            <>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Ayudante</label>
-                                    <input
-                                        type="text"
-                                        name="nombreAyudante"
-                                        value={formData.nombreAyudante}
-                                        readOnly
-                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-gray-700 text-sm font-medium mb-2">Rol del Ayudante</label>
-                                    <input
-                                        type="text"
-                                        name="rolAyudante"
-                                        value={formData.rolAyudante}
-                                        readOnly
-                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
-                                    />
-                                </div>
-                            </>
-                        )}
-
-                    </form>
-                </div>
-                <div className="flex justify-end space-x-4 mt-6">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="submit"
-                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        {item ? 'Actualizar' : 'Agregar'}
-                    </button>
-                </div>
+                    </div>
+                    <div className="flex justify-end space-x-4 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            {item ? 'Actualizar' : 'Agregar'}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );
 };
 
 export default ModalTarea;
-

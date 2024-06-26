@@ -113,8 +113,8 @@ const CRUDDonaciones = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Donaciones</h1>
                 <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
                     <CreateButton onClick={handleCreateClick} />
+                    <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
             {filteredData.length === 0 ? (

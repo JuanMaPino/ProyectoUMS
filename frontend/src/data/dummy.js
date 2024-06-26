@@ -500,22 +500,22 @@ export const links = [
         name: 'ayudantes',
         icon: <RiTeamLine />,
       },
-      {
-        name: 'tareas',
-        icon: <RiListCheck3 />,
-      },
+      // {
+      //   name: 'tareas',
+      //   icon: <RiListCheck3 />,
+      // },
       {
         name: 'Proyectos',
         icon: <RiContactsBookLine/>
       },
-      {
-        name: 'Insumos',
-        icon: <RiShoppingBasket2Line/>
-      },
-      {
-        name: 'Actividades',
-        icon: <RiFolderLine/>
-      }
+      // {
+      //   name: 'Insumos',
+      //   icon: <RiShoppingBasket2Line/>
+      // },
+      // {
+      //   name: 'Actividades',
+      //   icon: <RiFolderLine/>
+      // }
     ],
   },
 
