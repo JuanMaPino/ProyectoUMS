@@ -26,15 +26,21 @@ export const DonacionesProvider = ({ children }) => {
     // Función para crear una nueva donación
     const createDonacion = async (donacion) => {
         try {
+            console.log("Datos a enviar:", donacion); 
             const res = await createDonacionRequest(donacion); // Implementa esta función en tu API
             setDonaciones([...donaciones, res.data]);
+            handleResponse(res);
             return { success: true };
         } catch (error) {
             const errorMessage = error.response.data?.message || 'An error occurred';
+            console.error("Error al crear donacion:", error.response?.data || error.message);
             setErrors([errorMessage]);
             return { success: false, error: errorMessage };
         }
     };
+
+
+    
 
     // Función para actualizar una donación existente
     const updateDonacion = async (id, donacion) => {
