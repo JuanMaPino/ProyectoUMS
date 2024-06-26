@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
-import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
+import { useDonadores } from '../context/DonadoresContext'; // Adjust the path according to your structure
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -33,16 +33,8 @@ const CRUDDonador = () => {
     const itemsPerPage = 6;
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
         setCurrentPage(1); // Reset to first page on new search
     }, [searchTerm]);
-
-    const fetchData = async () => {
-        // Aquí no se necesita ya que el contexto DonadorProvider maneja la carga inicial
-    };
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -53,23 +45,30 @@ const CRUDDonador = () => {
         setSearchTerm(query);
     };
 
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    };
+
     const handleUpdate = async (updatedItem) => {
         try {
             await updateDonador(updatedItem._id, updatedItem);
             closeModal();
         } catch (error) {
             console.error('Error updating item:', error);
+            // Add user-friendly error handling here
         }
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await deleteDonador(id);
+          console.log(`Intentando eliminar donador con ID: ${id}`);
+          await deleteDonador(id);
+          console.log('Donador eliminado exitosamente');
         } catch (error) {
-            console.error('Error deleting item:', error);
+          console.error('Error deleting item:', error);
         }
-    };
-
+      };
+      
     const handleViewButtonClick = (item) => {
         setSelectedItem(item);
         setShowViewModal(true);
@@ -87,7 +86,7 @@ const CRUDDonador = () => {
                 ...item,
                 estado: item.estado === 'activo' ? 'inactivo' : 'activo'
             };
-            await disableDonador(id); // Utilizando la función de cambio de estado del contexto
+            await disableDonador(id); // Utilizing the state change function from context
         }
     };
 
@@ -129,8 +128,8 @@ const CRUDDonador = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Nombre</TableCell>
-                                <TableCell>Teléfono</TableCell>
+                                <TableCell>Donador</TableCell>
+                                <TableCell>Contacto</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
@@ -140,19 +139,24 @@ const CRUDDonador = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="text-black">{item.tipoDocumen.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                                <p className="text-black">{item.identificacion}</p>
+                                                <p className="text-xs text-gray-600">{item.tipoDocumen}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Nombre">
+                                        <TableCell label="Donador">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                                <p className="text-black">{item.nombreEmpresa}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
+                                        <TableCell label="Contacto">
+                                            <div>
+                                                <p className="text-black">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                                <p className=" text-black">{item.contacto}</p>
+                                            </div>
+                                        </TableCell>
                                         <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                            {item.estado}
+                                            {capitalizeFirstLetter(item.estado || item)}
                                         </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
@@ -220,10 +224,10 @@ const CRUDDonador = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
+                    <ModalDonador onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createDonador} item={selectedItem} />
                 </div>
             )}
-            {showViewModal && selectedItem && (
+            {showViewModal && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
                     <ViewDonador onClose={closeViewModal} item={selectedItem} />
                 </div>

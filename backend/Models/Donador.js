@@ -3,36 +3,44 @@ const { Schema } = mongoose;
 
 const donadorSchema = new Schema({
   identificacion: {
-    type: Number,
+    type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   nombre: {
     type: String,
-    required: true
+    required: true,
+    trim: true
+  },
+  contacto: {
+    type: String,
+    trim: true
   },
   tipoDonador: {
     type: String,
     required: true,
-    enum:['Empresa','Natural']
+    enum: ['Empresa', 'Natural']
   },
   tipoDocumen: {
     type: String,
     required: true,
-    enum: ['C.C', 'NIT']
-  },  
-
+    enum: ['C.C', 'C.E', 'NIT']
+  },
   telefono: {
-    type: Number
+    type: String,
+    trim: true
   },
   direccion: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   correoElectronico: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   estado: {
     type: String,
@@ -42,5 +50,4 @@ const donadorSchema = new Schema({
 });
 
 const Donador = mongoose.model('Donador', donadorSchema);
-
 module.exports = Donador;

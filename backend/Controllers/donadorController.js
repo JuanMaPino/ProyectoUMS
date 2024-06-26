@@ -52,24 +52,20 @@ exports.actualizarDonador = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 exports.eliminarDonador = async (req, res) => {
-  const { _id } = req.params;
   try {
-    const donadorConDonacion = await Donacion.findOne({ donador: _id });
-    if (donadorConDonacion.length > 0) {
-      return res.status(400).json({ message: 'No se puede eliminar el donador porque tiene donaciones asociadas' });
-    }
-    const donador = await Donador.findByIdAndDelete(id);
+    console.log(`Intentando eliminar donador con ID: ${req.params.id}`);
+    const donador = await Donador.findByIdAndDelete(req.params.id);
     if (!donador) {
       return res.status(404).json({ error: 'Donador no encontrado' });
     }
-    await donador.remove();
     res.status(204).end();
   } catch (error) {
+    console.error(`Error al eliminar donador: ${error.message}`);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 exports.cambiarEstadoDonador = async (req, res) => {
   try {

@@ -41,7 +41,7 @@ const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive 
             </div>
             <div className="flex items-center mb-2">
                 <span className="font-semibold">Estatus:</span>
-                <span className={`ml-2 py-1 px-2 ${item.estado === 'activo' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'} rounded-lg`}>
+                <span className={`ml-2 py-1 px-2 ${item.estado === 'Activo' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'} rounded-lg`}>
                     {item.estado}
                 </span>
             </div>
@@ -49,7 +49,7 @@ const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive 
                 <span className="font-semibold">Estado:</span>
                 <Switch
                     name="estado"
-                    checked={item.estado === 'activo'}
+                    checked={item.estado === 'Activo'}
                     onChange={() => onSwitchChange(item._id)}
                 />
             </div>
@@ -62,17 +62,17 @@ const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive 
                 </button>
                 <button
                     onClick={handleEditClick}
-                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                    disabled={item.estado !== 'activo'}
-                    title={item.estado !== 'activo' ? 'No se puede editar un donador inactivo' : ''}
+                    className={`rounded-lg transition-colors text-white ${item.estado === 'Activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                    disabled={item.estado !== 'Activo'}
+                    title={item.estado !== 'Activo' ? 'No se puede editar un donador inactivo' : ''}
                 >
                     <RiPlaneFill />
                 </button>
                 <button
                     onClick={handleDeleteClick}
-                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                    disabled={item.estado !== 'activo'}
-                    title={item.estado !== 'activo' ? 'No se puede eliminar un donador inactivo' : ''}
+                    className={`rounded-lg transition-colors text-white ${item.estado === 'Activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                    disabled={item.estado !== 'Activo'}
+                    title={item.estado !== 'Activo' ? 'No se puede eliminar un donador Inactivo' : ''}
                 >
                     <RiDeleteBin6Line />
                 </button>

@@ -7,5 +7,5 @@ export const updateDonadorRequest = (id, donador) => axios.put(`${API}/${id}`, d
 export const getDonadorByIdRequest = (id) => axios.get(`${API}/${id}`);
 export const getAllDonadoresRequest = () => axios.get(`${API}/`);
 export const disableDonadorRequest = (id) => axios.patch(`${API}/${id}/estado`);
-export const getDonadorByIdentificacionRequest = (identificacion) => axios.get(`${API}/buscar/${identificacion}`);
 export const deleteDonadorRequest = (id) => axios.delete(`${API}/${id}`);
+export const getDonadorByIdentificacionRequest = (identificacion) => axios.get(`${API}/buscar/${identificacion}`);

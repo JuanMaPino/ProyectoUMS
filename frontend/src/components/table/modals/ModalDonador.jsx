@@ -9,22 +9,21 @@ const ModalDonador = ({ onClose, item }) => {
         identificacion: '',
         nombre: '',
         tipoDonador: 'Natural',
-        tipoDocumen: 'C.C',
+        tipoDocumen: 'C.C' || 'C.E',
         telefono: '',
         direccion: '',
         correoElectronico: '',
-        estado: 'activo'
+        estado: 'activo',
+        contacto: '',
     });
 
-    const [formErrors, setErrors] = useState({
+    const [formErrors, setFormErrors] = useState({
         identificacion: '',
         nombre: '',
-        tipoDonador: 'Natural',
-        tipoDocumen: 'C.C',
-        telefono: '',
+        contacto: '',  // Inicialmente sin error
         direccion: '',
         correoElectronico: '',
-        estado: 'activo'
+        telefono: '',
     });
 
     useEffect(() => {
@@ -37,7 +36,8 @@ const ModalDonador = ({ onClose, item }) => {
                 telefono: item.telefono || '',
                 direccion: item.direccion || '',
                 correoElectronico: item.correoElectronico || '',
-                estado: item.estado || 'activo'
+                estado: item.estado || 'activo',
+                contacto: item.cargoContacto || '',
             });
         } else {
             setFormData({
@@ -48,112 +48,129 @@ const ModalDonador = ({ onClose, item }) => {
                 telefono: '',
                 direccion: '',
                 correoElectronico: '',
-                estado: 'activo'
+                estado: 'activo',
+                contacto: '',
             });
         }
     }, [item]);
 
-    const checkIfExists = (datoExistente) => {
-        return donadores.some(donador => {
-            if (donador.identificacion && datoExistente || donador.correoElectronico && datoExistente) {
-                return donador.identificacion.toString().toLowerCase().trim() || donador.correoElectronico.toString().toLowerCase().trim() === datoExistente.toString().toLowerCase().trim();
-            }
-            return false;
-        });
-    }
+    const checkIfExists = (key, value) => {
+        return donadores.some(donador => donador[key] && donador[key].toString().toLowerCase() === value.toString().toLowerCase());
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        const sanitizedValue = value.replace(/\s\s+/g, ' ');
 
-        if (name === 'identificacion') {
-            if (checkIfExists(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'El donador ya existe.'
-                }));
-            } else if (/^\d{5,10}$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: null
-                }));
-            } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'La identificación debe tener entre 5 y 10 dígitos numéricos.'
-                }));
-            }
-        } else if (name === 'nombre') {
-            if (/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: null
-                }));
-            } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'El nombre solo puede contener letras y espacios.'
-                }));
-            }
-        } else if (name === 'telefono') {
-            if (/^\d{8,12}$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: null
-                }));
-            } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'El telefono debe tener entre 8 a 12 dígitos numéricos.'
-                }));
-            }
-        } else if (name === 'correoElectronico') {
-            if (checkIfExists(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'El correo ya tiene un donador.'
-                }));
-            } else if (/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: null
-                }));
-            } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'Correo electrónico no válido.'
-                }));
-            }
-        } else {
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: value
-            }));
-            setErrors(prevState => ({
-                ...prevState,
-                [name]: null
-            }));
+        let newErrors = { ...formErrors };
+
+        switch (name) {
+            case 'identificacion':
+                if (!value || !/^\d{5,12}$/.test(value)) {
+                    newErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
+                } else {
+                    newErrors.identificacion = '';
+                }
+                break;
+            case 'nombre':
+                if (formData.tipoDonador === 'Natural' && (!value || !/^[a-zA-Z0-9\s]*$/.test(value))) {
+                    newErrors.nombre = 'El nombre debe contener solo letras y números.';
+                } else {
+                    newErrors.nombre = '';
+                }
+                break;
+            case 'contacto':
+                if (formData.tipoDonador === 'Empresa' && (!value || !/^[a-zA-Z0-9\s]*$/.test(value))) {
+                    newErrors.contacto = 'El contacto debe contener solo letras y números.';
+                } else {
+                    newErrors.contacto = '';
+                }
+                break;
+            case 'direccion':
+                newErrors.direccion = value ? '' : 'Este campo es obligatorio';
+                break;
+            case 'correoElectronico':
+                if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    newErrors.correoElectronico = 'Ingrese un correo electrónico válido';
+                } else {
+                    newErrors.correoElectronico = '';
+                }
+                break;
+            case 'telefono':
+                if (!value || !/^\d{9,10}$/.test(value)) {
+                    newErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 10 caracteres.';
+                } else {
+                    newErrors.telefono = '';
+                }
+                break;
+            default:
+                break;
         }
 
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: name === 'nombre' || name === 'contacto' ? capitalizeWords(sanitizedValue) : sanitizedValue
+        }));
+
+        setFormErrors(newErrors);
+    };
+
+    const handleTipoDonadorChange = (e) => {
+        const { value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            tipoDonador: value,
+            tipoDocumen: value === 'Natural' ? 'C.C' : 'NIT'
+        }));
+
+        // Reiniciar errores de contacto si cambia el tipo de donador
+        setFormErrors(prevErrors => ({
+            ...prevErrors,
+            contacto: value === 'Natural' ? '' : prevErrors.contacto
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const validationErrors = {};
-        if (!formData.identificacion) validationErrors.identificacion = 'Este campo es obligatorio';
-        else if (!/^\d{5,10}$/.test(formData.identificacion)) validationErrors.identificacion = 'La identificación debe tener entre 5 y 10 dígitos numéricos.';
-        if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
-        if (!formData.direccion) validationErrors.direccion = 'Este campo es obligatorio';
-        if (!formData.correoElectronico) validationErrors.correoElectronico = 'Este campo es obligatorio';
-        if (!formData.telefono) validationErrors.telefono = 'Este campo es obligatorio';
+        // Validación final antes de enviar el formulario
+        const validationErrors = { ...formErrors };
 
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+        if (!formData.identificacion || !/^\d{5,12}$/.test(formData.identificacion)) {
+            validationErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
+        }
+        if ((!formData.nombre || !/^[a-zA-Z0-9\s]*$/.test(formData.nombre)) && formData.tipoDonador === 'Natural') {
+            validationErrors.nombre = 'El nombre debe contener solo letras y números.';
+        }
+        if ((!formData.contacto || !/^[a-zA-Z0-9\s]*$/.test(formData.contacto)) && formData.tipoDonador === 'Empresa') {
+            validationErrors.contacto = 'El contacto debe contener solo letras y números.';
+        }
+        if (!formData.direccion) {
+            validationErrors.direccion = 'Este campo es obligatorio';
+        }
+        if (!formData.correoElectronico || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoElectronico)) {
+            validationErrors.correoElectronico = 'Ingrese un correo electrónico válido';
+        }
+        if (!formData.telefono || !/^\d{9,10}$/.test(formData.telefono)) {
+            validationErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 10 caracteres.';
+        }
+
+        if (Object.values(validationErrors).some(error => error !== '')) {
+            setFormErrors(validationErrors);
             return;
+        }
+        if (!item || item.identificacion !== formData.identificacion) {
+            if (checkIfExists('identificacion', formData.identificacion)) {
+                setFormErrors({ ...formErrors, identificacion: 'Esta identificación ya está registrada.' });
+                return;
+            }
+        }
+    
+        if (!item || item.correoElectronico !== formData.correoElectronico) {
+            if (checkIfExists('correoElectronico', formData.correoElectronico)) {
+                setFormErrors({ ...formErrors, correoElectronico: 'Este correo electrónico ya está registrado.' });
+                return;
+            }
         }
 
         try {
@@ -178,6 +195,11 @@ const ModalDonador = ({ onClose, item }) => {
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
         }
+
+    };
+
+    const capitalizeWords = (string) => {
+        return string.replace(/\b\w/g, char => char.toUpperCase());
     };
 
     return (
@@ -191,7 +213,7 @@ const ModalDonador = ({ onClose, item }) => {
                             <select
                                 name="tipoDonador"
                                 value={formData.tipoDonador}
-                                onChange={handleChange}
+                                onChange={handleTipoDonadorChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
                             >
@@ -202,7 +224,7 @@ const ModalDonador = ({ onClose, item }) => {
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<span className="text-red-500 text-sm">*</span></label>
                             <input
-                                type="text"
+                                type="number"
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
@@ -211,18 +233,20 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                             {formErrors.identificacion && <p className="text-red-500 text-sm mt-1">{formErrors.identificacion}</p>}
                         </div>
-                        {/* <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
-                            <select
-                                name="estado"
-                                value={formData.estado}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                            >
-                                <option value="activo">Activo</option>
-                                <option value="inactivo">Inactivo</option>
-                            </select>
-                        </div> */}
+                        {formData.tipoDonador === 'Empresa' && (
+                            <div>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Contacto<span className="text-red-500 text-sm">*</span></label>
+                                <input
+                                    type="text"
+                                    name="contacto"
+                                    value={formData.contacto}
+                                    onChange={handleChange}
+                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${formErrors.contacto ? 'border-red-500' : ''}`}
+                                    required
+                                />
+                                {formErrors.contacto && <p className="text-red-500 text-sm mt-1">{formErrors.contacto}</p>}
+                            </div>
+                        )}
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Dirección<span className="text-red-500 text-sm">*</span></label>
                             <input
@@ -235,7 +259,6 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                             {formErrors.direccion && <p className="text-red-500 text-sm mt-1">{formErrors.direccion}</p>}
                         </div>
-
                     </form>
                 </div>
                 <div>
@@ -249,21 +272,27 @@ const ModalDonador = ({ onClose, item }) => {
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required
                             >
-                                <option value="C.C">C.C</option>
-                                <option value="NIT">NIT</option>
+                                {formData.tipoDonador === 'Natural' ? (
+                                    <>
+                                        <option value="C.C">C.C</option>
+                                        <option value="C.E">C.E</option>
+                                    </>
+                                ): (
+                                    <option value="NIT">NIT</option>
+                                )}
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre Completo/Nombre Empresa<span className="text-red-500 text-sm">*</span></label>
                             <input
                                 type="text"
-                                name="nombre"
-                                value={formData.nombre}
+                                name={'nombre'}
+                                value={formData.nombre }
                                 onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${formErrors.nombre ? 'border-red-500' : ''}`}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${formErrors.nombre  ? 'border-red-500' : ''}`}
                                 required
                             />
-                            {formErrors.nombre && <p className="text-red-500 text-sm mt-1">{formErrors.nombre}</p>}
+                            {formErrors.nombre  && <p className="text-red-500 text-sm mt-1">{formErrors.nombre }</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono<span className="text-red-500 text-sm">*</span></label>
@@ -277,7 +306,6 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                             {formErrors.telefono && <p className="text-red-500 text-sm mt-1">{formErrors.telefono}</p>}
                         </div>
-
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico<span className="text-red-500 text-sm">*</span></label>
                             <input
@@ -290,7 +318,6 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                             {formErrors.correoElectronico && <p className="text-red-500 text-sm mt-1">{formErrors.correoElectronico}</p>}
                         </div>
-
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="button"
@@ -305,10 +332,7 @@ const ModalDonador = ({ onClose, item }) => {
                                 className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
-
                             </button>
-
-
                         </div>
                     </form>
                 </div>

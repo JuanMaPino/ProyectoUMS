@@ -12,17 +12,11 @@ const ModalDonacion = ({ onClose, item }) => {
         donador: '',
         fecha: '',
         tipo: 'Monetaria',
-        donacion: '',
-        cantidad: ''
+        donaciones: [], // Array para múltiples donaciones
     });
     const [selectedDonador, setSelectedDonador] = useState(null);
     const [validationErrors, setValidationErrors] = useState({});
     const { createInsumo, insumos, updateInsumo } = useInsumos();
-    const [formDataInsumos, setFormDataInsumos] = useState({
-        nombre: '',
-        fecha: '',
-        cantidad: ''
-    });
 
     useEffect(() => {
         if (item) {
@@ -31,30 +25,18 @@ const ModalDonacion = ({ onClose, item }) => {
                 donador: item.donador ? item.donador._id : '',
                 fecha: item.fecha || '',
                 tipo: item.tipo || 'Monetaria',
-                donacion: item.donacion || '',
-                cantidad: item.cantidad || ''
+                donaciones: item.donaciones || [],
             });
             setSelectedDonador(item.donador);
-            setFormDataInsumos({
-                nombre: item.donacion || '',
-                fecha: item.fecha || '',
-                cantidad: item.cantidad || ''
-            });
         } else {
             setFormData({
                 documento: '',
                 donador: '',
                 fecha: '',
                 tipo: 'Monetaria',
-                donacion: '',
-                cantidad: ''
+                donaciones: [],
             });
             setSelectedDonador(null);
-            setFormDataInsumos({
-                nombre: '',
-                fecha: '',
-                cantidad: ''
-            });
         }
     }, [item]);
 
@@ -73,18 +55,31 @@ const ModalDonacion = ({ onClose, item }) => {
 
     const validateField = (name, value) => {
         let error = '';
-        if (name === 'cantidad' && (value <= 0 || isNaN(value))) {
-            error = 'La cantidad debe ser un número mayor a 0.';
-        } else if (name === 'donacion' && !/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
-            error = 'La donación solo puede contener letras y espacios.';
+        switch (name) {
+            case 'cantidad':
+                if (value <= 0 || isNaN(value)) {
+                    error = 'La cantidad debe ser un número mayor a 0.';
+                }
+                break;
+            case 'nombre':
+                if (!/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
+                    error = 'El nombre de la donación solo puede contener letras y espacios.';
+                }
+                break;
+            default:
+                if (!/^[A-ZÁÉÍÓÚÜÑ][a-záéíóúüñ\s]*$/.test(value)) {
+                    error = 'Debe comenzar con mayúscula y contener solo letras y espacios.';
+                }
+                break;
         }
         setValidationErrors(prevState => ({ ...prevState, [name]: error }));
     };
 
-    const handleChange = (e) => {
+    const handleChange = (e, index) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({ ...prevState, [name]: value }));
-        setFormDataInsumos(prevState => ({ ...prevState, [name]: value }));
+        const updatedDonaciones = [...formData.donaciones];
+        updatedDonaciones[index] = { ...updatedDonaciones[index], [name]: value };
+        setFormData(prevState => ({ ...prevState, donaciones: updatedDonaciones }));
         validateField(name, value);
     };
 
@@ -92,6 +87,19 @@ const ModalDonacion = ({ onClose, item }) => {
         const selectedDonador = donadores.find(donador => donador._id === selectedOption.value);
         setFormData(prevState => ({ ...prevState, donador: selectedOption.value }));
         setSelectedDonador(selectedDonador);
+    };
+
+    const addDonacion = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            donaciones: [...prevState.donaciones, { nombre: '', cantidad: '' }],
+        }));
+    };
+
+    const removeDonacion = (index) => {
+        const updatedDonaciones = [...formData.donaciones];
+        updatedDonaciones.splice(index, 1);
+        setFormData(prevState => ({ ...prevState, donaciones: updatedDonaciones }));
     };
 
     const handleSubmit = async (e) => {
@@ -102,31 +110,11 @@ const ModalDonacion = ({ onClose, item }) => {
             return;
         }
         try {
+            const { donaciones, ...restData } = formData;
             if (item && item._id) {
-                await updateDonacion(item._id, formData);
+                await updateDonacion(item._id, { ...restData, donaciones });
             } else {
-                const updatedFormDataInsumos = {
-                    nombre: formData.donacion,
-                    fecha: formData.fecha,
-                    cantidad: formData.cantidad
-                };
-
-                const existingInsumo = insumos.find(insumo => insumo.nombre.toLowerCase().trim() === formData.donacion.toLowerCase().trim());
-                if (existingInsumo) {
-                    const updatedInsumo = {
-                        ...existingInsumo,
-                        cantidad: parseInt(existingInsumo.cantidad, 10) + parseInt(formData.cantidad, 10)
-                    };
-                    await Promise.all([
-                        createDonacion(formData),
-                        updateInsumo(existingInsumo._id, updatedInsumo)
-                    ]);
-                } else {
-                    await Promise.all([
-                        createDonacion(formData),
-                        createInsumo(updatedFormDataInsumos)
-                    ]);
-                }
+                await createDonacion({ ...restData, donaciones });
             }
             onClose();
         } catch (error) {
@@ -166,7 +154,7 @@ const ModalDonacion = ({ onClose, item }) => {
                         type="date"
                         name="fecha"
                         value={formData.fecha}
-                        onChange={handleChange}
+                        onChange={(e) => setFormData(prevState => ({ ...prevState, fecha: e.target.value }))}
                         className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                         required
                     />
@@ -176,7 +164,7 @@ const ModalDonacion = ({ onClose, item }) => {
                     <select
                         name="tipo"
                         value={formData.tipo}
-                        onChange={handleChange}
+                        onChange={(e) => setFormData(prevState => ({ ...prevState, tipo: e.target.value }))}
                         className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                         required
                     >
@@ -184,45 +172,66 @@ const ModalDonacion = ({ onClose, item }) => {
                         <option value="Material">Material</option>
                     </select>
                 </div>
-                <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">Donación <span className="text-red-500">*</span></label>
-                    <input
-                        type="text"
-                        name="donacion"
-                        value={formData.donacion}
-                        onChange={handleChange}
-                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                        required
-                    />
-                    {validationErrors.donacion && <p className="text-red-500 text-sm">{validationErrors.donacion}</p>}
-                </div>
-                <div>
-                    <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad <span className="text-red-500">*</span></label>
-                    <input
-                        type="number"
-                        name="cantidad"
-                        value={formData.cantidad}
-                        onChange={handleChange}
-                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                        required
-                    />
-                    {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
-                </div>
-                <div className="col-span-2 flex justify-end space-x-4">
+                {formData.donaciones.map((donacion, index) => (
+                    <div key={index}>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Donación {index + 1} <span className="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                name="nombre"
+                                value={donacion.nombre}
+                                onChange={(e) => handleChange(e, index)}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            />
+                            {validationErrors.nombre && <p className="text-red-500 text-sm">{validationErrors.nombre}</p>}
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad <span className="text-red-500">*</span></label>
+                            <input
+                                type="number"
+                                name="cantidad"
+                                value={donacion.cantidad}
+                                onChange={(e) => handleChange(e, index)}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            />
+                            {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
+                        </div>
+                        {index > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => removeDonacion(index)}
+                                className="text-sm text-red-500 hover:text-red-700 focus:outline-none"
+                            >
+                                Eliminar donación
+                            </button>
+                        )}
+                    </div>
+                ))}
+                <div className="col-span-2 flex justify-end">
                     <button
                         type="button"
-                        onClick={onClose}
-                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        onClick={addDonacion}
+                        className="text-sm text-blue-500 hover:text-blue-700 focus:outline-none"
                     >
-                        Cancelar
-                    </button>
-                    <button
-                        type="submit"
-                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        {item ? 'Actualizar' : 'Agregar'}
+                        + Agregar otra donación
                     </button>
                 </div>
+            </div>
+            <div className="flex justify-end mt-6">
+                <button
+                    onClick={handleSubmit}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    {item ? 'Guardar cambios' : 'Agregar'}
+                </button>
+                <button
+                    onClick={onClose}
+                    className="ml-4 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Cancelar
+                </button>
             </div>
         </div>
     );

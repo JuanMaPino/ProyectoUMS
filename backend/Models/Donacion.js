@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const donacionSchema = new mongoose.Schema({
   fecha: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   tipo: {
     type: String,
@@ -12,11 +13,13 @@ const donacionSchema = new mongoose.Schema({
   },
   donacion: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   cantidad: {
     type: Number,
-    required: true
+    required: true,
+    trim: true
   },
   estado: {
     type: String,
