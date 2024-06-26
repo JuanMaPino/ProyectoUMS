@@ -175,16 +175,8 @@ const CRUDAyudante = () => {
                                                 <p className="text-sm text-gray-600">{item.telefono}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Rol">
-                                            <button
-                                                className={`py-1 px-2 rounded-lg transition-colors text-white ${item.rol === 'alfabetizador' ? 'bg-blue-500 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-700'}`}
-                                                onClick={() => handleRoleChange(item._id)}
-                                                disabled={item.estado !== 'activo'}
-                                            >
-                                                {item.rol === 'alfabetizador' ? 'Alfabetizador' : 'Voluntario'}
-                                            </button>
-                                        </TableCell>
+                                        <TableCell label="Teléfono">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
+                                        
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
