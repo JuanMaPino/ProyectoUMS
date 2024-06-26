@@ -96,10 +96,10 @@ export const DonadorProvider = ({ children }) => {
             return { success: false, error: errorMessage };
         }
     };
-
     const deleteDonador = async (id) => {
         try {
             await deleteDonadorRequest(id);
+          
             setDonadores(donadores.filter(d => d._id !== id));
             setMessages(['Donador eliminado con éxito']); // Añadir mensaje de éxito
             return { success: true };
@@ -110,7 +110,7 @@ export const DonadorProvider = ({ children }) => {
             return { success: false, error: errorMessage };
         }
     };
-
+    
     useEffect(() => {
         getAllDonadores();
     }, []);

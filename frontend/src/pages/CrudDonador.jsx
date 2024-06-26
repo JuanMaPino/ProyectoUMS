@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
 import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -14,8 +14,6 @@ import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
-
-
 
 const CRUDDonador = () => {
     const {
@@ -152,16 +150,17 @@ const CRUDDonador = () => {
                                         <TableCell label="Donador">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
+                                                <p className="text-black">{item.nombreEmpresa}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Correo">
+                                        <TableCell label="Contacto">
                                             <div>
                                                 <p className="text-black">{item.correoElectronico.substring(0, 18) + '...'}</p>
-                                                <p className="text-xs text-gray-600">{item.telefono}</p>
+                                                <p className=" text-black">{item.contacto}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                            {capitalizeFirstLetter(item.estado)}
+                                            {capitalizeFirstLetter(item.estado || item)}
                                         </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
@@ -214,32 +213,32 @@ const CRUDDonador = () => {
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
                                 onSwitchChange={handleSwitchChange}
-                                isActive={item.estado === 'Activo'}
+                                isActive={item.estado === 'activo'}
                             />
                         ))}
                         <Pagination
-                            totalItems={filteredData.length}
-                            itemsPerPage={itemsPerPage}
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                        />
+                                totalItems={filteredData.length}
+                                itemsPerPage={itemsPerPage}
+                                currentPage={currentPage}
+                                onPageChange={setCurrentPage}
+                            />
                         <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
-            )}
-            {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalDonador onClose={closeModal} item={selectedItem} fetchData={fetchData} />
-                </div>
-            )}
-            {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
-                </div>
-            )}
+      )}
+      {showModalForm && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <ModalDonador onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createDonador} item={selectedItem} />
+        </div>
+      )}
+      {showViewModal && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <ViewDonador onClose={closeViewModal} item={selectedItem} />
+        </div>
+      )}
+            
         </div>
     );
 };
 
 export default CRUDDonador;
-
