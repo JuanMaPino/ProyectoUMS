@@ -11,7 +11,7 @@ const TableRow = ({ children, isActive, className, isMonetario, tipo, ...props }
     } else if (isActive) {
         rowClass = "bg-gradient-to-r from-gray-200 from-40% to-sky-300  shadow-inner";
     } else {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% via-red-300 to-red-600 shadow-inner ";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% via-red-300 to-red-600 shadow-inner animate-pulse";
     }
 
     return (

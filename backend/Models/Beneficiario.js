@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const beneficiarioSchema = new Schema({
   tipoDocumento: {
     type: String,
-    enum: ['C.C', 'T.I'],
+    enum: ['C.C', 'C.E', 'T.I'],
     required: true
   },
   identificacion: {
@@ -29,13 +29,23 @@ const beneficiarioSchema = new Schema({
     type: String,
     required: true,
   },
-  cantidadFamiliares: {
-    type: Number,
-    required: true,
+  familiares: [{
+    
+    documento: {
+        type: Number,
+        required: true
+    },
+    nombre: {
+        type: Number,
+        required: true
+    },
+    condicionEspecial: {
+      type: Number,
+  }
+}]
 
-  },
-  
-  estado: {
+  ,
+    estado: {
     type: String,
     enum: ['activo', 'inactivo'],
     default: 'activo'
