@@ -29,18 +29,6 @@ const ModalAyudante = ({ onClose, item }) => {
                 institucion: item.institucion || '',
                 estado: item.estado || 'activo'
             });
-        } else {
-            setFormData({
-                tipoDocumento: 'C.C',
-                identificacion: '',
-                nombre: '',
-                telefono: '',
-                rol: 'alfabetizador',
-                direccion: '',
-                correoElectronico: '',
-                institucion: '',
-                estado: 'activo'
-            });
         }
     }, [item]);
 
@@ -74,7 +62,8 @@ const ModalAyudante = ({ onClose, item }) => {
             else delete newErrors.correoElectronico;
         } else if (name === 'direccion') {
             if (!value) newErrors.direccion = 'Este campo es obligatorio';
-            else if (value.length < 5) newErrors.direccion = 'La dirección debe tener al menos 5 caracteres';
+            else if (value.length < 8) newErrors.direccion = 'La dirección debe tener minimo 8 caracteres';
+            else if (!/^[a-zA-Z0-9#\-\s]+$/.test(value)) newErrors.direccion = 'La dirección solo debe contener letras, números, numeral, guion medio y espacios';
             else delete newErrors.direccion;
         } else if (name === 'institucion') {
             if (!value) newErrors.institucion = 'Este campo es obligatorio';
@@ -118,143 +107,130 @@ const ModalAyudante = ({ onClose, item }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
+        <div className="bg-white rounded-lg shadow-2xl max-w-2xl mx-auto mt-8 mb-8">
             <div className="p-8">
                 <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
-                <div className="flex space-x-8">
-                    <form onSubmit={handleSubmit} className=" space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
-                            <select
-                                name="tipoDocumento"
-                                value={formData.tipoDocumento}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="C.C">C.C</option>
-                                <option value="T.I">T.I</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
-                            <input
-                                type="text"
-                                name="identificacion"
-                                value={formData.identificacion}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
-                            <input
-                                type="text"
-                                name="nombre"
-                                value={formData.nombre}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
-                            <input
-                                type="text"
-                                name="telefono"
-                                value={formData.telefono}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.telefono ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
-                        </div>
-                    </form>
-                    <form onSubmit={handleSubmit} className=" space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Rol</label>
-                            <select
-                                name="rol"
-                                value={formData.rol}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="alfabetizador">Alfabetizador</option>
-                                <option value="voluntario">Voluntario</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
-                            <input
-                                type="text"
-                                name="direccion"
-                                value={formData.direccion}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.direccion ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
-                            <input
-                                type="email"
-                                name="correoElectronico"
-                                value={formData.correoElectronico}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.correoElectronico ? 'border-red-500' : ''}`}
-                            />
-                            {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
-                            <input
-                                type="text"
-                                name="institucion"
-                                value={formData.institucion}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.institucion ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.institucion && <p className="text-red-500 text-sm mt-1">{errors.institucion}</p>}
-                        </div>
-                        {/* <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
-                            <select
-                                name="estado"
-                                value={formData.estado}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="activo">Activo</option>
-                                <option value="inactivo">Inactivo</option>
-                            </select>
-                        </div> */}
-                    </form>
-                </div>
-                <div className="flex justify-end mt-6">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold mr-3 py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        Cancelar
-                    </button>
-
-                    <button
-                        type="submit"
-                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                    >
-                        {item ? 'Actualizar' : 'Agregar'}
-
-                    </button>
-
-                </div>
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
+                        <select
+                            name="tipoDocumento"
+                            value={formData.tipoDocumento}
+                            onChange={handleChange}
+                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                            required
+                        >
+                            <option value="C.C">C.C</option>
+                            <option value="T.I">T.I</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
+                        <input
+                            type="text"
+                            name="identificacion"
+                            value={formData.identificacion}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                        <input
+                            type="text"
+                            name="nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
+                        <input
+                            type="text"
+                            name="telefono"
+                            value={formData.telefono}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.telefono ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Rol</label>
+                        <select
+                            name="rol"
+                            value={formData.rol}
+                            onChange={handleChange}
+                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                            required
+                        >
+                            <option value="alfabetizador">Alfabetizador</option>
+                            <option value="voluntario">Voluntario</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
+                        <input
+                            type="text"
+                            name="direccion"
+                            value={formData.direccion}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.direccion ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
+                        <input
+                            type="email"
+                            name="correoElectronico"
+                            value={formData.correoElectronico}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.correoElectronico ? 'border-red-500' : ''}`}
+                        />
+                        {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
+                        <input
+                            list="instituciones"
+                            name="institucion"
+                            value={formData.institucion}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.institucion ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        <datalist id="instituciones">
+                            <option value="JEP"></option>
+                            <option value="Federico Carrasquilla"></option>
+                            <option value="FEPI"></option>
+                            <option value="I.E Maria Cano"></option>
+                           
+                        </datalist>
+                        {errors.institucion && <p className="text-red-500 text-sm mt-1">{errors.institucion}</p>}
+                    </div>
+                    <div className="flex justify-end mt-6 col-span-1 sm:col-span-2">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold mr-3 py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            {item ? 'Actualizar' : 'Agregar'}
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );

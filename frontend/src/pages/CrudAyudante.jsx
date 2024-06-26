@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPencilFill } from 'react-icons/ri';
-import { useAyudantes } from '../context/AyudantesContext'; // Importar el contexto y el hook
+import { RiUserHeartFill, RiUserStarFill } from 'react-icons/ri'; // Importamos los iconos
+import { useAyudantes } from '../context/AyudantesContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -14,6 +14,7 @@ import FormModal from '../components/table/modals/ModalAyudante';
 import ViewModal from '../components/table/views/ViewAyudante';
 import CardAyudante from '../components/table/CardItems/CardAyudante';
 import FloatingButton from '../components/FloatingButton';
+import { RiDeleteBin6Line, RiEyeLine, RiPencilFill } from 'react-icons/ri';
 
 const CRUDAyudante = () => {
     const {
@@ -24,7 +25,7 @@ const CRUDAyudante = () => {
         deleteAyudante,
         ayudantes,
         errors
-    } = useAyudantes(); // Usar el contexto
+    } = useAyudantes();
 
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +34,7 @@ const CRUDAyudante = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         fetchData();
@@ -128,39 +129,53 @@ const CRUDAyudante = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
+                                <TableCell>Rol</TableCell> {/* Nueva columna para el cambio de rol */}
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Ayudante</TableCell>
-                                <TableCell>Teléfono</TableCell>
-                                <TableCell>Rol</TableCell>
-                                <TableCell>Estado</TableCell>
+                                <TableCell>Correo Electronico</TableCell>
+                                <TableCell className="pl-10">Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Identificación">
-                                            <div>
-                                                <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell label="Ayudante">
-                                            <div>
-                                                <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
-                                        <TableCell label="Rol">
+                                         <TableCell label="Rol">
                                             <button
-                                                className={`py-1 px-2 rounded-lg transition-colors text-white ${item.rol === 'alfabetizador' ? 'bg-blue-500 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-700'}`}
                                                 onClick={() => handleRoleChange(item._id)}
+                                                className={`flex items-center rounded-full p-2 transition-colors ${
+                                                    item.rol === 'alfabetizador' ? 'bg-blue-300 text-white hover:bg-blue-400' : 'bg-cyan-300 text-white hover:bg-cyan-400'
+                                                }`}
                                                 disabled={item.estado !== 'activo'}
                                             >
-                                                {item.rol === 'alfabetizador' ? 'Alfabetizador' : 'Voluntario'}
+                                                {item.rol === 'alfabetizador' ? (
+                                                    <>
+                                                        <RiUserHeartFill size={20} />
+                                                        <span className="ml-2">A</span>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <RiUserStarFill size={20} />
+                                                        <span className="ml-2">V</span>
+                                                    </>
+                                                )}
                                             </button>
                                         </TableCell>
-                                        <TableCell label="Estado">
+
+                                        <TableCell label="Identificación">
+                                            <div>
+                                                <p className="text-sm text-gray-600">{item.identificacion}</p>
+                                                <p className="text-sm text-gray-600">{item.tipoDocumento.split(' ')[0]}</p>
+                                            </div>
+                                        </TableCell>
+                                       
+                                        <TableCell label="Ayudante">
+                                            <div>
+                                                <p className="text-gray-600">{item.nombre}</p>
+                                                <p className="text-sm text-gray-600">{item.telefono}</p>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell label="Correo Electronico">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
+                                        <TableCell label="Estado" className="pl-10">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
@@ -234,7 +249,7 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-            <FloatingButton onClick={handleCreateClick} />
+            
         </div>
     );
 };

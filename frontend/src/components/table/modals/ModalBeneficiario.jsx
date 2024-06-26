@@ -11,7 +11,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
         telefono: '',
         correoElectronico: '',
         direccion: '',
-        cantidadFamiliares: 0,
+        familiares: [], // Array para almacenar los familiares
         estado: 'activo'
     });
     const [errors, setErrors] = useState({});
@@ -25,7 +25,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 telefono: item.telefono || '',
                 correoElectronico: item.correoElectronico || '',
                 direccion: item.direccion || '',
-                cantidadFamiliares: item.cantidadFamiliares || 0,
+                familiares: item.familiares || [], // Cargar familiares si existen
                 estado: item.estado || 'activo'
             });
         } else {
@@ -36,71 +36,78 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 telefono: '',
                 correoElectronico: '',
                 direccion: '',
-                cantidadFamiliares: 0,
+                familiares: [],
                 estado: 'activo'
             });
         }
     }, [item]);
 
-    const checkIfExists = (identificacion) => {
-        return beneficiarios.some(beneficiario => {
-            if (beneficiario.identificacion && identificacion) {
-                return beneficiario.identificacion.toString().toLowerCase().trim() === identificacion.toString().toLowerCase().trim();
-            }
-
-            return false;
-        });
+    // Función para manejar cambios en los campos de familiares
+    const handleFamiliarChange = (index, field, value) => {
+        const updatedFamiliares = [...formData.familiares];
+        updatedFamiliares[index][field] = value;
+        setFormData(prevState => ({
+            ...prevState,
+            familiares: updatedFamiliares
+        }));
     };
 
-    const handleValidation = (name, value) => {
+    // Función para agregar un nuevo familiar
+    const handleAddFamiliar = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            familiares: [...prevState.familiares, { nombre: '', documento: '', condicionEspecial: '' }]
+        }));
+    };
+
+    // Función para eliminar un familiar
+    const handleRemoveFamiliar = (index) => {
+        const updatedFamiliares = [...formData.familiares];
+        updatedFamiliares.splice(index, 1);
+        setFormData(prevState => ({
+            ...prevState,
+            familiares: updatedFamiliares
+        }));
+    };
+
+    // Función para validar los campos de familiares
+    const validateFamiliares = () => {
         const newErrors = { ...errors };
-
-        if (name === 'identificacion') {
-            if (!value) newErrors.identificacion = 'Este campo es obligatorio';
-            else if (!/^\d{8,10}$/.test(value)) newErrors.identificacion = 'El documento debe contener entre 8 y 10 dígitos numéricos';
-            else if (checkIfExists(value)) newErrors.identificacion = 'El beneficiario ya existe.';
-            else delete newErrors.identificacion;
-        } else if (name === 'nombre') {
-            if (!value) newErrors.nombre = 'Este campo es obligatorio';
-            else if (!/^[a-zA-Z\s]+$/.test(value)) newErrors.nombre = 'El nombre solo debe contener letras y espacios';
-            else delete newErrors.nombre;
-        } else if (name === 'telefono') {
-            if (!value) newErrors.telefono = 'Este campo es obligatorio';
-            else if (value.toString().length !== 10) newErrors.telefono = 'El teléfono debe tener 10 dígitos numéricos';
-            else delete newErrors.telefono;
-        } else if (name === 'correoElectronico') {
-            if (value && !/.+@.+\..+/.test(value)) newErrors.correoElectronico = 'Ingrese un correo electrónico válido';
-            else delete newErrors.correoElectronico;
-        } else if (name === 'direccion') {
-            if (!value) newErrors.direccion = 'Este campo es obligatorio';
-            else if (value.length < 5) newErrors.direccion = 'La dirección debe tener al menos 5 caracteres';
-            else delete newErrors.direccion;
-        } else if (name === 'cantidadFamiliares') {
-            if (!value) newErrors.cantidadFamiliares = 'Este campo es obligatorio';
-            else if (value < 0 || value > 10) newErrors.cantidadFamiliares = 'Cantidad de familiares debe estar entre 0 y 10';
-            else delete newErrors.cantidadFamiliares;
-        }
-
+        formData.familiares.forEach((familiar, index) => {
+            if (!familiar.nombre || !familiar.documento || !familiar.relacion) {
+                newErrors[`familiares.${index}`] = 'Todos los campos de los familiares son obligatorios';
+            } else {
+                delete newErrors[`familiares.${index}`];
+            }
+        });
         setErrors(newErrors);
     };
 
+    // Función para manejar cambios generales en el formulario
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-
-        handleValidation(name, value);
+        if (name.startsWith('familiares')) {
+            const [_, famIndex, famField] = name.split('.');
+            handleFamiliarChange(parseInt(famIndex), famField, value);
+        } else {
+            setFormData(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
+        }
     };
 
+    // Función para manejar el envío del formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Validar todos los campos, incluidos los familiares
+        const allErrors = { ...errors };
         Object.keys(formData).forEach(key => handleValidation(key, formData[key]));
+        validateFamiliares();
 
-        if (Object.keys(errors).length > 0) {
+        if (Object.keys(allErrors).length > 0) {
             return;
         }
 
@@ -171,7 +178,6 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             />
                             {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
                         </div>
-                        
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
                             <input
@@ -195,31 +201,78 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             />
                             {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
-                            <input
-                                type="number"
-                                name="cantidadFamiliares"
-                                value={formData.cantidadFamiliares}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadFamiliares ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.cantidadFamiliares && <p className="text-red-500 text-sm mt-1">{errors.cantidadFamiliares}</p>}
-                        </div>
                     </div>
+
+                    {/* Sección de Familiares */}
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Familiares</label>
+                        {formData.familiares.map((familiar, index) => (
+                            <div key={index} className="grid grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <input
+                                        type="text"
+                                        name={`familiares.${index}.nombre`}
+                                        value={familiar.nombre}
+                                        onChange={handleChange}
+                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                        placeholder={`Nombre del Familiar ${index + 1}`}
+                                        required
+                                    />
+                                    {errors[`familiares.${index}.nombre`] && <p className="text-red-500 text-sm mt-1">{errors[`familiares.${index}.nombre`]}</p>}
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        name={`familiares.${index}.documento`}
+                                        value={familiar.documento}
+                                        onChange={handleChange}
+                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                        placeholder={`Documento del Familiar ${index + 1}`}
+                                        required
+                                    />
+                                    {errors[`familiares.${index}.documento`] && <p className="text-red-500 text-sm mt-1">{errors[`familiares.${index}.documento`]}</p>}
+                                </div>
+                                <div>
+                                    <input
+                                        type="text"
+                                        name={`familiares.${index}.condicionEspecial`}
+                                        value={familiar.condicionEspecial}
+                                        onChange={handleChange}
+                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                        placeholder={`Relación del Familiar ${index + 1}`}
+                                        required
+                                    />
+                                    {errors[`familiares.${index}.condicionEspecial`] && <p className="text-red-500 text-sm mt-1">{errors[`familiares.${index}.condicionEspecial`]}</p>}
+                                </div>
+                                <div className="flex items-center">
+                                    <button type="button" onClick={() => handleRemoveFamiliar(index)} className="text-red-600">
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                        <button
+                            type="button"
+                            onClick={handleAddFamiliar}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        >
+                            Agregar Familiar
+                        </button>
+                    </div>
+
+                    {/* Botones */}
                     <div className="flex justify-end space-x-4 mt-6">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                         >
                             Cancelar
                         </button>
 
                         <button
                             type="submit"
-                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
                         >
                             {item ? 'Actualizar' : 'Agregar'}
                         </button>

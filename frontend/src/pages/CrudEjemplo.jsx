@@ -12,6 +12,8 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
+import ViewFamiliar from '../components/table/views/ViewFamiliar'; // Importamos el componente ViewFamiliar
+
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
@@ -21,6 +23,7 @@ const CRUDTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModalForm, setShowModalForm] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
+  const [showFamiliarModal, setShowFamiliarModal] = useState(false); // Estado para mostrar el modal de familiares
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -95,6 +98,11 @@ const CRUDTable = () => {
     }
   };
 
+  const handleFamiliaresButtonClick = (item) => {
+    setSelectedItem(item);
+    setShowFamiliarModal(true);
+  };
+
   const closeModal = () => {
     setSelectedItem(null);
     setShowModalForm(false);
@@ -105,18 +113,23 @@ const CRUDTable = () => {
     setShowViewModal(false);
   };
 
+  const closeFamiliarModal = () => {
+    setSelectedItem(null);
+    setShowFamiliarModal(false);
+  };
+
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   return (
     <div>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
-                <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
-                    <CreateButton onClick={handleCreateClick} />
-                </div>
-            </div>
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+        <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
+        <div className="flex items-center gap-2">
+          <SearchBar onSearch={handleSearch} />
+          <CreateButton onClick={handleCreateClick} />
+        </div>
+      </div>
       {filteredData.length === 0 ? (
         <p className="text-center">No hay registros disponibles</p>
       ) : (
@@ -124,40 +137,45 @@ const CRUDTable = () => {
           <div className="hidden md:block">
             <Table>
               <TableHead>
-                <TableCell>Identificación</TableCell>
-                <TableCell>Beneficiario</TableCell>
-                <TableCell>Teléfono</TableCell>
-                <TableCell>Condición</TableCell>
-                <TableCell>Estado</TableCell>
-                <TableCell>Acciones</TableCell>
+                <TableCell className="pl-4">Identificación</TableCell>
+                <TableCell className="pl-4">Beneficiario</TableCell>
+                <TableCell className="pl-4">Correo Electrónico</TableCell>
+                <TableCell className="pl-4">Familiares</TableCell>
+                <TableCell className="pl-14">Estado</TableCell> {/* Ajustar padding */}
+                <TableCell className="pl-10">Acciones</TableCell> {/* Ajustar padding */}
               </TableHead>
               <TableBody>
                 {currentData.map((item, index) => (
                   <TableRow key={index} isActive={item.estado === 'activo'}>
-                    <TableCell label="Identificación">
+                    <TableCell label="Identificación" className="pl-4">
                       <div>
-                        <p className="text-sm text-gray-600">{item.identificacion}</p>
-                        <p className="text-sm text-gray-600">{item.tipoDocumento.split(' ')[0]}</p>
+                        <p className="text-sm text-gray-600 pl-4">{item.identificacion}</p>
+                        <p className="text-sm text-gray-600 pl-4">{item.tipoDocumento.split(' ')[0]}</p>
                       </div>
                     </TableCell>
                     <TableCell label="Beneficiario">
                       <div>
-                        <p className="text-black">{item.nombre.substring(0, 18) + '...'}</p>
-                        <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                        <p className="text-sm text-gray-600 pl-4">{item.nombre.substring(0, 18) + '...'}</p>
+                        <p className="text-sm text-gray-600 pl-4">{item.telefono}</p>
                       </div>
                     </TableCell>
-                    <TableCell label="Teléfono">{item.telefono}</TableCell>
-                    <TableCell label="Estatus" className="py-1 px-2 text-black text-center">
-                      {item.estado}
+                    <TableCell label="Correo Electrónico" className="pl-4">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
+                    <TableCell label="Familiares" className="pl-4"> {/* Ajustar padding */}
+                      <button
+                        onClick={() => handleFamiliaresButtonClick(item)}
+                        className="text-blue-500 hover:text-blue-700"
+                      >
+                        Ver Familiares
+                      </button>
                     </TableCell>
-                    <TableCell label="Estado">
+                    <TableCell label="Estado" className="pl-14"> {/* Ajustar padding */}
                       <Switch
                         name="estado"
                         checked={item.estado === 'activo'}
                         onChange={() => handleSwitchChange(item._id)}
                       />
                     </TableCell>
-                    <TableCell label="Acciones">
+                    <TableCell label="Acciones" className="pl-10"> {/* Ajustar padding */}
                       <div className="flex gap-1 mr-3">
                         <button
                           onClick={() => handleViewButtonClick(item)}
@@ -222,6 +240,11 @@ const CRUDTable = () => {
       {showViewModal && (
         <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
           <ViewModal onClose={closeViewModal} item={selectedItem} />
+        </div>
+      )}
+      {showFamiliarModal && selectedItem && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+          <ViewFamiliar onClose={closeFamiliarModal} item={selectedItem} />
         </div>
       )}
     </div>
