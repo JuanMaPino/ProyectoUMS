@@ -135,8 +135,8 @@ const CRUDTable = () => {
                   <TableRow key={index} isActive={item.estado === 'activo'}>
                     <TableCell label="Identificación">
                       <div>
-                        <p className="text-black">{item.tipoDocumento.split(' ')[0]}</p>
-                        <p className="text-xs text-gray-600">{item.identificacion}</p>
+                        <p className="text-sm text-gray-600">{item.identificacion}</p>
+                        <p className="text-sm text-gray-600">{item.tipoDocumento.split(' ')[0]}</p>
                       </div>
                     </TableCell>
                     <TableCell label="Beneficiario">
