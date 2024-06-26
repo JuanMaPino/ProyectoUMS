@@ -1,3 +1,5 @@
+// AyudantesContext.js
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
     createAyudanteRequest,
@@ -19,7 +21,7 @@ export const AyudanteProvider = ({ children }) => {
     const [errors, setErrors] = useState([]);
 
     // Función para obtener todos los ayudantes
-    const fetchAyudantes = async () => {
+    const getAllAyudantes = async () => {
         try {
             const response = await getAllAyudantesRequest();
             setAyudantes(response.data);
@@ -51,6 +53,7 @@ export const AyudanteProvider = ({ children }) => {
         }
     };
 
+    // Función para deshabilitar un ayudante
     const disableAyudante = async (id) => {
         try {
             const res = await disableAyudanteRequest(id);
@@ -82,20 +85,21 @@ export const AyudanteProvider = ({ children }) => {
 
     // Cargar ayudantes al montar el componente
     useEffect(() => {
-        fetchAyudantes();
+        getAllAyudantes();
     }, []);
 
+    const value = {
+        ayudantes,
+        errors,
+        createAyudante,
+        updateAyudante,
+        deleteAyudante,
+        disableAyudante,
+        getAllAyudantes
+    };
+
     return (
-        <AyudanteContext.Provider
-            value={{
-                ayudantes,
-                errors,
-                createAyudante,
-                updateAyudante,
-                disableAyudante,
-                deleteAyudante
-            }}
-        >
+        <AyudanteContext.Provider value={value}>
             {children}
         </AyudanteContext.Provider>
     );

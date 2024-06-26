@@ -18,7 +18,7 @@ const beneficiarioSchema = new Schema({
     required: true,
   },
   telefono: {
-    type: Number,
+    type: Number, 
     required: true,
   },
   correoElectronico: {

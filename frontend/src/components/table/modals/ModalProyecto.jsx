@@ -1,35 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { useProjects } from '../../../context/ProyectosContext';
 
-const ModalProyecto = ({ onClose, item }) => {
+const ModalProyecto = ({ onClose, item, tiposActividad }) => {
     const { createProject, updateProject } = useProjects();
     const [formData, setFormData] = useState({
-        codigo: '',
         nombre: '',
         descripcion: '',
         fechaInicio: '',
         fechaFin: '',
-        estado: 'activo'
+        estado: 'activo',
+        tipoActividad: ''  // Nuevo campo para el tipo de actividad
     });
 
     useEffect(() => {
         if (item) {
             setFormData({
-                codigo: item.codigo || '',
                 nombre: item.nombre || '',
                 descripcion: item.descripcion || '',
                 fechaInicio: item.fechaInicio ? new Date(item.fechaInicio).toISOString().substring(0, 10) : '',
                 fechaFin: item.fechaFin ? new Date(item.fechaFin).toISOString().substring(0, 10) : '',
-                estado: item.estado || 'activo'
+                estado: item.estado || 'activo',
+                tipoActividad: item.tipoActividad || ''  // Asignar el tipo de actividad si existe en el item
             });
         } else {
             setFormData({
-                codigo: '',
                 nombre: '',
                 descripcion: '',
                 fechaInicio: '',
                 fechaFin: '',
-                estado: 'activo'
+                estado: 'activo',
+                tipoActividad: ''  // Inicializar el tipo de actividad en blanco para nuevos proyectos
             });
         }
     }, [item]);
@@ -49,7 +49,7 @@ const ModalProyecto = ({ onClose, item }) => {
             }
             onClose();
         } catch (error) {
-            console.error('Error saving item:', error.response ? error.response.data : error.message);
+            console.error('Error saving project:', error.response ? error.response.data : error.message);
         }
     };
 
@@ -60,17 +60,6 @@ const ModalProyecto = ({ onClose, item }) => {
                 <div className="flex-1">
                     <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Proyecto' : 'Agregar Proyecto'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Código</label>
-                            <input
-                                type="text"
-                                name="codigo"
-                                value={formData.codigo}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            />
-                        </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
                             <input
@@ -93,6 +82,20 @@ const ModalProyecto = ({ onClose, item }) => {
                                 required
                             />
                         </div>
+                        {/* <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Actividad</label>
+                            <select
+                                name="tipoActividad"
+                                value={formData.tipoActividad}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                            >
+                                <option value="">Seleccione un tipo de actividad</option>
+                                {tiposActividad.map(tipo => (
+                                    <option key={tipo._id} value={tipo._id}>{tipo.tipo}</option>
+                                ))}
+                            </select>
+                        </div> */}
                     </form>
                 </div>
                 {/* Columna derecha */}
@@ -135,7 +138,7 @@ const ModalProyecto = ({ onClose, item }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
                             </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
 import { useActividades } from '../context/ActividadContext';
 import { useInsumos } from '../context/InsumosContext';
 import { useTareas } from '../context/TareasContext';
@@ -15,6 +15,7 @@ import Switch from '../components/table/Switch';
 import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
+import { Link } from 'react-router-dom';
 
 const CRUDActividad = () => {
     const {
@@ -24,7 +25,7 @@ const CRUDActividad = () => {
         deleteActividad,
         disableActividad,
     } = useActividades();
-
+    
     const { insumos } = useInsumos();
     const { tareas } = useTareas();
 
@@ -79,10 +80,6 @@ const CRUDActividad = () => {
     const handleSwitchChange = async (id) => {
         const item = actividades.find(item => item._id === id);
         if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
             await disableActividad(id); 
         }
     };
@@ -109,13 +106,16 @@ const CRUDActividad = () => {
 
     return (
         <div>
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-            <h1 className="text-3xl font-semibold text-left text-gray-800">Actividad</h1>
-            <div className="flex items-center gap-2">
-                <SearchBar onSearch={handleSearch} />
-                <CreateButton onClick={handleCreateClick} />
+            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Actividad</h1>
+                <div className="flex items-center gap-2">
+                    <Link to="/proyectos" className="flex items-center gap-2 transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white px-3 py-2 rounded-xl">
+                        Volver
+                    </Link>
+                    <CreateButton onClick={handleCreateClick} />
+                    <SearchBar onSearch={handleSearch} />
+                </div>
             </div>
-        </div>
             {actividades.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (
@@ -134,29 +134,19 @@ const CRUDActividad = () => {
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
-                                            <div>
-                                                <p className="text-black">{item.id_actividad}</p>
-                                            </div>
+                                            <p className="text-black">{item.id_actividad}</p>
                                         </TableCell>
                                         <TableCell label="Nombre">
-                                            <div>
-                                                <p className="text-black">{item.nombre}</p>
-                                            </div>
+                                            <p className="text-black">{item.nombre}</p>
                                         </TableCell>
                                         <TableCell label="Descripción">
-                                            <div>
-                                                <p className="text-black">{item.descripcion}</p>
-                                            </div>
+                                            <p className="text-black">{item.descripcion}</p>
                                         </TableCell>
                                         <TableCell label="Tarea">
-                                            <div>
-                                                <p className="text-black">
-                                                    {tareas.find(t => t._id === item.tarea)?.nombre || 'Desconocido'}
-                                                </p>
-                                            </div>
+                                            <p className="text-black">
+                                                {tareas.find(t => t._id === item.tarea)?.nombre || 'Desconocido'}
+                                            </p>
                                         </TableCell>
-
-
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -177,7 +167,7 @@ const CRUDActividad = () => {
                                                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                                                     disabled={item.estado !== 'activo'}
                                                 >
-                                                    <RiPlaneFill />
+                                                    <RiPencilFill />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}
