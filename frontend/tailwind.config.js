@@ -42,6 +42,20 @@ module.exports = {
         'hero-pattern':
           "url('https://i.ibb.co/MkvLDfb/Rectangle-4389.png')",
       },
+      keyframes: {
+        spin360: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+      },
+      animation: {
+        spin360: 'spin360 0.5s linear forwards',
+      },
+    },
+  },
+  variants: {
+    extend: {
+      animation: ['hover'],
     },
   },
   plugins: [],

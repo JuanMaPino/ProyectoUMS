@@ -12,7 +12,7 @@ import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalInsumo';
 import ViewModal from '../components/table/views/ViewInsumo';
 import CardItem from '../components/table/CardItems/CardItem';
-
+import { Link } from 'react-router-dom';
 const CRUDInsumos = () => {
     const { insumos, createInsumo, updateInsumo, deleteInsumo, getAllInsumos } = useInsumos();
     const [filteredData, setFilteredData] = useState([]);
@@ -134,6 +134,7 @@ const CRUDInsumos = () => {
         <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
             <h1 className="text-3xl font-semibold text-left text-gray-800">Insumos</h1>
             <div className="flex items-center gap-2">
+                <Link to="/proyectos" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600y">Volver</Link>
                 <SearchBar onSearch={handleSearch} />
             </div>
         </div>

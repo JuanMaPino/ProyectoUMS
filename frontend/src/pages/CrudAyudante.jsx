@@ -1,3 +1,4 @@
+// CRUDAyudante.jsx
 import React, { useState, useEffect } from 'react';
 import { RiUserHeartFill, RiUserStarFill } from 'react-icons/ri'; // Importamos los iconos
 import { useAyudantes } from '../context/AyudantesContext';
@@ -118,8 +119,8 @@ const CRUDAyudante = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Ayudantes</h1>
                 <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
                     <CreateButton onClick={handleCreateClick} />
+                    <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
             {filteredData.length === 0 ? (
@@ -174,8 +175,17 @@ const CRUDAyudante = () => {
                                                 <p className="text-sm text-gray-600">{item.telefono}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Correo Electronico">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
-                                        <TableCell label="Estado" className="pl-10">
+                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
+                                        <TableCell label="Rol">
+                                            <button
+                                                className={`py-1 px-2 rounded-lg transition-colors text-white ${item.rol === 'alfabetizador' ? 'bg-blue-500 hover:bg-blue-700' : 'bg-green-500 hover:bg-green-700'}`}
+                                                onClick={() => handleRoleChange(item._id)}
+                                                disabled={item.estado !== 'activo'}
+                                            >
+                                                {item.rol === 'alfabetizador' ? 'Alfabetizador' : 'Voluntario'}
+                                            </button>
+                                        </TableCell>
+                                        <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
@@ -195,7 +205,7 @@ const CRUDAyudante = () => {
                                                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                                                     disabled={item.estado !== 'activo'}
                                                 >
-                                                    <RiPencilFill />
+                                                    <RiPencilFill className="transform hover:animate-spin360" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}
@@ -206,6 +216,8 @@ const CRUDAyudante = () => {
                                                 </button>
                                             </div>
                                         </TableCell>
+
+
                                     </TableRow>
                                 ))}
                             </TableBody>

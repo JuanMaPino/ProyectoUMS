@@ -15,7 +15,7 @@ import ViewModal from '../components/table/views/ViewTarea';
 import CardTarea from '../components/table/CardItems/CardTarea';
 import FloatingButton from '../components/FloatingButton';
 import { useAyudantes } from '../context/AyudantesContext';
-
+import { Link } from 'react-router-dom';
 const CRUDTarea = () => {
     const {
         createTarea,
@@ -114,8 +114,10 @@ const CRUDTarea = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Tareas</h1>
                 <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
+                    <Link to="/proyectos" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600y">Volver</Link>
                     <CreateButton onClick={handleCreateClick} />
+                    <SearchBar onSearch={handleSearch} />
+                   
                 </div>
             </div>
             {filteredData.length === 0 ? (
