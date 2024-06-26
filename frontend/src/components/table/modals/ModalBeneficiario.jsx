@@ -136,6 +136,18 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             </select>
                         </div>
                         <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
+                            <input
+                                type="text"
+                                name="identificacion"
+                                value={formData.identificacion}
+                                onChange={handleChange}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
+                                required
+                            />
+                            {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
+                        </div>
+                        <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
                             <input
                                 type="text"
@@ -159,30 +171,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             />
                             {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
-                            <input
-                                type="number"
-                                name="cantidadFamiliares"
-                                value={formData.cantidadFamiliares}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadFamiliares ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.cantidadFamiliares && <p className="text-red-500 text-sm mt-1">{errors.cantidadFamiliares}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
-                            <input
-                                type="text"
-                                name="identificacion"
-                                value={formData.identificacion}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.identificacion ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
-                        </div>
+                        
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
                             <input
@@ -206,12 +195,24 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             />
                             {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
                         </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Familiares</label>
+                            <input
+                                type="number"
+                                name="cantidadFamiliares"
+                                value={formData.cantidadFamiliares}
+                                onChange={handleChange}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadFamiliares ? 'border-red-500' : ''}`}
+                                required
+                            />
+                            {errors.cantidadFamiliares && <p className="text-red-500 text-sm mt-1">{errors.cantidadFamiliares}</p>}
+                        </div>
                     </div>
                     <div className="flex justify-end space-x-4 mt-6">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                         >
                             Cancelar
                         </button>

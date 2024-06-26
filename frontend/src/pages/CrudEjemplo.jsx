@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPencilFill } from 'react-icons/ri';
 import { useBeneficiarios } from '../context/BeneficiariosContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -109,13 +109,14 @@ const CRUDTable = () => {
   const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   return (
-    <div className='ml-3'>
-      <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-        <div className="flex items-center gap-2">
-          <CreateButton onClick={handleCreateClick} />
-          <SearchBar onSearch={handleSearch} />
-        </div>
-      </div>
+    <div>
+            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
+                <div className="flex items-center gap-2">
+                    <SearchBar onSearch={handleSearch} />
+                    <CreateButton onClick={handleCreateClick} />
+                </div>
+            </div>
       {filteredData.length === 0 ? (
         <p className="text-center">No hay registros disponibles</p>
       ) : (
@@ -169,7 +170,7 @@ const CRUDTable = () => {
                           className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                           disabled={item.estado !== 'activo'}
                         >
-                          <RiPlaneFill />
+                          <RiPencilFill />
                         </button>
                         <button
                           onClick={() => handleDeleteButtonClick(item._id)}
