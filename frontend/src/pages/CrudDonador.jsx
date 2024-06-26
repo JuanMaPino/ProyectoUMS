@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
 import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -119,9 +119,10 @@ const CRUDDonador = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Donadores</h1>
                 <div className="flex items-center gap-2">
-                    <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
+                    <CreateButton onClick={handleCreateClick} />
                 </div>
             </div>
             {donadores.length === 0 ? (
@@ -182,7 +183,7 @@ const CRUDDonador = () => {
                                                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                                                     disabled={item.estado !== 'activo'}
                                                 >
-                                                    <RiPlaneFill />
+                                                    <RiPencilFill />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}

@@ -130,12 +130,13 @@ const CRUDInsumos = () => {
     };
 
     return (
-        <div className='ml-3'>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
-                </div>
+        <div>
+        <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+            <h1 className="text-3xl font-semibold text-left text-gray-800">Insumos</h1>
+            <div className="flex items-center gap-2">
+                <SearchBar onSearch={handleSearch} />
             </div>
+        </div>
             {filteredData.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (

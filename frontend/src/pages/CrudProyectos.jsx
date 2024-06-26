@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -16,14 +16,14 @@ import FloatingButton from '../components/FloatingButton';
 import { useProjects } from '../context/ProyectosContext'; // Import the context
 
 const CRUDProyecto = () => {
-    const { 
-        createProject, 
-        updateProject, 
-        getAllProjects, 
-        disableProject, 
+    const {
+        createProject,
+        updateProject,
+        getAllProjects,
+        disableProject,
         deleteProject, // Utilizar deleteProject desde el contexto
-        projects, 
-        errors 
+        projects,
+        errors
     } = useProjects(); // Use the context
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -96,11 +96,13 @@ const CRUDProyecto = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Proyectos</h1>
                 <div className="flex items-center gap-2">
-                    <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
+                    <CreateButton onClick={handleCreateClick} />
                 </div>
             </div>
+
             {filteredData.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (
@@ -147,7 +149,7 @@ const CRUDProyecto = () => {
                                                     className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                                                     disabled={item.estado !== 'activo'}
                                                 >
-                                                    <RiPlaneFill />
+                                                    <RiPencilFill />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDeleteButtonClick(item._id)}
