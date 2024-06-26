@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPlaneFill, RiAddLine } from 'react-icons/ri';
-import { useDonadores } from '../context/DonadoresContext'; // Ajusta la ruta según tu estructura
+import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
+import { useDonadores } from '../context/DonadoresContext'; // Adjust the path according to your structure
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -33,16 +33,8 @@ const CRUDDonador = () => {
     const itemsPerPage = 6;
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
         setCurrentPage(1); // Reset to first page on new search
     }, [searchTerm]);
-
-    const fetchData = async () => {
-        // Aquí no se necesita ya que el contexto DonadorProvider maneja la carga inicial
-    };
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -63,17 +55,20 @@ const CRUDDonador = () => {
             closeModal();
         } catch (error) {
             console.error('Error updating item:', error);
+            // Add user-friendly error handling here
         }
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
-            await deleteDonador(id);
+          console.log(`Intentando eliminar donador con ID: ${id}`);
+          await deleteDonador(id);
+          console.log('Donador eliminado exitosamente');
         } catch (error) {
-            console.error('Error deleting item:', error);
+          console.error('Error deleting item:', error);
         }
-    };
-
+      };
+      
     const handleViewButtonClick = (item) => {
         setSelectedItem(item);
         setShowViewModal(true);
@@ -91,7 +86,7 @@ const CRUDDonador = () => {
                 ...item,
                 estado: item.estado === 'activo' ? 'inactivo' : 'activo'
             };
-            await disableDonador(id); // Utilizando la función de cambio de estado del contexto
+            await disableDonador(id); // Utilizing the state change function from context
         }
     };
 
@@ -218,26 +213,25 @@ const CRUDDonador = () => {
                             />
                         ))}
                         <Pagination
-                                totalItems={filteredData.length}
-                                itemsPerPage={itemsPerPage}
-                                currentPage={currentPage}
-                                onPageChange={setCurrentPage}
-                            />
+                            totalItems={filteredData.length}
+                            itemsPerPage={itemsPerPage}
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                        />
                         <FloatingButton onClick={handleCreateClick} />
                     </div>
                 </div>
-      )}
-      {showModalForm && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-          <ModalDonador onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createDonador} item={selectedItem} />
-        </div>
-      )}
-      {showViewModal && (
-        <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-          <ViewDonador onClose={closeViewModal} item={selectedItem} />
-        </div>
-      )}
-            
+            )}
+            {showModalForm && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ModalDonador onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createDonador} item={selectedItem} />
+                </div>
+            )}
+            {showViewModal && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
+                </div>
+            )}
         </div>
     );
 };

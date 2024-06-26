@@ -8,9 +8,8 @@ const ModalDonador = ({ onClose, item }) => {
     const [formData, setFormData] = useState({
         identificacion: '',
         nombre: '',
-        nombreEmpresa: '',
         tipoDonador: 'Natural',
-        tipoDocumen: 'C.C',
+        tipoDocumen: 'C.C' || 'C.E',
         telefono: '',
         direccion: '',
         correoElectronico: '',
@@ -18,14 +17,20 @@ const ModalDonador = ({ onClose, item }) => {
         contacto: '',
     });
 
-    const [formErrors, setErrors] = useState({});
+    const [formErrors, setFormErrors] = useState({
+        identificacion: '',
+        nombre: '',
+        contacto: '',  // Inicialmente sin error
+        direccion: '',
+        correoElectronico: '',
+        telefono: '',
+    });
 
     useEffect(() => {
         if (item) {
             setFormData({
                 identificacion: item.identificacion || '',
                 nombre: item.nombre || '',
-                nombreEmpresa: item.nombreEmpresa || '',
                 tipoDonador: item.tipoDonador || 'Natural',
                 tipoDocumen: item.tipoDocumen || 'C.C',
                 telefono: item.telefono || '',
@@ -38,7 +43,6 @@ const ModalDonador = ({ onClose, item }) => {
             setFormData({
                 identificacion: '',
                 nombre: '',
-                nombreEmpresa: '',
                 tipoDonador: 'Natural',
                 tipoDocumen: 'C.C',
                 telefono: '',
@@ -57,31 +61,58 @@ const ModalDonador = ({ onClose, item }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
         const sanitizedValue = value.replace(/\s\s+/g, ' ');
-    
+
         let newErrors = { ...formErrors };
-    
-        if (name === 'identificacion' || name === 'correoElectronico') {
-            if (checkIfExists(name, sanitizedValue)) {
-                newErrors = {
-                    ...newErrors,
-                    [name]: `${name === 'identificacion' ? 'La identificación' : 'El correo electrónico'} ya existe.`
-                };
-            } else {
-                newErrors = {
-                    ...newErrors,
-                    [name]: null
-                };
-            }
+
+        switch (name) {
+            case 'identificacion':
+                if (!value || !/^\d{5,12}$/.test(value)) {
+                    newErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
+                } else {
+                    newErrors.identificacion = '';
+                }
+                break;
+            case 'nombre':
+                if (formData.tipoDonador === 'Natural' && (!value || !/^[a-zA-Z0-9\s]*$/.test(value))) {
+                    newErrors.nombre = 'El nombre debe contener solo letras y números.';
+                } else {
+                    newErrors.nombre = '';
+                }
+                break;
+            case 'contacto':
+                if (formData.tipoDonador === 'Empresa' && (!value || !/^[a-zA-Z0-9\s]*$/.test(value))) {
+                    newErrors.contacto = 'El contacto debe contener solo letras y números.';
+                } else {
+                    newErrors.contacto = '';
+                }
+                break;
+            case 'direccion':
+                newErrors.direccion = value ? '' : 'Este campo es obligatorio';
+                break;
+            case 'correoElectronico':
+                if (!value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                    newErrors.correoElectronico = 'Ingrese un correo electrónico válido';
+                } else {
+                    newErrors.correoElectronico = '';
+                }
+                break;
+            case 'telefono':
+                if (!value || !/^\d{9,10}$/.test(value)) {
+                    newErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 10 caracteres.';
+                } else {
+                    newErrors.telefono = '';
+                }
+                break;
+            default:
+                break;
         }
 
-        
-    
         setFormData(prevState => ({
             ...prevState,
-            [name]: name === 'nombre' || name === 'nombreEmpresa' || name === 'contacto' ? capitalizeWords(sanitizedValue) : sanitizedValue
+            [name]: name === 'nombre' || name === 'contacto' ? capitalizeWords(sanitizedValue) : sanitizedValue
         }));
-    
-        setErrors(newErrors);
+
+        setFormErrors(newErrors);
     };
 
     const handleTipoDonadorChange = (e) => {
@@ -91,49 +122,55 @@ const ModalDonador = ({ onClose, item }) => {
             tipoDonador: value,
             tipoDocumen: value === 'Natural' ? 'C.C' : 'NIT'
         }));
+
+        // Reiniciar errores de contacto si cambia el tipo de donador
+        setFormErrors(prevErrors => ({
+            ...prevErrors,
+            contacto: value === 'Natural' ? '' : prevErrors.contacto
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const validationErrors = {};
-        if (!formData.identificacion) validationErrors.identificacion = 'Este campo es obligatorio';
-        if (!formData.nombre && formData.tipoDonador === 'Natural') validationErrors.nombre = 'Este campo es obligatorio';
-        if (!formData.nombreEmpresa && formData.tipoDonador === 'Empresa') validationErrors.nombreEmpresa = 'Este campo es obligatorio';
-        if (!formData.contacto && formData.tipoDonador === 'Empresa') validationErrors.contacto = 'Este campo es obligatorio';
-        if (!formData.direccion) validationErrors.direccion = 'Este campo es obligatorio';
-        if (!formData.correoElectronico) validationErrors.correoElectronico = 'Este campo es obligatorio';
-        if (!formData.telefono) validationErrors.telefono = 'Este campo es obligatorio';
-        
-        const identificacionRegex = /^\d{5,12}$/;
-        const alphanumericRegex = /^[a-zA-Z0-9\s]*$/;
-        const telefonoRegex = /^\d{9,12}$/;
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-        if (!formData.identificacion || !identificacionRegex.test(formData.identificacion)) {
+        // Validación final antes de enviar el formulario
+        const validationErrors = { ...formErrors };
+
+        if (!formData.identificacion || !/^\d{5,12}$/.test(formData.identificacion)) {
             validationErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
         }
-        if ((!formData.nombre || !alphanumericRegex.test(formData.nombre)) && formData.tipoDonador === 'Natural') {
+        if ((!formData.nombre || !/^[a-zA-Z0-9\s]*$/.test(formData.nombre)) && formData.tipoDonador === 'Natural') {
             validationErrors.nombre = 'El nombre debe contener solo letras y números.';
         }
-        if ((!formData.nombreEmpresa || !alphanumericRegex.test(formData.nombreEmpresa)) && formData.tipoDonador === 'Empresa') {
-            validationErrors.nombreEmpresa = 'El nombre de la empresa debe contener solo letras y números.';
-        }
-        if ((!formData.contacto || !alphanumericRegex.test(formData.contacto)) && formData.tipoDonador === 'Empresa') {
+        if ((!formData.contacto || !/^[a-zA-Z0-9\s]*$/.test(formData.contacto)) && formData.tipoDonador === 'Empresa') {
             validationErrors.contacto = 'El contacto debe contener solo letras y números.';
         }
         if (!formData.direccion) {
             validationErrors.direccion = 'Este campo es obligatorio';
         }
-        if (!formData.correoElectronico || !emailRegex.test(formData.correoElectronico)) {
+        if (!formData.correoElectronico || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correoElectronico)) {
             validationErrors.correoElectronico = 'Ingrese un correo electrónico válido';
         }
-        if (!formData.telefono || !telefonoRegex.test(formData.telefono)) {
-            validationErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 12 caracteres.';
+        if (!formData.telefono || !/^\d{9,10}$/.test(formData.telefono)) {
+            validationErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 10 caracteres.';
         }
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+
+        if (Object.values(validationErrors).some(error => error !== '')) {
+            setFormErrors(validationErrors);
             return;
+        }
+        if (!item || item.identificacion !== formData.identificacion) {
+            if (checkIfExists('identificacion', formData.identificacion)) {
+                setFormErrors({ ...formErrors, identificacion: 'Esta identificación ya está registrada.' });
+                return;
+            }
+        }
+    
+        if (!item || item.correoElectronico !== formData.correoElectronico) {
+            if (checkIfExists('correoElectronico', formData.correoElectronico)) {
+                setFormErrors({ ...formErrors, correoElectronico: 'Este correo electrónico ya está registrado.' });
+                return;
+            }
         }
 
         try {
@@ -154,9 +191,11 @@ const ModalDonador = ({ onClose, item }) => {
                     show_alert(errors[0], 'error');
                 }
             }
+            onClose();
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
         }
+
     };
 
     const capitalizeWords = (string) => {
@@ -185,7 +224,7 @@ const ModalDonador = ({ onClose, item }) => {
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<span className="text-red-500 text-sm">*</span></label>
                             <input
-                                type="text"
+                                type="number"
                                 name="identificacion"
                                 value={formData.identificacion}
                                 onChange={handleChange}
@@ -237,7 +276,6 @@ const ModalDonador = ({ onClose, item }) => {
                                     <>
                                         <option value="C.C">C.C</option>
                                         <option value="C.E">C.E</option>
-                                        
                                     </>
                                 ): (
                                     <option value="NIT">NIT</option>
@@ -245,16 +283,16 @@ const ModalDonador = ({ onClose, item }) => {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">{formData.tipoDonador === 'Natural' ? 'Nombre' : 'Nombre Empresa'}<span className="text-red-500 text-sm">*</span></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre Completo/Nombre Empresa<span className="text-red-500 text-sm">*</span></label>
                             <input
                                 type="text"
-                                name={formData.tipoDonador === 'Natural' ? 'nombre' : 'nombreEmpresa'}
-                                value={formData.tipoDonador === 'Natural' ? formData.nombre : formData.nombreEmpresa}
+                                name={'nombre'}
+                                value={formData.nombre }
                                 onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${formErrors.nombre || formErrors.nombreEmpresa ? 'border-red-500' : ''}`}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${formErrors.nombre  ? 'border-red-500' : ''}`}
                                 required
                             />
-                            {(formErrors.nombre || formErrors.nombreEmpresa) && <p className="text-red-500 text-sm mt-1">{formErrors.nombre || formErrors.nombreEmpresa}</p>}
+                            {formErrors.nombre  && <p className="text-red-500 text-sm mt-1">{formErrors.nombre }</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono<span className="text-red-500 text-sm">*</span></label>

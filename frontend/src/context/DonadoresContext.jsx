@@ -37,18 +37,20 @@ export const DonadorProvider = ({ children }) => {
 
     const createDonador = async (donador) => {
         try {
+            console.log("Datos a enviar:", donador);  // Añadir este log
             const res = await createDonadorRequest(donador);
             setDonadores([...donadores, res.data]);
             handleResponse(res);
             return { success: true };
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'An error occurred';
+            console.error("Error al crear donador:", error.response?.data || error.message);  // Añadir este log
             setErrors([errorMessage]);
             handleError(error);
             return { success: false, error: errorMessage };
         }
     };
-
+    
     const updateDonador = async (id, donador) => {
         try {
             const res = await updateDonadorRequest(id, donador);
@@ -106,7 +108,7 @@ export const DonadorProvider = ({ children }) => {
         } catch (error) {
             const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error); // Manejador de errores
+            handleError(error); 
             return { success: false, error: errorMessage };
         }
     };

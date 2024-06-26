@@ -13,14 +13,8 @@ const donadorSchema = new Schema({
     required: true,
     trim: true
   },
-  nombreEmpresa: {
-    type: String,
-    required: true,
-    trim: true
-  },
   contacto: {
     type: String,
-    required: true,
     trim: true
   },
   tipoDonador: {
