@@ -209,11 +209,18 @@ const ModalDonacion = ({ onClose, item }) => {
                     {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
                 </div>
                 <div className="col-span-2 flex justify-end space-x-4">
-                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                        {item ? 'Actualizar' : 'Guardar'}
-                    </button>
-                    <button type="button" onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                    >
                         Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                    >
+                        {item ? 'Actualizar' : 'Agregar'}
                     </button>
                 </div>
             </div>
