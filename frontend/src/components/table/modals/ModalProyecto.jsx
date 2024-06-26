@@ -135,7 +135,7 @@ const ModalProyecto = ({ onClose, item }) => {
                         <div className="flex justify-end space-x-4">
                             <button
                                 type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
                             </button>

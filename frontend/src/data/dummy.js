@@ -5,7 +5,7 @@ import { BsKanban, BsBarChart, BsBoxSeam, BsCurrencyDollar, BsShield, BsChatLeft
 
 import { BiColorFill } from 'react-icons/bi';
 import { IoMdContacts, IoMdArchive } from 'react-icons/io';
-import { RiContactsLine, RiStockLine, RiHandCoinLine, RiHeartAddLine, RiTeamLine,  RiListCheck3, RiContactsBookLine, RiShoppingBasket2Line } from 'react-icons/ri';
+import { RiContactsLine, RiStockLine, RiHandCoinLine, RiHeartAddLine, RiTeamLine,  RiListCheck3, RiContactsBookLine, RiShoppingBasket2Line, RiFolderLine } from 'react-icons/ri';
 import { MdOutlineSupervisorAccount } from 'react-icons/md';
 import { HiOutlineRefresh } from 'react-icons/hi';
 import { TiTick } from 'react-icons/ti';
@@ -514,7 +514,7 @@ export const links = [
       },
       {
         name: 'Actividades',
-        icon: <ri-folder-line/>
+        icon: <RiFolderLine/>
       }
     ],
   },
