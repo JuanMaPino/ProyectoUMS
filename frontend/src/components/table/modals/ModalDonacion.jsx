@@ -5,7 +5,7 @@ import { useInsumos } from '../../../context/InsumosContext';
 import { getAllDonadoresRequest } from '../../../api/ApiDonador';
 
 const ModalDonacion = ({ onClose, item }) => {
-    const { createDonacion, updateDonacion, } = useDonaciones();
+    const { createDonacion, updateDonacion } = useDonaciones();
     const [donadores, setDonadores] = useState([]);
     const [formData, setFormData] = useState({
         documento: '',
@@ -14,7 +14,6 @@ const ModalDonacion = ({ onClose, item }) => {
         tipo: 'Monetaria',
         donacion: '',
         cantidad: ''
-        
     });
     const [selectedDonador, setSelectedDonador] = useState(null);
     const [validationErrors, setValidationErrors] = useState({});
@@ -71,9 +70,6 @@ const ModalDonacion = ({ onClose, item }) => {
 
         fetchDonadores();
     }, []);
-
-
-    
 
     const validateField = (name, value) => {
         let error = '';
@@ -144,91 +140,81 @@ const ModalDonacion = ({ onClose, item }) => {
     }));
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8">
-            <div className="p-8 flex gap-8">
-                {/* Columna izquierda */}
-                <div className="flex-1">
-                    <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donación' : 'Agregar Donación'}</h2>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Documento<p className="text-red-500 text-sm">*</p></label>
-                            <Select
-                                name="donador"
-                                value={documentOptions.find(option => option.value === formData.donador)}
-                                onChange={handleSelectChange}
-                                options={documentOptions}
-                                className="shadow-sm border rounded w-full text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            />
-                        </div>
-                        {selectedDonador && (
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Donador<p className="text-red-500 text-sm">*</p></label>
-                                <p className="text-gray-800">{selectedDonador.nombre}</p>
-                            </div>
-                        )}
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Fecha<p className="text-red-500 text-sm">*</p></label>
-                            <input
-                                type="date"
-                                name="fecha"
-                                value={formData.fecha}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donación<p className="text-red-500 text-sm">*</p></label>
-                            <select
-                                name="tipo"
-                                value={formData.tipo}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="Monetaria">Monetaria</option>
-                                <option value="Material">Material</option>
-                            </select>
-                        </div>
-                    </form>
+        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8">
+            <div className="grid grid-cols-2 gap-8">
+                <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donación' : 'Agregar Donación'}</h2>
+                <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Documento <span className="text-red-500">*</span></label>
+                    <Select
+                        name="donador"
+                        value={documentOptions.find(option => option.value === formData.donador)}
+                        onChange={handleSelectChange}
+                        options={documentOptions}
+                        className="shadow-sm border rounded w-full text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    />
                 </div>
-                {/* Columna derecha */}
-                <div className="flex-1">
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Donación <p className="text-red-500 text-sm">*</p></label>
-                            <input
-                                type="text"
-                                name="donacion"
-                                value={formData.donacion}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            />
-                            {validationErrors.donacion && <p className="text-red-500 text-sm">{validationErrors.donacion}</p>}
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad<p className="text-red-500 text-sm">*</p></label>
-                            <input
-                                type="number"
-                                name="cantidad"
-                                value={formData.cantidad}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            />
-                            {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
-                        </div>
-                        <div className="flex justify-end space-x-4">
-                            <button type="button" onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md">
-                                Cancelar
-                            </button>
-                            <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
-                                {item ? 'Actualizar' : 'Guardar'}
-                            </button>
-                        </div>
-                    </form>
+                {selectedDonador && (
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Donador <span className="text-red-500">*</span></label>
+                        <p className="text-gray-800">{selectedDonador.nombre}</p>
+                    </div>
+                )}
+                <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Fecha <span className="text-red-500">*</span></label>
+                    <input
+                        type="date"
+                        name="fecha"
+                        value={formData.fecha}
+                        onChange={handleChange}
+                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    />
+                </div>
+                <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Donación <span className="text-red-500">*</span></label>
+                    <select
+                        name="tipo"
+                        value={formData.tipo}
+                        onChange={handleChange}
+                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    >
+                        <option value="Monetaria">Monetaria</option>
+                        <option value="Material">Material</option>
+                    </select>
+                </div>
+                <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Donación <span className="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        name="donacion"
+                        value={formData.donacion}
+                        onChange={handleChange}
+                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    />
+                    {validationErrors.donacion && <p className="text-red-500 text-sm">{validationErrors.donacion}</p>}
+                </div>
+                <div>
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad <span className="text-red-500">*</span></label>
+                    <input
+                        type="number"
+                        name="cantidad"
+                        value={formData.cantidad}
+                        onChange={handleChange}
+                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                        required
+                    />
+                    {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
+                </div>
+                <div className="col-span-2 flex justify-end space-x-4">
+                    <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md">
+                        {item ? 'Actualizar' : 'Guardar'}
+                    </button>
+                    <button type="button" onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md">
+                        Cancelar
+                    </button>
                 </div>
             </div>
         </div>
