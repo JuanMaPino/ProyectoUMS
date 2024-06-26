@@ -13,7 +13,7 @@ const ModalDonador = ({ onClose, item }) => {
         telefono: '',
         direccion: '',
         correoElectronico: '',
-        estado: 'activo'
+        estado: 'Activo'
     });
 
     const [formErrors, setErrors] = useState({
@@ -24,7 +24,7 @@ const ModalDonador = ({ onClose, item }) => {
         telefono: '',
         direccion: '',
         correoElectronico: '',
-        estado: 'activo'
+        estado: 'Activo'
     });
 
 
@@ -281,32 +281,22 @@ const ModalDonador = ({ onClose, item }) => {
                             />
                             {formErrors.correoElectronico && <p className="text-red-500 text-sm mt-1">{formErrors.correoElectronico}</p>}
                         </div>
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
-                            <select
-                                name="estado"
-                                value={formData.estado}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                            >
-                                <option value="activo">Activo</option>
-                                <option value="inactivo">Inactivo</option>
-                            </select>
-                        </div>
+                        
                         <div className="flex justify-end space-x-4">
-                            <button
-                                type="submit"
-                                className="bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                            >
-                                {item ? 'Actualizar' : 'Agregar'}
-                            </button>
-                            <button
+                        <button
                                 type="button"
                                 onClick={onClose}
-                                className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                                className="bg-gradient-to-r from-red-200 to-red-500 hover:from-red-300 hover:to-red-700 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 Cancelar
                             </button>
+                            <button
+                                type="submit"
+                                className="bg-gradient-to-r from-blue-500 to-blue-800 hover:from-blue-600 hover:to-blue-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            >
+                                {item ? 'Actualizar' : 'Agregar'}
+                            </button>
+                            
                         </div>
                     </form>
                 </div>

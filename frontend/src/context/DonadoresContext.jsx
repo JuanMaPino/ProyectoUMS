@@ -1,5 +1,3 @@
-
-
 import { createContext, useState, useContext, useEffect } from 'react';
 import {
     createDonadorRequest,
@@ -20,22 +18,17 @@ export const useDonadores = () => {
     return context;
 };
 
-
-
-
-
 export const DonadorProvider = ({ children }) => {
     const [donadores, setDonadores] = useState([]);
     const [selectedDonador, setSelectedDonador] = useState(null);
     const [errors, setErrors] = useState([]);
-    const [messages, setMessages]=useState([])
+    const [messages, setMessages] = useState([]);
 
     const handleError = (error) => {
         const errorMessage = error.response?.data?.message || 'An error occurred';
         setErrors([errorMessage]);
     };
-    
-    
+
     const handleResponse = (response) => {
         if (response?.data?.message) {
             setMessages([response.data.message]);
@@ -46,12 +39,12 @@ export const DonadorProvider = ({ children }) => {
         try {
             const res = await createDonadorRequest(donador);
             setDonadores([...donadores, res.data]);
-            handleResponse(res)
+            handleResponse(res);
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error)
+            handleError(error);
             return { success: false, error: errorMessage };
         }
     };
@@ -60,12 +53,12 @@ export const DonadorProvider = ({ children }) => {
         try {
             const res = await updateDonadorRequest(id, donador);
             setDonadores(donadores.map(d => d._id === id ? res.data : d));
-            handleResponse(res)
+            handleResponse(res);
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error)
+            handleError(error);
             return { success: false, error: errorMessage };
         }
     };
@@ -74,9 +67,8 @@ export const DonadorProvider = ({ children }) => {
         try {
             const res = await getDonadorByIdRequest(id);
             setSelectedDonador(res.data);
-            
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
         }
     };
@@ -86,7 +78,7 @@ export const DonadorProvider = ({ children }) => {
             const res = await getAllDonadoresRequest();
             setDonadores(res.data);
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
         }
     };
@@ -95,12 +87,12 @@ export const DonadorProvider = ({ children }) => {
         try {
             const res = await disableDonadorRequest(id);
             setDonadores(donadores.map(d => d._id === id ? res.data : d));
-            handleResponse(res)
+            handleResponse(res);
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error)
+            handleError(error);
             return { success: false, error: errorMessage };
         }
     };
@@ -109,12 +101,12 @@ export const DonadorProvider = ({ children }) => {
         try {
             await deleteDonadorRequest(id);
             setDonadores(donadores.filter(d => d._id !== id));
-            handleResponse(res)
+            setMessages(['Donador eliminado con éxito']); // Añadir mensaje de éxito
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error)
+            handleError(error); // Manejador de errores
             return { success: false, error: errorMessage };
         }
     };
@@ -130,14 +122,12 @@ export const DonadorProvider = ({ children }) => {
         }
     }, [errors]);
 
-
     useEffect(() => {
         if (messages.length > 0) {
             const timer = setTimeout(() => setMessages([]), 3000);
             return () => clearTimeout(timer);
         }
     }, [messages]);
-
 
     return (
         <DonadorContext.Provider value={{

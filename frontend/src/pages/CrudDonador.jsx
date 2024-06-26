@@ -15,6 +15,8 @@ import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
 
+
+
 const CRUDDonador = () => {
     const {
         donadores,
@@ -51,6 +53,10 @@ const CRUDDonador = () => {
 
     const handleSearch = (query) => {
         setSearchTerm(query);
+    };
+
+    const capitalizeFirstLetter = (string) => {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     };
 
     const handleUpdate = async (updatedItem) => {
@@ -128,8 +134,8 @@ const CRUDDonador = () => {
                         <Table>
                             <TableHead>
                                 <TableCell>Identificación</TableCell>
-                                <TableCell>Nombre</TableCell>
-                                <TableCell>Teléfono</TableCell>
+                                <TableCell>Donador</TableCell>
+                                <TableCell>Contacto</TableCell>
                                 <TableCell>Estatus</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
@@ -139,19 +145,23 @@ const CRUDDonador = () => {
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                         <TableCell label="Identificación">
                                             <div>
-                                                <p className="text-black">{item.tipoDocumen.split(' ')[0]}</p>
-                                                <p className="text-xs text-gray-600">{item.identificacion}</p>
+                                                <p className="text-black">{item.identificacion}</p>
+                                                <p className="text-xs text-gray-600">{item.tipoDocumen}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Nombre">
+                                        <TableCell label="Donador">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
-                                                <p className="text-xs text-gray-600">{item.correoElectronico.substring(0, 18) + '...'}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.telefono}</TableCell>
+                                        <TableCell label="Correo">
+                                            <div>
+                                                <p className="text-black">{item.correoElectronico.substring(0, 18) + '...'}</p>
+                                                <p className="text-xs text-gray-600">{item.telefono}</p>
+                                            </div>
+                                        </TableCell>
                                         <TableCell label="Estatus" className={`py-1 px-2 text-black text-center`}>
-                                            {item.estado}
+                                            {capitalizeFirstLetter(item.estado)}
                                         </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
@@ -204,7 +214,7 @@ const CRUDDonador = () => {
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
                                 onSwitchChange={handleSwitchChange}
-                                isActive={item.estado === 'activo'}
+                                isActive={item.estado === 'Activo'}
                             />
                         ))}
                         <Pagination
@@ -232,3 +242,4 @@ const CRUDDonador = () => {
 };
 
 export default CRUDDonador;
+

@@ -19,9 +19,8 @@ const donadorSchema = new Schema({
   tipoDocumen: {
     type: String,
     required: true,
-    enum: ['C.C', 'NIT']
+    enum: ['C.C','C.E','NIT']
   },  
-
   telefono: {
     type: Number
   },

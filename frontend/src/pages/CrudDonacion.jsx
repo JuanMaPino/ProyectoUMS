@@ -123,7 +123,7 @@ const CRUDDonaciones = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Documento</TableCell>
+                                <TableCell>Donador</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Tipo</TableCell>
                                 <TableCell>Insumo</TableCell>
@@ -137,10 +137,10 @@ const CRUDDonaciones = () => {
                                         isMonetario={item.tipo === 'Monetaria'}
                                         tipo={item.tipo}
                                     >
-                                        <TableCell label="Documento">
+                                        <TableCell label="Donador">
                                             <div>
-                                                <p className="text-black">{item.donadorIdentificacion.toString().substring(0, 18) + '...'}</p>
-                                                <p className="text-xs text-gray-600">{item.donadorNombre.toString().substring(0, 18) + '...'}</p>
+                                            <p className=" text-black">{item.donadorNombre}</p>
+                                                <p className="text-xs text-black">{item.donadorIdentificacion.toString().substring(0, 12)}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell>{item.fecha}</TableCell>
