@@ -37,6 +37,10 @@ const ViewDonador = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className="text-gray-800">{item.estado}</p>
                 </div>
+                <div>
+                    <label className="block text-gray-700"><span className="font-semibold">Contacto:</span></label>
+                    <p className="text-gray-800">{item.contacto}</p>
+                </div>
             </div>
             <div className="mt-6 flex justify-center">
                 <button

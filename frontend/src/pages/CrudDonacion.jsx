@@ -128,8 +128,6 @@ const CRUDDonaciones = () => {
                                 <TableCell>Donador</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Tipo</TableCell>
-                                <TableCell>Insumo</TableCell>
-                                <TableCell>Cantidad</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
@@ -147,8 +145,6 @@ const CRUDDonaciones = () => {
                                         </TableCell>
                                         <TableCell>{item.fecha}</TableCell>
                                         <TableCell>{item.tipo}</TableCell>
-                                        <TableCell>{item.donacion}</TableCell>
-                                        <TableCell>{item.cantidad}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
                                                 <TableActions
