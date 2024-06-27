@@ -25,7 +25,7 @@ const ViewFamiliar = ({ item, onClose }) => {
       <div className="flex justify-center mt-6">
         <button
           onClick={onClose}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+          className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600  text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
         >
           Cerrar
         </button>

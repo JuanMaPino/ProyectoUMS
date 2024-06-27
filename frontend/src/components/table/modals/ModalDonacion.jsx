@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useDonaciones } from '../../../context/DonacionesContext';
+import { useInsumos } from '../../../context/InsumosContext';
 import { getAllDonadoresRequest } from '../../../api/ApiDonador';
 
 const ModalDonacion = ({ onClose, item }) => {
     const { createDonacion, updateDonacion } = useDonaciones();
+    const { insumos, createInsumo, updateInsumo } = useInsumos();
     const [donadores, setDonadores] = useState([]);
     const [formData, setFormData] = useState({
         donador: '',
@@ -102,26 +104,49 @@ const ModalDonacion = ({ onClose, item }) => {
             console.error('Validation errors:', validationErrors);
             return;
         }
-    
+
         try {
             const donacionesValidadas = formData.donaciones.filter(donacion => donacion.nombre && donacion.cantidad > 0);
-    
+
             if (donacionesValidadas.length !== formData.donaciones.length) {
                 console.error('Cada donación debe tener un nombre y una cantidad mayor a 0.');
                 return;
             }
-    
+
             const { ...restData } = formData;
-    
+
             if (item && item._id) {
                 await updateDonacion(item._id, { ...restData, donaciones: donacionesValidadas });
             } else {
                 await createDonacion({ ...restData, donaciones: donacionesValidadas });
             }
-    
+
+            // Ensure insumos are created for each donation
+            for (const donacion of donacionesValidadas) {
+                await ensureInsumoExists({
+                    nombre: donacion.nombre,
+                    fecha: formData.fecha,
+                    cantidad: donacion.cantidad
+                });
+            }
+
             onClose();
         } catch (error) {
             console.error('Error al guardar la donación:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    const ensureInsumoExists = async ({ nombre, fecha, cantidad }) => {
+        const existingInsumo = insumos.find(insumo => insumo.nombre === nombre);
+        if (!existingInsumo) {
+            await createInsumo({
+                nombre,
+                fecha,
+                cantidad: parseInt(cantidad, 10),
+                estado: 'activo'
+            });
+        } else {
+            await updateInsumo(existingInsumo._id, { cantidad: existingInsumo.cantidad + parseInt(cantidad, 10) });
         }
     };
 
@@ -193,46 +218,32 @@ const ModalDonacion = ({ onClose, item }) => {
                             required
                         />
                         {validationErrors.cantidad && <p className="text-red-500 text-sm">{validationErrors.cantidad}</p>}
-                        {index > 0 && (
-                            <button
-                                type="button"
-                                onClick={() => removeDonacion(index)}
-                                className="mt-2 bg-red-500 text-white py-1 px-3 rounded focus:outline-none focus:ring"
-                            >
-                                Eliminar
-                            </button>
-                        )}
+                        <button
+                            type="button"
+                            onClick={() => removeDonacion(index)}
+                            className="mt-2 bg-red-500 text-white px-4 py-2 rounded"
+                        >
+                            Eliminar Donación
+                        </button>
                     </div>
                 ))}
                 <button
                     type="button"
                     onClick={addDonacion}
-                    className="col-span-2 mt-4 bg-green-500 text-white py-2 px-4 rounded focus:outline-none focus:ring"
+                    className="col-span-2 bg-blue-500 text-white px-4 py-2 rounded mt-4"
                 >
-                    Añadir otra Donación
+                    Agregar Donación
                 </button>
-                </div >
-                        <div className="flex pt-2 justify-end space-x-4">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                            >
-                                Cancelar
-                            </button>
-
-                            <button
-                                type="submit"
-                                onClick={handleSubmit}
-                                className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                            >
-                                {item ? 'Actualizar' : 'Agregar'}
-                            </button>
-                        </div>
-            
+                <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="col-span-2 bg-green-500 text-white px-4 py-2 rounded mt-4"
+                >
+                    {item ? 'Actualizar Donación' : 'Crear Donación'}
+                </button>
+            </div>
         </div>
     );
 };
 
 export default ModalDonacion;
-
