@@ -34,7 +34,9 @@ export const BeneficiarioProvider = ({ children }) => {
     // Función para crear un beneficiario
     const createBeneficiario = async (data) => {
         try {
-            const response = await createBeneficiarioRequest(data);
+            console.log("Datos a enviar: ", data)
+            const capitalizedData = capitalizeBeneficiarioData(data);
+            const response = await createBeneficiarioRequest(capitalizedData);
             setBeneficiarios([...beneficiarios, response.data]);
             setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
@@ -45,7 +47,8 @@ export const BeneficiarioProvider = ({ children }) => {
     // Función para actualizar un beneficiario
     const updateBeneficiario = async (id, data) => {
         try {
-            const response = await updateBeneficiarioRequest(id, data);
+            const capitalizedData = capitalizeBeneficiarioData(data);
+            const response = await updateBeneficiarioRequest(id, capitalizedData);
             const updatedBeneficiarios = beneficiarios.map(beneficiario =>
                 beneficiario._id === response.data._id ? response.data : beneficiario
             );
@@ -94,6 +97,11 @@ export const BeneficiarioProvider = ({ children }) => {
     useEffect(() => {
         fetchBeneficiarios();
     }, []);
+
+    const capitalizeBeneficiarioData = (data) => {
+        const capitalizedNombre = data.nombre.charAt(0).toUpperCase() + data.nombre.slice(1).toLowerCase();
+        return { ...data, nombre: capitalizedNombre };
+    };
 
     return (
         <BeneficiarioContext.Provider

@@ -22,7 +22,7 @@ const tareaSchema = new mongoose.Schema({
     enum: ['activo', 'inactivo'],
     default: 'activo'
   },
-  ayudante: { type: mongoose.Schema.Types.ObjectId, ref: 'Ayudante'}
+  ayudante: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ayudante'}]
 });
 
 const Tarea= mongoose.model('Tarea', tareaSchema);

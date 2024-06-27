@@ -33,7 +33,8 @@ export const AyudanteProvider = ({ children }) => {
     // Función para crear un ayudante
     const createAyudante = async (data) => {
         try {
-            const response = await createAyudanteRequest(data);
+            const capitalizedData = capitalizeAyudanteData(data);
+            const response = await createAyudanteRequest(capitalizedData);
             setAyudantes([...ayudantes, response.data]);
         } catch (error) {
             handleErrors(error);
@@ -43,7 +44,8 @@ export const AyudanteProvider = ({ children }) => {
     // Función para actualizar un ayudante
     const updateAyudante = async (id, data) => {
         try {
-            const response = await updateAyudanteRequest(id, data);
+            const capitalizedData = capitalizeAyudanteData(data);
+            const response = await updateAyudanteRequest(id, capitalizedData);
             const updatedAyudantes = ayudantes.map(ayudante =>
                 ayudante._id === response.data._id ? response.data : ayudante
             );
@@ -87,6 +89,11 @@ export const AyudanteProvider = ({ children }) => {
     useEffect(() => {
         getAllAyudantes();
     }, []);
+
+    const capitalizeAyudanteData = (data) => {
+        const capitalizedNombre = data.nombre.charAt(0).toUpperCase() + data.nombre.slice(1).toLowerCase();
+        return { ...data, nombre: capitalizedNombre };
+    };
 
     const value = {
         ayudantes,

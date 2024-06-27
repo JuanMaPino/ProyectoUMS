@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTareas } from '../../../context/TareasContext';
 import axios from 'axios';
+import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
 
 const ModalTarea = ({ onClose, item }) => {
     const { createTarea, updateTarea } = useTareas();
@@ -10,24 +11,22 @@ const ModalTarea = ({ onClose, item }) => {
         cantidadHoras: '',
         fecha: '',
         estado: 'activo',
-        ayudante: '',
-        nombreAyudante: '',
-        rolAyudante: ''
+        ayudantes: []
     });
-    const [ayudantes, setAyudantes] = useState([]);
+    const [ayudantesList, setAyudantesList] = useState([]);
     const [errors, setErrors] = useState({
         nombre: '',
         accion: '',
         cantidadHoras: '',
         fecha: '',
-        ayudante: ''
+        ayudantes: ''
     });
 
     useEffect(() => {
         const fetchAyudantes = async () => {
             try {
                 const response = await axios.get('http://localhost:3002/ayudantes');
-                setAyudantes(response.data);
+                setAyudantesList(response.data);
             } catch (error) {
                 console.error('Error fetching ayudantes:', error.message);
             }
@@ -42,23 +41,29 @@ const ModalTarea = ({ onClose, item }) => {
                 cantidadHoras: item.cantidadHoras || '',
                 fecha: item.fecha || '',
                 estado: item.estado || 'activo',
-                ayudante: item.ayudante?._id || '',
-                nombreAyudante: item.ayudante?.nombre || '',
-                rolAyudante: item.ayudante?.rol || ''
+                ayudantes: item.ayudantes ? item.ayudantes.map(a => ({
+                    _id: a._id || '',
+                    nombre: a.nombre || '',
+                    rol: a.rol || ''
+                })) : []
             });
         }
     }, [item]);
 
-    const handleAyudanteChange = (e) => {
+    const handleAyudanteChange = (e, index) => {
         const ayudanteId = e.target.value;
-        const selectedAyudante = ayudantes.find(a => a._id === ayudanteId);
+        const selectedAyudante = ayudantesList.find(a => a._id === ayudanteId);
+        const updatedAyudantes = [...formData.ayudantes];
+        updatedAyudantes[index] = {
+            _id: ayudanteId,
+            nombre: selectedAyudante ? selectedAyudante.nombre : '',
+            rol: selectedAyudante ? selectedAyudante.rol : ''
+        };
         setFormData(prevState => ({
             ...prevState,
-            ayudante: ayudanteId,
-            nombreAyudante: selectedAyudante ? selectedAyudante.nombre : '',
-            rolAyudante: selectedAyudante ? selectedAyudante.rol : ''
+            ayudantes: updatedAyudantes
         }));
-        validateField('ayudante', ayudanteId);
+        validateField('ayudantes', updatedAyudantes);
     };
 
     const handleChange = (e) => {
@@ -92,8 +97,8 @@ const ModalTarea = ({ onClose, item }) => {
                     value < today ? 'La fecha no puede estar en el pasado' :
                         '';
                 break;
-            case 'ayudante':
-                errorMessage = !value ? 'Debe seleccionar un ayudante' : '';
+            case 'ayudantes':
+                errorMessage = value.length === 0 ? 'Debe agregar al menos un ayudante' : '';
                 break;
             default:
                 break;
@@ -103,6 +108,19 @@ const ModalTarea = ({ onClose, item }) => {
             ...prevErrors,
             [name]: errorMessage
         }));
+    };
+
+    const addAyudante = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            ayudantes: [...prevState.ayudantes, { _id: '', nombre: '', rol: '' }]
+        }));
+    };
+
+    const removeAyudante = (index) => {
+        const updatedAyudantes = [...formData.ayudantes];
+        updatedAyudantes.splice(index, 1);
+        setFormData(prevState => ({ ...prevState, ayudantes: updatedAyudantes }));
     };
 
     const handleSubmit = async (e) => {
@@ -185,63 +203,57 @@ const ModalTarea = ({ onClose, item }) => {
                             </div>
                         </div>
                         <div className="w-1/2">
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Ayudante</label>
-                                <select
-                                    name="ayudante"
-                                    value={formData.ayudante}
-                                    onChange={handleAyudanteChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.ayudante ? 'border-red-500' : ''}`}
-                                    required
-                                >
-                                    <option value="">Seleccionar Ayudante</option>
-                                    {ayudantes.map(a => (
-                                        <option key={a._id} value={a._id}>
-                                            {a.identificacion} - {a.nombre}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.ayudante && <p className="text-red-500 text-xs italic">{errors.ayudante}</p>}
-                            </div>
-                            {formData.ayudante && (
-                                <>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Ayudantes</label>
+                            {formData.ayudantes.map((ayudante, index) => (
+                                <div key={index} className="border rounded p-4 mb-4">
                                     <div>
-                                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre del Ayudante</label>
-                                        <input
-                                            type="text"
-                                            name="nombreAyudante"
-                                            value={formData.nombreAyudante}
-                                            readOnly
-                                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
-                                        />
+                                        <select
+                                            name="ayudante"
+                                            value={ayudante._id}
+                                            onChange={(e) => handleAyudanteChange(e, index)}
+                                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.ayudantes ? 'border-red-500' : ''}`}
+                                            required
+                                        >
+                                            <option value="">Seleccionar Ayudante</option>
+                                            {ayudantesList.map(a => (
+                                                <option key={a._id} value={a._id}>
+                                                    {a.identificacion} - {a.nombre}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
-                                    <div>
-                                        <label className="block text-gray-700 text-sm font-medium mb-2">Rol del Ayudante</label>
-                                        <input
-                                            type="text"
-                                            name="rolAyudante"
-                                            value={formData.rolAyudante}
-                                            readOnly
-                                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 bg-gray-100"
-                                        />
-                                    </div>
-                                </>
-                            )}
+                                    <button
+                                        type="button"
+                                        className="text-red-500 mt-2 flex items-center"
+                                        onClick={() => removeAyudante(index)}
+                                    >
+                                        <RiDeleteBin6Line className="mr-2" /> Eliminar Ayudante
+                                    </button>
+                                </div>
+                            ))}
+                            {errors.ayudantes && <p className="text-red-500 text-xs italic">{errors.ayudantes}</p>}
+                            <button
+                                type="button"
+                                className="text-blue-500 mt-4 flex items-center"
+                                onClick={addAyudante}
+                            >
+                                <RiAddCircleLine className="mr-2" /> Agregar Ayudante
+                            </button>
                         </div>
                     </div>
-                    <div className="flex justify-end space-x-4 mt-6">
+                    <div className="flex justify-end space-x-4 mt-8">
                         <button
                             type="button"
+                            className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 focus:outline-none"
                             onClick={onClose}
-                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none"
                         >
-                            {item ? 'Actualizar' : 'Agregar'}
+                            {item ? 'Actualizar Tarea' : 'Guardar Tarea'}
                         </button>
                     </div>
                 </form>

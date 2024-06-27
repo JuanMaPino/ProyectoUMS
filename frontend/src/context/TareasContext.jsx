@@ -33,7 +33,8 @@ export const TareaProvider = ({ children }) => {
     // Función para crear una tarea
     const createTarea = async (data) => {
         try {
-            const response = await createTareaRequest(data);
+            const capitalizedData = capitalizeTareaData(data);
+            const response = await createTareaRequest(capitalizedData);
             setTareas([...tareas, response.data]);
         } catch (error) {
             handleErrors(error);
@@ -43,7 +44,8 @@ export const TareaProvider = ({ children }) => {
     // Función para actualizar una tarea
     const updateTarea = async (id, data) => {
         try {
-            const response = await updateTareaRequest(id, data);
+            const capitalizedData = capitalizeTareaData(data);
+            const response = await updateTareaRequest(id, capitalizedData);
             const updatedTareas = tareas.map(tarea =>
                 tarea._id === response.data._id ? response.data : tarea
             );
@@ -86,6 +88,11 @@ export const TareaProvider = ({ children }) => {
     useEffect(() => {
         fetchTareas();
     }, []);
+
+    const capitalizeTareaData = (data) => {
+        const capitalizedAccion = data.accion.charAt(0).toUpperCase() + data.accion.slice(1).toLowerCase();
+        return { ...data, accion: capitalizedNombre };
+    };
 
     return (
         <TareaContext.Provider
