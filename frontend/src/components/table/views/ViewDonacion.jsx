@@ -48,3 +48,4 @@ const ViewDonacion = ({ onClose, item }) => {
 };
 
 export default ViewDonacion;
+

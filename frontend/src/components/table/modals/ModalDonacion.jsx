@@ -211,14 +211,25 @@ const ModalDonacion = ({ onClose, item }) => {
                 >
                     Añadir otra Donación
                 </button>
-                <button
-                    type="submit"
-                    onClick={handleSubmit}
-                    className="col-span-2 mt-4 bg-blue-500 text-white py-2 px-4 rounded focus:outline-none focus:ring"
-                >
-                    {item ? 'Actualizar Donación' : 'Crear Donación'}
-                </button>
-            </div>
+                </div >
+                        <div className="flex pt-2 justify-end space-x-4">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                type="submit"
+                                onClick={handleSubmit}
+                                className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            >
+                                {item ? 'Actualizar' : 'Agregar'}
+                            </button>
+                        </div>
+            
         </div>
     );
 };
