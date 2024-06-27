@@ -5,6 +5,7 @@ import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
+import TableActions from '../components/table/TableActions';
 import TableCell from '../components/table/TableCell';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
@@ -14,6 +15,7 @@ import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
+
 
 const CRUDDonador = () => {
     const {
@@ -30,7 +32,7 @@ const CRUDDonador = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         setCurrentPage(1); // Reset to first page on new search
@@ -167,26 +169,12 @@ const CRUDDonador = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiPencilFill />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
+                                                <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                handleEditButtonClick={handleEditButtonClick}
+                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                />
                                             </div>
                                         </TableCell>
                                     </TableRow>

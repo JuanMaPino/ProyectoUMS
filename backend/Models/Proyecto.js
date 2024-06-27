@@ -1,8 +1,7 @@
 // Models/Proyecto.js
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
-const proyectoSchema = new Schema({
+const proyectoSchema = new mongoose.Schema({
   nombre: {
     type: String,
     required: true
@@ -15,9 +14,11 @@ const proyectoSchema = new Schema({
     type: Date,
     required: true
   },
-  tipo:
-    { type: mongoose.Schema.Types.ObjectId, ref: 'Actividad'}
-    ,
+  tipo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Actividad',
+    required: true // Si quieres que este campo sea obligatorio
+  },
   descripcion: {
     type: String,
     required: true
@@ -33,6 +34,4 @@ const proyectoSchema = new Schema({
   }
 });
 
-const Proyecto = mongoose.model('Proyecto', proyectoSchema);
-
-module.exports = Proyecto;
+module.exports = mongoose.model('Proyecto', proyectoSchema);

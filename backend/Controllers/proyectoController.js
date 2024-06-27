@@ -52,7 +52,7 @@ exports.actualizarProyecto = async (req, res) => {
 
 exports.eliminarProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findByIdAndDelete(req.params.id).populate('tipo');
+    const proyecto = await Proyecto.findByIdAndDelete(req.params.id);
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -64,12 +64,13 @@ exports.eliminarProyecto = async (req, res) => {
 
 exports.cambiarEstadoProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findById(req.params.id).populate('tipo');
+    const proyecto = await Proyecto.findById(req.params.id);
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
     proyecto.estado = proyecto.estado === 'activo' ? 'inactivo' : 'activo';
     await proyecto.save();
+    await proyecto.populate('tipo').execPopulate();
     res.json(proyecto);
   } catch (error) {
     res.status(500).json({ error: error.message });

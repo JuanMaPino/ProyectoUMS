@@ -6,6 +6,7 @@ import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
@@ -22,7 +23,7 @@ const CRUDInsumos = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         getAllInsumos();
@@ -175,12 +176,10 @@ const CRUDInsumos = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-1 mr-3">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
+                                                <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                />
                                             </div>
                                         </TableCell>
                                     </TableRow>

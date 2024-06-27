@@ -6,6 +6,7 @@ import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
@@ -16,6 +17,7 @@ import CardTarea from '../components/table/CardItems/CardTarea';
 import FloatingButton from '../components/FloatingButton';
 import { useAyudantes } from '../context/AyudantesContext';
 import { Link } from 'react-router-dom';
+
 const CRUDTarea = () => {
     const {
         createTarea,
@@ -36,7 +38,7 @@ const CRUDTarea = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 5;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         if (ayudantes && tareas) {
@@ -168,26 +170,12 @@ const CRUDTarea = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiPencilFill />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
+                                                <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                handleEditButtonClick={handleEditButtonClick}
+                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                />
                                             </div>
                                         </TableCell>
                                     </TableRow>

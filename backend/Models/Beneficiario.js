@@ -36,11 +36,12 @@ const beneficiarioSchema = new Schema({
         required: true
     },
     nombre: {
-        type: Number,
+        type: String,
         required: true
     },
     condicionEspecial: {
-      type: Number,
+      type: String,
+      required: true
   }
 }]
 

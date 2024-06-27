@@ -5,6 +5,7 @@ import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
@@ -33,7 +34,7 @@ const CRUDDonaciones = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         getAllDonaciones();
@@ -146,12 +147,10 @@ const CRUDDonaciones = () => {
                                         <TableCell>{item.tipo}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
+                                                <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                />
                                                 <button
                                                   name="estado"
                                                   checked={item.estado === 'activa'}
