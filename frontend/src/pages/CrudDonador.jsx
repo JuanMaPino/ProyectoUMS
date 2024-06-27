@@ -169,7 +169,7 @@ const CRUDDonador = () => {
                                             <div className="flex gap-2">
                                                 <button
                                                     onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
+                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-violet-500 from-10% to-blue-600 hover:from-violet-700 hover:to-blue-800 p-2"
                                                 >
                                                     <RiEyeLine />
                                                 </button>

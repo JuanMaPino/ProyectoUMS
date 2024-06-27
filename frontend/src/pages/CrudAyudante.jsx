@@ -144,7 +144,7 @@ const CRUDAyudante = () => {
                                             <button
                                                 onClick={() => handleRoleChange(item._id)}
                                                 className={`flex items-center rounded-full p-2 transition-colors ${
-                                                    item.rol === 'alfabetizador' ? 'bg-blue-300 text-white hover:bg-blue-400' : 'bg-cyan-300 text-white hover:bg-cyan-400'
+                                                    item.rol === 'alfabetizador' ? 'bg-blue-400 text-white hover:bg-blue-500' : 'bg-indigo-400 text-white hover:bg-indigo-500'
                                                 }`}
                                                 disabled={item.estado !== 'activo'}
                                             >

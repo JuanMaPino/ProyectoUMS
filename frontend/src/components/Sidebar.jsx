@@ -65,9 +65,9 @@ const Sidebar = () => {
                   >
                     <NavLink
                       to={`/${link.name}`}
-                      className={({ isActive }) => `flex items-center py-3 px-4 m-1 shadow-inner text-lg text-gray-700 dark:text-gray-200 
-                      dark:hover:text-black transition-all duration-200 ease-in-out hover:font-bold hover:bg-gradient-to-bl from-blue-200 to-blue-500
-                       hover:from-blue-300 hover:to-blue-700 w-100 ${isActive ? 'text-blue-500 font-bold bg-gradient-to-bl from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700' : ''} ${activeMenu ? 'text-base' : 'text-sm'} rounded-md `}
+                      className={({ isActive }) => `flex items-center py-3 px-4 m-1 shadow-inner text-lg text-gray-700 dark:text-white 
+                      dark:hover:text-black transition-all duration-200 ease-in-out hover:font-bold hover:bg-gradient-to-r from-cyan-950 to-blue-500
+                       hover:from-cyan-950 hover:to-blue-700 w-100 ${isActive ? 'text-blue-500 font-bold bg-gradient-to-bl from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700' : ''} ${activeMenu ? 'text-base' : 'text-sm'} rounded-md `}
                     >
                       {link.icon}
                       <span className={`${activeMenu ? 'block text-base pl-2' : 'hidden'}`}>
