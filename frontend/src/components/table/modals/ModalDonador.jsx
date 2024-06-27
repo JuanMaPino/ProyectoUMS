@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDonadores } from '../../../context/DonadoresContext';
 import { RiCloseLine } from 'react-icons/ri';
-import show_alert from '../alertFunctions';
+
 
 const ModalDonador = ({ onClose, item }) => {
     const { createDonador, updateDonador, donadores, messages, errors } = useDonadores();

@@ -13,6 +13,7 @@ exports.obtenerTodasLasDonaciones = async (req, res) => {
 exports.crearDonacion = async (req, res) => {
   try {
     const { donacion, cantidad } = req.body;
+
     const nuevaDonacion = new Donacion(req.body);
     await nuevaDonacion.save();
     res.status(201).json(nuevaDonacion);
@@ -60,17 +61,17 @@ exports.actualizarDonacion = async (req, res) => {
 
 exports.anularDonacion = async (req, res) => {
   try {
-    const donacion = await Donacion.findById(req.params.id);
-    if (!donacion) {
-      return res.status(404).json({ error: 'Donación no encontrada' });
-    }
-    if (donacion.estado === 'anulada') {
-      return res.status(400).json({ error: 'La donación ya está anulada' });
-    }
-    donacion.estado = 'anulada';
-    await donacion.save();
-    res.status(200).json(donacion);
+      const donacion = await Donacion.findById(req.params.id);
+      if (!donacion) {
+          return res.status(404).json({ error: 'Donación no encontrada' });
+      }
+      if (donacion.estado === 'anulada') {
+          return res.status(400).json({ error: 'La donación ya está anulada' });
+      }
+      donacion.estado = 'anulada'; // Cambia el estado a 'anulada'
+      await donacion.save();
+      res.status(200).json(donacion);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
   }
 };

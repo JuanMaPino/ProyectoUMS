@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useDonaciones } from '../../../context/DonacionesContext';
 import { getAllDonadoresRequest } from '../../../api/ApiDonador';
+import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
 
 const ModalDonacion = ({ onClose, item }) => {
     const { createDonacion, updateDonacion } = useDonaciones();
@@ -115,13 +116,16 @@ const ModalDonacion = ({ onClose, item }) => {
     
             if (item && item._id) {
                 await updateDonacion(item._id, { ...restData, donaciones: donacionesValidadas });
+                showToast('Donación actualizada correctamente.', 'success');
             } else {
                 await createDonacion({ ...restData, donaciones: donacionesValidadas });
+                showToast('Donación creada correctamente.', 'success');
             }
     
             onClose();
         } catch (error) {
             console.error('Error al guardar la donación:', error.response ? error.response.data : error.message);
+            showToast('Error al guardar la donación.', 'error');
         }
     };
 
@@ -131,7 +135,7 @@ const ModalDonacion = ({ onClose, item }) => {
     }));
 
     return (
-        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8">
+        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-8">
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Donación' : 'Agregar Donación'}</h2>
                 <div className="col-span-2">
@@ -211,28 +215,25 @@ const ModalDonacion = ({ onClose, item }) => {
                 >
                     Añadir otra Donación
                 </button>
-                </div >
-                        <div className="flex pt-2 justify-end space-x-4">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                            >
-                                Cancelar
-                            </button>
-
-                            <button
-                                type="submit"
-                                onClick={handleSubmit}
-                                className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                            >
-                                {item ? 'Actualizar' : 'Agregar'}
-                            </button>
-                        </div>
-            
+            </div>
+            <div className="flex pt-2 justify-end space-x-4">
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                >
+                    Cancelar
+                </button>
+                <button
+                    type="submit"
+                    onClick={handleSubmit}
+                    className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                >
+                    {item ? 'Actualizar' : 'Agregar'}
+                </button>
+            </div>
         </div>
     );
 };
 
 export default ModalDonacion;
-

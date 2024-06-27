@@ -124,29 +124,19 @@ const CRUDActividad = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead>
-                                <TableCell>Identificación</TableCell>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>Tarea</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
-                                        <TableCell label="Identificación">
-                                            <p className="text-black">{item.id_actividad}</p>
-                                        </TableCell>
                                         <TableCell label="Nombre">
                                             <p className="text-black">{item.nombre}</p>
                                         </TableCell>
                                         <TableCell label="Descripción">
                                             <p className="text-black">{item.descripcion}</p>
-                                        </TableCell>
-                                        <TableCell label="Tarea">
-                                            <p className="text-black">
-                                                {tareas.find(t => t._id === item.tarea)?.nombre || 'Desconocido'}
-                                            </p>
                                         </TableCell>
                                         <TableCell label="Estado">
                                             <Switch

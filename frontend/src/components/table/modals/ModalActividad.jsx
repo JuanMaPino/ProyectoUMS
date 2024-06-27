@@ -1,30 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { useActividades } from '../../../context/ActividadContext';
 import axios from 'axios';
-import { RiCloseLine } from 'react-icons/ri';
 
 const ModalActividad = ({ onClose, item }) => {
     const { createActividad, updateActividad, actividades } = useActividades();
     const [insumos, setInsumos] = useState([]);
     const [tareas, setTareas] = useState([]);
+    const [selectedTareas, setSelectedTareas] = useState([]);
+    const [selectedInsumos, setSelectedInsumos] = useState([]);
     const [formData, setFormData] = useState({
-        id_actividad: '',
         nombre: '',
         fecha: '',
         tipo: 'Recreativa',
         descripcion: '',
-        tarea: '',
-        insumo: '',
+        tarea: [],
+        insumo: [],
         estado: 'activo'
     });
 
     const [errors, setErrors] = useState({
-        id_actividad: '',
         nombre: '',
         fecha: '',
         descripcion: '',
-        tarea: '',
-        insumo: ''
+        tarea: [],
+        insumo: []
     });
 
     useEffect(() => {
@@ -56,8 +55,8 @@ const ModalActividad = ({ onClose, item }) => {
                 fecha: item.fecha || '',
                 tipo: item.tipo || 'Recreativa',
                 descripcion: item.descripcion || '',
-                tarea: item.tarea ? item.tarea._id : '',
-                insumo: item.insumo ? item.insumo._id : '',
+                tarea: item.tarea.map(t => t._id) || [],
+                insumo: item.insumo.map(i => i._id) || [],
                 estado: item.estado || 'activo',
             });
         } else {
@@ -67,8 +66,8 @@ const ModalActividad = ({ onClose, item }) => {
                 fecha: '',
                 tipo: 'Recreativa',
                 descripcion: '',
-                tarea: '',
-                insumo: '',
+                tarea: [],
+                insumo: [],
                 estado: 'activo'
             });
         }
@@ -92,7 +91,7 @@ const ModalActividad = ({ onClose, item }) => {
                     ...prevState,
                     [name]: 'La actividad ya existe.'
                 }));
-            } else if (/^\d{0,10}$/.test(value)) {
+            } else if (/^\d{5,10}$/.test(value)) {
                 setErrors(prevState => ({
                     ...prevState,
                     [name]: null
@@ -128,6 +127,24 @@ const ModalActividad = ({ onClose, item }) => {
         }));
     };
 
+    const handleTareaChange = (e) => {
+        const { value } = e.target;
+        setSelectedTareas(Array.from(value));
+        setFormData(prevState => ({
+            ...prevState,
+            tarea: Array.from(value)
+        }));
+    };
+
+    const handleInsumoChange = (e) => {
+        const { value } = e.target;
+        setSelectedInsumos(Array.from(value));
+        setFormData(prevState => ({
+            ...prevState,
+            insumo: Array.from(value)
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -137,8 +154,8 @@ const ModalActividad = ({ onClose, item }) => {
         if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
         if (!formData.fecha) validationErrors.fecha = 'Este campo es obligatorio';
         if (!formData.descripcion) validationErrors.descripcion = 'Este campo es obligatorio';
-        if (!formData.tarea) validationErrors.tarea = 'Este campo es obligatorio';
-        if (!formData.insumo) validationErrors.insumo = 'Este campo es obligatorio';
+        if (formData.tarea.length === 0) validationErrors.tarea = 'Seleccione al menos una tarea';
+        if (formData.insumo.length === 0) validationErrors.insumo = 'Seleccione al menos un insumo';
 
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
@@ -168,18 +185,6 @@ const ModalActividad = ({ onClose, item }) => {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-8">
                         <div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<p className="text-red-500 text-sm">*</p></label>
-                                <input
-                                    type="text"
-                                    name="id_actividad"
-                                    value={formData.id_actividad}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.id_actividad ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.id_actividad && <p className="text-red-500 text-sm mt-1">{errors.id_actividad}</p>}
-                            </div>
                             <div>
                                 <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<p className="text-red-500 text-sm">*</p></label>
                                 <input
@@ -231,15 +236,15 @@ const ModalActividad = ({ onClose, item }) => {
                                 {errors.descripcion && <p className="text-red-500 text-sm mt-1">{errors.descripcion}</p>}
                             </div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Tarea<p className="text-red-500 text-sm">*</p></label>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Tareas<p className="text-red-500 text-sm">*</p></label>
                                 <select
                                     name="tarea"
-                                    value={formData.tarea}
-                                    onChange={handleChange}
+                                    value={selectedTareas}
+                                    onChange={handleTareaChange}
+                                    multiple
                                     className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tarea ? 'border-red-500' : ''}`}
                                     required
                                 >
-                                    <option value="">Seleccionar tarea</option>
                                     {tareas.map((tarea) => (
                                         <option key={tarea._id} value={tarea._id}>{tarea.nombre}</option>
                                     ))}
@@ -247,15 +252,15 @@ const ModalActividad = ({ onClose, item }) => {
                                 {errors.tarea && <p className="text-red-500 text-sm mt-1">{errors.tarea}</p>}
                             </div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Insumo<p className="text-red-500 text-sm">*</p></label>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Insumos<p className="text-red-500 text-sm">*</p></label>
                                 <select
                                     name="insumo"
-                                    value={formData.insumo}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.insumo ? 'border-red-500' : ''}`}
+                                    value={selectedInsumos}
+                                    onChange={handleInsumoChange}
+                                    multiple
+                                    className={`shadow-sm mb-2 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.insumo ? 'border-red-500' : ''}`}
                                     required
                                 >
-                                    <option value="">Seleccionar insumo</option>
                                     {insumos.map((insumo) => (
                                         <option key={insumo._id} value={insumo._id}>{insumo.nombre}</option>
                                     ))}
