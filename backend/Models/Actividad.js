@@ -2,10 +2,7 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const actividadSchema = new Schema({
-  id_actividad: {
-    type: Number,
-    required: true
-  },
+
   nombre: {
     type: String,
     required: true,
@@ -27,11 +24,13 @@ const actividadSchema = new Schema({
 
   },
 
-  tarea: 
+  tarea:[
     { type: mongoose.Schema.Types.ObjectId, ref: 'Tarea'}
+  ]
   ,
-  insumo: 
+  insumo:[
     { type: mongoose.Schema.Types.ObjectId, ref: 'Insumo'}
+  ]
     ,
   estado: {
     type: String,
