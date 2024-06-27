@@ -17,6 +17,8 @@ import ViewFamiliar from '../components/table/views/ViewFamiliar'; // Importamos
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
+import { showAlert, show_alert } from '../components/table/alertFunctions'; // Importamos los componentes de alerta
+
 const CRUDTable = () => {
   const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
   const [filteredData, setFilteredData] = useState([]);
@@ -27,7 +29,7 @@ const CRUDTable = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchData();
@@ -64,17 +66,33 @@ const CRUDTable = () => {
     try {
       await updateBeneficiario(updatedItem._id, updatedItem);
       closeModal();
+      show_alert('Beneficiario actualizado exitosamente', 'success');
     } catch (error) {
       console.error('Error updating item:', error);
+      show_alert('Error al actualizar beneficiario', 'error');
     }
   };
 
-  const handleDeleteButtonClick = async (id) => {
-    try {
-      await deleteBeneficiario(id);
-    } catch (error) {
-      console.error('Error deleting item:', error);
-    }
+  const handleDeleteButtonClick = (id) => {
+    showAlert(
+      {
+        title: '¿Estás seguro?',
+        text: 'No podrás revertir esto',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      },
+      async () => {
+        try {
+          await deleteBeneficiario(id);
+          show_alert('Beneficiario eliminado exitosamente', 'success');
+        } catch (error) {
+          console.error('Error deleting item:', error);
+          show_alert('Error al eliminar beneficiario', 'error');
+        }
+      }
+    );
   };
 
   const handleViewButtonClick = (item) => {
@@ -123,13 +141,13 @@ const CRUDTable = () => {
 
   return (
     <div>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
-                <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
-                    <CreateButton onClick={handleCreateClick} />
-                </div>
-            </div>
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+        <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
+        <div className="flex items-center gap-2">
+          <SearchBar onSearch={handleSearch} />
+          <CreateButton onClick={handleCreateClick} />
+        </div>
+      </div>
       {filteredData.length === 0 ? (
         <p className="text-center">No hay registros disponibles</p>
       ) : (
@@ -163,9 +181,9 @@ const CRUDTable = () => {
                     <TableCell label="Familiares" className="pl-4"> {/* Ajustar padding */}
                       <button
                         onClick={() => handleFamiliaresButtonClick(item)}
-                        className="text-blue-500 hover:text-blue-700"
+                        className=" bg-blue-200 rounded-sm text-blue-500 hover:text-blue-700"
                       >
-                        Ver Familiares
+                        Detalles
                       </button>
                     </TableCell>
                     <TableCell label="Estado" className="pl-14"> {/* Ajustar padding */}

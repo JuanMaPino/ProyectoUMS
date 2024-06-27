@@ -1,4 +1,3 @@
-// CRUDAyudante.jsx
 import React, { useState, useEffect } from 'react';
 import { RiUserHeartFill, RiUserStarFill } from 'react-icons/ri'; // Importamos los iconos
 import { useAyudantes } from '../context/AyudantesContext';
@@ -16,6 +15,8 @@ import ViewModal from '../components/table/views/ViewAyudante';
 import CardAyudante from '../components/table/CardItems/CardAyudante';
 import FloatingButton from '../components/FloatingButton';
 import { RiDeleteBin6Line, RiEyeLine, RiPencilFill } from 'react-icons/ri';
+
+import { showAlert, show_alert } from '../components/table/alertFunctions';  // Importamos las funciones de alerta
 
 const CRUDAyudante = () => {
     const {
@@ -69,19 +70,28 @@ const CRUDAyudante = () => {
     };
 
     const handleCreateOrUpdate = async (item) => {
-        if (item._id) {
-            await updateAyudante(item._id, item);
-        } else {
-            await createAyudante(item);
+        try {
+            if (item._id) {
+                await updateAyudante(item._id, item);
+                show_alert('¡Ayudante actualizado correctamente!', 'success');
+            } else {
+                await createAyudante(item);
+                show_alert('¡Ayudante creado correctamente!', 'success');
+            }
+            closeModal();
+        } catch (error) {
+            console.error('Error creating/updating ayudante:', error);
+            show_alert('Error al guardar el ayudante. Inténtelo de nuevo más tarde.', 'error');
         }
-        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteAyudante(id);
+            show_alert('¡Ayudante eliminado correctamente!', 'success');
         } catch (error) {
             console.error('Error deleting ayudante:', error);
+            show_alert('Error al eliminar el ayudante. Inténtelo de nuevo más tarde.', 'error');
         }
     };
 
@@ -106,9 +116,15 @@ const CRUDAyudante = () => {
     };
 
     const handleRoleChange = async (id) => {
-        const updatedItem = ayudantes.find(item => item._id === id);
-        updatedItem.rol = updatedItem.rol === 'alfabetizador' ? 'voluntario' : 'alfabetizador';
-        await updateAyudante(id, updatedItem);
+        try {
+            const updatedItem = ayudantes.find(item => item._id === id);
+            updatedItem.rol = updatedItem.rol === 'alfabetizador' ? 'voluntario' : 'alfabetizador';
+            await updateAyudante(id, updatedItem);
+            show_alert('Rol del ayudante actualizado correctamente!', 'success');
+        } catch (error) {
+            console.error('Error changing role:', error);
+            show_alert('Error al cambiar el rol del ayudante. Inténtelo de nuevo más tarde.', 'error');
+        }
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;

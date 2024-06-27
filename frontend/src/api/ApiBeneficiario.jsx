@@ -9,4 +9,3 @@ export const getAllBeneficiariosRequest = () => axios.get(`${API}/`);
 export const disableBeneficiarioRequest = (id) => axios.patch(`${API}/${id}/estado`);
 export const getBeneficiarioByDocumentoRequest = (documento) => axios.get(`${API}/buscar/${documento}`);
 export const deleteBeneficiarioRequest = (id) => axios.delete(`${API}/${id}`);
-
