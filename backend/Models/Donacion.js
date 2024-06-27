@@ -11,16 +11,10 @@ const donacionSchema = new mongoose.Schema({
     required: true,
     enum:['Monetaria','Material']
   },
-  donacion: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  cantidad: {
-    type: Number,
-    required: true,
-    trim: true
-  },
+  donaciones: [{ 
+    nombre: { type: String, required: true, trim:true },
+    cantidad: { type: String, required: true,trim:true }
+  }],
   estado: {
     type: String,
     enum: ['activa', 'anulada'],

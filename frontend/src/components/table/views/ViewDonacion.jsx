@@ -17,14 +17,19 @@ const ViewDonacion = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Tipo:</span></label>
                     <p className="text-gray-800">{item.tipo}</p>
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Donación:</span></label>
-                    <p className="text-gray-800">{item.donacion}</p>
-                </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Cantidad:</span></label>
-                    <p className="text-gray-800">{item.cantidad}</p>
-                </div>
+                {/* Iterar sobre las donaciones */}
+                {item.donaciones.map((donacion, index) => (
+                    <React.Fragment key={index}>
+                        <div>
+                            <label className="block text-gray-700"><span className="font-semibold">Nombre de la Donación {index + 1}:</span></label>
+                            <p className="text-gray-800">{donacion.nombre}</p>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700"><span className="font-semibold">Cantidad de la Donación {index + 1}:</span></label>
+                            <p className="text-gray-800">{donacion.cantidad}</p>
+                        </div>
+                    </React.Fragment>
+                ))}
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre del Donador:</span></label>
                     <p className="text-gray-800">{item.donadorNombre}</p>
