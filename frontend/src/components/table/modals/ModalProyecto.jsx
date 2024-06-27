@@ -8,11 +8,12 @@ const ModalProyecto = ({ onClose, item }) => {
     const [formData, setFormData] = useState({
         nombre: '',
         descripcion: '',
-        fechaInicio: '',
-        fechaFin: '',
+        fechaInicio: item ? item.fechaInicio : '', // Establecer un valor predeterminado
+        fechaFin: item ? item.fechaFin : '', // Establecer un valor predeterminado
         estado: 'activo',
-        tipoActividad: ''  // Nuevo campo para el tipo de actividad
-    });
+        tipoActividad: '',
+        direccion: ''
+      });
 
     useEffect(() => {
         if (item) {
@@ -22,7 +23,8 @@ const ModalProyecto = ({ onClose, item }) => {
                 fechaInicio: item.fechaInicio ? new Date(item.fechaInicio).toISOString().substring(0, 10) : '',
                 fechaFin: item.fechaFin ? new Date(item.fechaFin).toISOString().substring(0, 10) : '',
                 estado: item.estado || 'activo',
-                tipoActividad: item.tipoActividad || ''  // Asignar el tipo de actividad si existe en el item
+                tipoActividad: item.tipoActividad || '',  // Asignar el tipo de actividad si existe en el item
+                direccion:item.direccion || ''
             });
         } else {
             setFormData({
@@ -31,7 +33,8 @@ const ModalProyecto = ({ onClose, item }) => {
                 fechaInicio: '',
                 fechaFin: '',
                 estado: 'activo',
-                tipoActividad: ''  // Inicializar el tipo de actividad en blanco para nuevos proyectos
+                tipoActividad: '',
+                direccion:''  // Inicializar el tipo de actividad en blanco para nuevos proyectos
             });
         }
     }, [item]);
@@ -123,6 +126,17 @@ const ModalProyecto = ({ onClose, item }) => {
                                 type="date"
                                 name="fechaFin"
                                 value={formData.fechaFin}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
+                            <input
+                                type="text"
+                                name="direccion"
+                                value={formData.direccion}
                                 onChange={handleChange}
                                 className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 required

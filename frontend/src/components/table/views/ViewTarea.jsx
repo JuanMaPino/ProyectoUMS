@@ -33,7 +33,7 @@ const ViewTarea = ({ onClose, item }) => {
             <div className="flex justify-center mt-6">
                 <button
                     onClick={onClose}
-                    className="bg-gradient-to-tr from-yellow-400 from-10% to-orange-600 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
+                    className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
                 >
                     Cerrar
                 </button>
