@@ -23,9 +23,9 @@ export function showAlert(options, onConfirm, onCancel) {
     });
 }
 
-export function show_alert(message, icon, focus = '') {
+export function showToast(message, icon, focus = '') {
     if (!message) return;
-    onfocus(focus);
+    focusOnElement(focus);
     const toast = MySwal.mixin({
         toast: true,
         position: 'top-end',
@@ -41,16 +41,20 @@ export function show_alert(message, icon, focus = '') {
     });
 }
 
-function onfocus(focus) {
+function focusOnElement(focus) {
     if (focus !== '') {
-        document.getElementById(focus).focus();
+        const element = document.getElementById(focus);
+        if (element) {
+            element.focus();
+        }
     }
 }
+
 
 const style = document.createElement('style');
 style.innerHTML = `
     .swal2-custom-popup {
-        background-color: #1E1F25 !important;
+        background-color: #E1E3EB !important;
         color: black !important;
     }
     .swal2-title,
@@ -58,12 +62,12 @@ style.innerHTML = `
         color: black !important;
     }
     .swal2-confirm {
-        background-color: #00aa4d !important;
+        background-color: #E1E3EB !important;
         color: black !important;
         border: none !important;
     }
     .swal2-cancel {
-        background-color: #ef4444 !important;
+        background-color: #E1E3EB !important;
         color: black !important;
         border: none !important;
     }
@@ -74,4 +78,4 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-export default show_alert;
+export default showToast;

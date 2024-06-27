@@ -10,7 +10,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
                 onClick={() => onPageChange(currentPage - 1)}
                 disabled={currentPage === 1}
                 className={classNames("px-4 py-2 shadow-inner rounded-lg mx-1", {
-                    "bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300": currentPage !== 1,
+                    "bg-gradient-to-tr from-indigo-200 to-indigo-500 hover:from-indigo-300": currentPage !== 1,
                     "bg-gray-300 cursor-not-allowed": currentPage === 1
                 })}
             >
@@ -21,8 +21,8 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
                     key={index}
                     onClick={() => onPageChange(index + 1)}
                     className={classNames("px-4 py-2 rounded-lg mx-1", {
-                        "shadow-inner bg-gradient-to-l from-blue-200 to-blue-500 hover:from-blue-300 text-black": currentPage === index + 1,
-                        "bg-secondary-100": currentPage !== index + 1
+                        "shadow-inner bg-gradient-to-l from-indigo-200 to-indigo-500 hover:from-indigo-300 text-black": currentPage === index + 1,
+                        "bg-secondary-100 bg-indigo-100": currentPage !== index + 1
                     })}
                 >
                     {index + 1}
@@ -32,7 +32,7 @@ const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => 
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className={classNames("px-4 py-2 shadow-inner rounded-lg mx-1", {
-                    "bg-gradient-to-tl from-blue-200 to-blue-500 hover:from-blue-300": currentPage !== totalPages,
+                    "bg-gradient-to-tl from-indigo-200 to-indigo-500 hover:from-indigo-300": currentPage !== totalPages,
                     "bg-gray-300 cursor-not-allowed": currentPage === totalPages
                 })}
             >

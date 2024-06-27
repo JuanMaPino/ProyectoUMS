@@ -37,11 +37,15 @@ const ViewDonador = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className="text-gray-800">{item.estado}</p>
                 </div>
+                <div>
+                    <label className="block text-gray-700"><span className="font-semibold">Contacto:</span></label>
+                    <p className="text-gray-800">{item.contacto}</p>
+                </div>
             </div>
             <div className="mt-6 flex justify-center">
                 <button
                     onClick={onClose}
-                    className="bg-gradient-to-tr from-yellow-400 from-10% to-orange-600 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
+                    className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
                 >
                     Cerrar
                 </button>

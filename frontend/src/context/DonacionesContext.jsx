@@ -5,7 +5,6 @@ import {
     anularDonacionRequest,
     getAllDonacionesRequest,
     getDonacionByIdRequest
-    // Agrega aquí las importaciones de las funciones de API necesarias
 } from '../api/ApiDonacion'; // Ajusta la ruta según la estructura de tu proyecto
 
 export const DonacionesContext = createContext();
@@ -26,11 +25,14 @@ export const DonacionesProvider = ({ children }) => {
     // Función para crear una nueva donación
     const createDonacion = async (donacion) => {
         try {
-            const res = await createDonacionRequest(donacion); // Implementa esta función en tu API
+            console.log("Datos a enviar:", donacion);
+            const res = await createDonacionRequest(donacion);
+
             setDonaciones([...donaciones, res.data]);
-            return { success: true };
+            return { success: false };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
+            console.error("Error al crear donacion:", error.response?.data || error.message);
             setErrors([errorMessage]);
             return { success: false, error: errorMessage };
         }
@@ -39,43 +41,46 @@ export const DonacionesProvider = ({ children }) => {
     // Función para actualizar una donación existente
     const updateDonacion = async (id, donacion) => {
         try {
-            const res = await updateDonacionRequest(id, donacion); // Implementa esta función en tu API
+            const res = await updateDonacionRequest(id, donacion);
             setDonaciones(donaciones.map(d => d._id === id ? res.data : d));
         } catch (error) {
-            setErrors(error.response.data);
+            const errorMessage = error.response?.data?.message || 'An error occurred';
+            setErrors([errorMessage]);
         }
     };
 
+    // Función para obtener una donación por su ID
     const getDonacionById = async (id) => {
         try {
             const res = await getDonacionByIdRequest(id);
             setSelectedDonacion(res.data);
         } catch (error) {
-            setErrors(error.response.data);
+            const errorMessage = error.response?.data?.message || 'An error occurred';
+            setErrors([errorMessage]);
         }
     };
 
-
+    // Función para anular una donación
     const anularDonacion = async (id) => {
         try {
             const res = await anularDonacionRequest(id);
-            setDonaciones(donacines.map(d => d._id === id ? res.data : d));
-            handleResponse(res)
+            setDonaciones(donaciones.map(d => d._id === id ? res.data : d));
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
+            const errorMessage = error.response?.data?.message || 'An error occurred';
             setErrors([errorMessage]);
-            handleError(error)
             return { success: false, error: errorMessage };
         }
     };
 
+    // Función para obtener todas las donaciones
     const getAllDonaciones = async () => {
         try {
-            const res = await getAllDonacionesRequest(); // Implementa esta función en tu API
+            const res = await getAllDonacionesRequest();
             setDonaciones(res.data);
         } catch (error) {
-            setErrors(error.response.data);
+            const errorMessage = error.response?.data?.message || 'An error occurred';
+            setErrors([errorMessage]);
         }
     };
 
@@ -97,6 +102,7 @@ export const DonacionesProvider = ({ children }) => {
             createDonacion,
             updateDonacion,
             anularDonacion,
+            getDonacionById,
             getAllDonaciones,
             donaciones,
             selectedDonacion,

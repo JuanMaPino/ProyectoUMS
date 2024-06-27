@@ -17,14 +17,19 @@ const ViewDonacion = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Tipo:</span></label>
                     <p className="text-gray-800">{item.tipo}</p>
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Donación:</span></label>
-                    <p className="text-gray-800">{item.donacion}</p>
-                </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Cantidad:</span></label>
-                    <p className="text-gray-800">{item.cantidad}</p>
-                </div>
+                {/* Iterar sobre las donaciones */}
+                {item.donaciones.map((donacion, index) => (
+                    <React.Fragment key={index}>
+                        <div>
+                            <label className="block text-gray-700"><span className="font-semibold">Nombre de la Donación {index + 1}:</span></label>
+                            <p className="text-gray-800">{donacion.nombre}</p>
+                        </div>
+                        <div>
+                            <label className="block text-gray-700"><span className="font-semibold">Cantidad de la Donación {index + 1}:</span></label>
+                            <p className="text-gray-800">{donacion.cantidad}</p>
+                        </div>
+                    </React.Fragment>
+                ))}
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre del Donador:</span></label>
                     <p className="text-gray-800">{item.donadorNombre}</p>
@@ -33,7 +38,7 @@ const ViewDonacion = ({ onClose, item }) => {
             <div className="mt-6 flex justify-center">
                 <button
                     onClick={onClose}
-                    className="bg-gradient-to-tr from-yellow-400 from-10% to-orange-600 hover:from-yellow-600 hover:to-orange-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
+                    className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
                 >
                     Cerrar
                 </button>
@@ -43,3 +48,4 @@ const ViewDonacion = ({ onClose, item }) => {
 };
 
 export default ViewDonacion;
+

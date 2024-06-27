@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { RiEyeLine , RiDeleteBin6Line} from 'react-icons/ri';
+import Select from 'react-select';
+import { RiEyeLine, RiDeleteBin6Line } from 'react-icons/ri';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
@@ -12,6 +14,7 @@ import FormModal from '../components/table/modals/ModalDonacion';
 import ViewModal from '../components/table/views/ViewDonacion';
 import CardDonacion from '../components/table/CardItems/CardDonacion';
 import FloatingButton from '../components/FloatingButton';
+import { showToast } from '../components/table/alertFunctions'; // Ajusta la ruta según tu estructura
 
 import { useDonaciones } from '../context/DonacionesContext';
 import { useDonadores } from '../context/DonadoresContext';
@@ -33,7 +36,7 @@ const CRUDDonaciones = () => {
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const itemsPerPage = 6;
+    const itemsPerPage = 10;
 
     useEffect(() => {
         getAllDonaciones();
@@ -52,8 +55,8 @@ const CRUDDonaciones = () => {
         const filtered = combinedData.filter(item =>
             item.fecha.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.donacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||// Busca también en el nombre del donador
-            item.donadorIdentificacion.toString().includes(searchTerm) 
+            item.donadorNombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.donadorIdentificacion.toString().includes(searchTerm)
         );
         setFilteredData(filtered);
         setCurrentPage(1); // Reset to first page on new search
@@ -69,19 +72,34 @@ const CRUDDonaciones = () => {
     };
 
     const handleCreateOrUpdate = async (item) => {
-        if (item._id) {
-            await updateDonacion(item._id, item);
-        } else {
-            await createDonacion(item);
+        try {
+            if (item._id) {
+                await updateDonacion(item._id, item);
+                showToast('Donación actualizada exitosamente.', 'success');
+            } else {
+                await createDonacion(item);
+                showToast('Donación creada exitosamente.', 'success');
+            }
+            closeModal();
+        } catch (error) {
+            console.error('Error al guardar la donación:', error.response ? error.response.data : error.message);
+            showToast('Error al guardar la donación.', 'error');
         }
-        closeModal();
     };
 
-    const handleDeleteButtonClick = async (id) => {
+    const handleAnularButtonClick = async (id) => {
         try {
-            await deleteDonacion(id);
+            const item = donaciones.find(item => item._id === id);
+            if (item) {
+                await anularDonacion(id);
+                showToast('Donación anulada exitosamente.', 'success');
+            } else {
+                console.error('Error al anular donación: No se encontró la donación.');
+                showToast('Error al anular la donación.', 'error');
+            }
         } catch (error) {
-            console.error('Error deleting donacion:', error);
+            console.error('Error al anular donación:', error);
+            showToast('Error al anular la donación.', 'error');
         }
     };
 
@@ -127,8 +145,6 @@ const CRUDDonaciones = () => {
                                 <TableCell>Donador</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Tipo</TableCell>
-                                <TableCell>Insumo</TableCell>
-                                <TableCell>Cantidad</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
@@ -140,26 +156,22 @@ const CRUDDonaciones = () => {
                                     >
                                         <TableCell label="Donador">
                                             <div>
-                                            <p className=" text-black">{item.donadorNombre}</p>
+                                                <p className=" text-black">{item.donadorNombre}</p>
                                                 <p className="text-xs text-black">{item.donadorIdentificacion.toString().substring(0, 12)}</p>
                                             </div>
                                         </TableCell>
                                         <TableCell>{item.fecha}</TableCell>
                                         <TableCell>{item.tipo}</TableCell>
-                                        <TableCell>{item.donacion}</TableCell>
-                                        <TableCell>{item.cantidad}</TableCell>
                                         <TableCell>
                                             <div className="flex gap-2">
+                                                <TableActions
+                                                    item={item}
+                                                    handleViewButtonClick={handleViewButtonClick}
+                                                />
                                                 <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
-                                                <button
-                                                  name="estado"
-                                                  checked={item.estado === 'activa'}
-                                                   onChange={() => handleSwitchChange(item._id)} 
+                                                    name="estado"
+                                                    checked={item.estado === 'activa'}
+                                                    onChange={() => handleAnularButtonClick(item._id)}
                                                     className={`rounded-lg transition-colors text-white bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
                                                 >
                                                     <RiDeleteBin6Line />
