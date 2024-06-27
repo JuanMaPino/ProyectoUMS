@@ -16,6 +16,7 @@ import ViewFamiliar from '../components/table/views/ViewFamiliar'; // Importamos
 
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
+import TableActions from '../components/table/TableActions';
 
 const CRUDTable = () => {
   const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
@@ -27,7 +28,7 @@ const CRUDTable = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     fetchData();
@@ -126,8 +127,9 @@ const CRUDTable = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
                 <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
-                    <CreateButton onClick={handleCreateClick} />
+                     <CreateButton onClick={handleCreateClick} />
+                     <SearchBar onSearch={handleSearch} />
+                   
                 </div>
             </div>
       {filteredData.length === 0 ? (
@@ -177,26 +179,12 @@ const CRUDTable = () => {
                     </TableCell>
                     <TableCell label="Acciones" className="pl-10"> {/* Ajustar padding */}
                       <div className="flex gap-1 mr-3">
-                        <button
-                          onClick={() => handleViewButtonClick(item)}
-                          className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                        >
-                          <RiEyeLine />
-                        </button>
-                        <button
-                          onClick={() => handleEditButtonClick(item)}
-                          className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                          disabled={item.estado !== 'activo'}
-                        >
-                          <RiPencilFill />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteButtonClick(item._id)}
-                          className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                          disabled={item.estado !== 'activo'}
-                        >
-                          <RiDeleteBin6Line />
-                        </button>
+                        <TableActions
+                        item={item}
+                        handleViewButtonClick={handleViewButtonClick}
+                        handleEditButtonClick={handleEditButtonClick}
+                        handleDeleteButtonClick={handleDeleteButtonClick}
+                        />
                       </div>
                     </TableCell>
                   </TableRow>

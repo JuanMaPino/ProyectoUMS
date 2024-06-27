@@ -7,6 +7,7 @@ import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
@@ -141,25 +142,10 @@ const CRUDAyudante = () => {
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'}>
                                          <TableCell label="Rol">
-                                            <button
-                                                onClick={() => handleRoleChange(item._id)}
-                                                className={`flex items-center rounded-full p-2 transition-colors ${
-                                                    item.rol === 'alfabetizador' ? 'bg-blue-400 text-white hover:bg-blue-500' : 'bg-indigo-400 text-white hover:bg-indigo-500'
-                                                }`}
-                                                disabled={item.estado !== 'activo'}
-                                            >
-                                                {item.rol === 'alfabetizador' ? (
-                                                    <>
-                                                        <RiUserHeartFill size={20} />
-                                                        <span className="ml-2">A</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <RiUserStarFill size={20} />
-                                                        <span className="ml-2">V</span>
-                                                    </>
-                                                )}
-                                            </button>
+                                           <TableActions
+                                           item={item}
+                                           handleRoleChange={handleRoleChange}
+                                           />
                                         </TableCell>
 
                                         <TableCell label="Identificación">
@@ -186,26 +172,12 @@ const CRUDAyudante = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
-                                                <button
-                                                    onClick={() => handleViewButtonClick(item)}
-                                                    className="rounded-lg transition-colors text-white bg-gradient-to-r from-cyan-200 from-10% to-cyan-600 hover:from-cyan-400 hover:to-cyan-600 p-2"
-                                                >
-                                                    <RiEyeLine />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditButtonClick(item)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-violet-500 to-blue-600 hover:from-violet-700 hover:to-blue-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiPencilFill className="transform hover:animate-spin360" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                    disabled={item.estado !== 'activo'}
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
+                                                <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                handleEditButtonClick={handleEditButtonClick}
+                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                />
                                             </div>
                                         </TableCell>
 

@@ -5,13 +5,13 @@ const TableRow = ({ children, isActive, className, isMonetario, tipo, ...props }
     let rowClass;
     
     if (isMonetario) {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-200  shadow-inner";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-100  shadow-inner";
     } else if (tipo === 'Material') {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-200  shadow-inner";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-100  shadow-inner";
     } else if (isActive) {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-200  shadow-inner";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-indigo-100  shadow-inner";
     } else {
-        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-red-100 shadow-inner";
+        rowClass = "bg-gradient-to-r from-gray-200 from-40% to-red-50 shadow-inner";
     }
 
     return (

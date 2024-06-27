@@ -14,7 +14,7 @@ const insumoSchema = new mongoose.Schema({
   cantidad: {
     type: Number,
     default: 0
-  },
+  }, 
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],
