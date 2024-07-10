@@ -219,7 +219,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         />
                         {errors.direccion && <p className="text-red-500 text-sm mt-1">{errors.direccion}</p>}
                     </div>
-                    <div>
+                    <div className="sm:col-span-2">
                         <label className="block text-gray-700 text-sm font-medium mb-2">Correo Electrónico</label>
                         <input
                             type="email"
@@ -230,7 +230,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         />
                         {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
                     </div>
-                    <div>
+                    <div className='sm:col-span-2'>
                         <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
                         <input
                             type="text"
@@ -242,23 +242,17 @@ const ModalAyudante = ({ onClose, item }) => {
                         />
                         {errors.institucion && <p className="text-red-500 text-sm mt-1">{errors.institucion}</p>}
                     </div>
-                    <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Estado</label>
-                        <select
-                            name="estado"
-                            value={formData.estado}
-                            onChange={handleChange}
-                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                            required
-                        >
-                            <option value="activo">Activo</option>
-                            <option value="inactivo">Inactivo</option>
-                        </select>
-                    </div>
                     <div className="sm:col-span-2">
-                        <div className="flex justify-center mt-6">
-                            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        <div className="flex flex-col justify-center mt-6">
+                            <button type="submit" className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
                                 {item ? 'Actualizar Ayudante' : 'Agregar Ayudante'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
+                            >
+                                Cancelar
                             </button>
                         </div>
                     </div>

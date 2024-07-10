@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBeneficiarios } from '../../../context/BeneficiariosContext';
 import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
-import { show_alert } from '../alertFunctions'; // Asegúrate de importar correctamente la función show_alert
+import { showAlert } from '../alertFunctions'; // Asegúrate de importar correctamente la función show_alert
 
 const ModalBeneficiario = ({ onClose, item }) => {
     const { createBeneficiario, updateBeneficiario } = useBeneficiarios();
@@ -119,15 +119,15 @@ const ModalBeneficiario = ({ onClose, item }) => {
         try {
             if (item && item._id) {
                 await updateBeneficiario(item._id, formData);
-                show_alert('Beneficiario actualizado exitosamente', 'success'); // Mostrar alerta de éxito al actualizar
+                showAlert('Beneficiario actualizado exitosamente', 'success'); // Mostrar alerta de éxito al actualizar
             } else {
                 await createBeneficiario(formData);
-                show_alert('Beneficiario creado exitosamente', 'success'); // Mostrar alerta de éxito al crear
+                showAlert('Beneficiario creado exitosamente', 'success'); // Mostrar alerta de éxito al crear
             }
             onClose();
         } catch (error) {
             console.error('Error al guardar el beneficiario:', error.response ? error.response.data : error.message);
-            show_alert('Error al guardar el beneficiario', 'error'); // Mostrar alerta de error
+            showAlert('Error al guardar el beneficiario', 'error'); // Mostrar alerta de error
         }
     };
 

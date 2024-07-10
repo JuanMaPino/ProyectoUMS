@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTareas } from '../../../context/TareasContext';
 import axios from 'axios';
 import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
+import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
 
 const ModalTarea = ({ onClose, item }) => {
     const { createTarea, updateTarea } = useTareas();
@@ -13,20 +14,14 @@ const ModalTarea = ({ onClose, item }) => {
         estado: 'activo',
         ayudantes: []
     });
-    const [ayudantesList, setAyudantesList] = useState([]);
-    const [errors, setErrors] = useState({
-        nombre: '',
-        accion: '',
-        cantidadHoras: '',
-        fecha: '',
-        ayudantes: ''
-    });
+    const [ayudantesDisponibles, setAyudantesDisponibles] = useState([]);
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchAyudantes = async () => {
             try {
                 const response = await axios.get('http://localhost:3002/ayudantes');
-                setAyudantesList(response.data);
+                setAyudantesDisponibles(response.data);
             } catch (error) {
                 console.error('Error fetching ayudantes:', error.message);
             }
@@ -39,37 +34,61 @@ const ModalTarea = ({ onClose, item }) => {
                 nombre: item.nombre || '',
                 accion: item.accion || '',
                 cantidadHoras: item.cantidadHoras || '',
-                fecha: item.fecha || '',
+                fecha: item.fecha ? item.fecha.split('T')[0] : '',
                 estado: item.estado || 'activo',
-                ayudantes: item.ayudantes ? item.ayudantes.map(a => ({
-                    _id: a._id || '',
-                    nombre: a.nombre || '',
-                    rol: a.rol || ''
+                ayudantes: item.ayudantes ? item.ayudantes.map(ayudante => ({
+                    _id: ayudante._id || '',
+                    nombre: ayudante.nombre || '',
+                    rol: ayudante.rol || ''
                 })) : []
             });
         }
     }, [item]);
 
-    const handleAyudanteChange = (e, index) => {
-        const ayudanteId = e.target.value;
-        const selectedAyudante = ayudantesList.find(a => a._id === ayudanteId);
-        const updatedAyudantes = [...formData.ayudantes];
-        updatedAyudantes[index] = {
-            _id: ayudanteId,
-            nombre: selectedAyudante ? selectedAyudante.nombre : '',
-            rol: selectedAyudante ? selectedAyudante.rol : ''
-        };
-        setFormData(prevState => ({
-            ...prevState,
-            ayudantes: updatedAyudantes
-        }));
-        validateField('ayudantes', updatedAyudantes);
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
         validateField(name, value);
+    };
+
+    const handleAyudanteChange = (e, index) => {
+        const { name, value } = e.target;
+        const selectedAyudante = ayudantesDisponibles.find(a => a._id === value);
+    
+        // Creamos una copia del array de ayudantes
+        const updatedAyudantes = formData.ayudantes.map((ayudante, i) => {
+            if (i === index) {
+                return {
+                    ...ayudante,
+                    _id: selectedAyudante ? selectedAyudante._id : '',
+                    nombre: selectedAyudante ? selectedAyudante.nombre : '',
+                    rol: selectedAyudante ? selectedAyudante.rol : ''
+                };
+            }
+            return ayudante;
+        });
+    
+        // Actualizamos el estado con la nueva copia del array
+        setFormData(prevState => ({
+            ...prevState,
+            ayudantes: updatedAyudantes
+        }));
+    
+        validateField('ayudante', value);
+    };
+    
+
+    const addAyudante = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            ayudantes: [...prevState.ayudantes, { _id: '', nombre: '', rol: '' }]
+        }));
+    };
+
+    const removeAyudante = (index) => {
+        const updatedAyudantes = [...formData.ayudantes];
+        updatedAyudantes.splice(index, 1);
+        setFormData(prevState => ({ ...prevState, ayudantes: updatedAyudantes }));
     };
 
     const validateField = (name, value) => {
@@ -92,13 +111,13 @@ const ModalTarea = ({ onClose, item }) => {
                                 '';
                 break;
             case 'fecha':
-                const today = new Date().toISOString().split('T')[0]; // Obtener la fecha actual en formato YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
                 errorMessage = !value ? 'La fecha es obligatoria' :
                     value < today ? 'La fecha no puede estar en el pasado' :
                         '';
                 break;
-            case 'ayudantes':
-                errorMessage = value.length === 0 ? 'Debe agregar al menos un ayudante' : '';
+            case 'ayudante':
+                errorMessage = !value ? 'Debe seleccionar un ayudante' : '';
                 break;
             default:
                 break;
@@ -110,153 +129,141 @@ const ModalTarea = ({ onClose, item }) => {
         }));
     };
 
-    const addAyudante = () => {
-        setFormData(prevState => ({
-            ...prevState,
-            ayudantes: [...prevState.ayudantes, { _id: '', nombre: '', rol: '' }]
-        }));
-    };
-
-    const removeAyudante = (index) => {
-        const updatedAyudantes = [...formData.ayudantes];
-        updatedAyudantes.splice(index, 1);
-        setFormData(prevState => ({ ...prevState, ayudantes: updatedAyudantes }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        // Validar todos los campos antes de enviar
+    
         const formIsValid = Object.keys(formData).every(key => {
             validateField(key, formData[key]);
             return !errors[key];
         });
-
+    
         if (formIsValid) {
             try {
                 if (item && item._id) {
                     await updateTarea(item._id, formData);
+                    showToast('Tarea actualizada correctamente.', 'success');
                 } else {
+                    console.log('Datos ENVIADOS:', formData); // Verifica los datos en la consola
                     await createTarea(formData);
+                    showToast('Tarea creada correctamente.', 'success');
                 }
                 onClose();
             } catch (error) {
                 console.error('Error saving task:', error.message);
+                showToast('Error al guardar la tarea.', 'error');
             }
         }
     };
+    
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
-            <div className="p-8">
+        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
+            <div className="grid grid-cols-2 gap-8">
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Tarea' : 'Agregar Tarea'}</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="flex space-x-8">
-                        <div className="w-1/2">
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
-                                <input
-                                    type="text"
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.nombre && <p className="text-red-500 text-xs italic">{errors.nombre}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Acción</label>
-                                <input
-                                    type="text"
-                                    name="accion"
-                                    value={formData.accion}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.accion ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.accion && <p className="text-red-500 text-xs italic">{errors.accion}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Horas</label>
-                                <input
-                                    type="number"
-                                    name="cantidadHoras"
-                                    value={formData.cantidadHoras}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadHoras ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.cantidadHoras && <p className="text-red-500 text-xs italic">{errors.cantidadHoras}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Fecha</label>
-                                <input
-                                    type="date"
-                                    name="fecha"
-                                    value={formData.fecha}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.fecha && <p className="text-red-500 text-xs italic">{errors.fecha}</p>}
-                            </div>
-                        </div>
-                        <div className="w-1/2">
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Ayudantes</label>
-                            {formData.ayudantes.map((ayudante, index) => (
-                                <div key={index} className="border rounded p-4 mb-4">
-                                    <div>
-                                        <select
-                                            name="ayudante"
-                                            value={ayudante._id}
-                                            onChange={(e) => handleAyudanteChange(e, index)}
-                                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.ayudantes ? 'border-red-500' : ''}`}
-                                            required
-                                        >
-                                            <option value="">Seleccionar Ayudante</option>
-                                            {ayudantesList.map(a => (
-                                                <option key={a._id} value={a._id}>
-                                                    {a.identificacion} - {a.nombre}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                <div className="col-span-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Nombre <span className="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleChange}
+                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
+                        required
+                    />
+                    {errors.nombre && <p className="text-red-500 text-xs italic">{errors.nombre}</p>}
+                </div>
+                <div className="col-span-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Acción <span className="text-red-500">*</span></label>
+                    <input
+                        type="text"
+                        name="accion"
+                        value={formData.accion}
+                        onChange={handleChange}
+                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.accion ? 'border-red-500' : ''}`}
+                        required
+                    />
+                    {errors.accion && <p className="text-red-500 text-xs italic">{errors.accion}</p>}
+                </div>
+                <div className="col-span-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Cantidad de Horas <span className="text-red-500">*</span></label>
+                    <input
+                        type="number"
+                        name="cantidadHoras"
+                        value={formData.cantidadHoras}
+                        onChange={handleChange}
+                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.cantidadHoras ? 'border-red-500' : ''}`}
+                        required
+                    />
+                    {errors.cantidadHoras && <p className="text-red-500 text-xs italic">{errors.cantidadHoras}</p>}
+                </div>
+                <div className="col-span-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Fecha <span className="text-red-500">*</span></label>
+                    <input
+                        type="date"
+                        name="fecha"
+                        value={formData.fecha}
+                        onChange={handleChange}
+                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
+                        required
+                    />
+                    {errors.fecha && <p className="text-red-500 text-xs italic">{errors.fecha}</p>}
+                </div>
+                <div className="col-span-2">
+                    <label className="block text-gray-700 text-sm font-medium mb-2">Ayudantes</label>
+                    {formData.ayudantes && formData.ayudantes.map((ayudante, index) => (
+                        <div key={index} className="border rounded p-4 mb-4">
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label className="block text-gray-700 text-sm font-medium mb-2">Ayudante</label>
+                                    <select
+                                        name="ayudante"
+                                        value={ayudante._id}
+                                        onChange={(e) => handleAyudanteChange(e, index)}
+                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                    >
+                                        <option value="">Seleccionar Ayudante</option>
+                                        {ayudantesDisponibles.map(a => (
+                                            <option key={a._id} value={a._id}>{a.nombre} - {a.rol}</option>
+                                        ))}
+                                    </select>
+                                    {errors.ayudante && <p className="text-red-500 text-xs italic">{errors.ayudante}</p>}
+                                </div>
+                                <div className="flex items-center justify-end">
                                     <button
                                         type="button"
-                                        className="text-red-500 mt-2 flex items-center"
                                         onClick={() => removeAyudante(index)}
+                                        className="bg-red-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                                     >
-                                        <RiDeleteBin6Line className="mr-2" /> Eliminar Ayudante
+                                        <RiDeleteBin6Line />
                                     </button>
                                 </div>
-                            ))}
-                            {errors.ayudantes && <p className="text-red-500 text-xs italic">{errors.ayudantes}</p>}
-                            <button
-                                type="button"
-                                className="text-blue-500 mt-4 flex items-center"
-                                onClick={addAyudante}
-                            >
-                                <RiAddCircleLine className="mr-2" /> Agregar Ayudante
-                            </button>
+                            </div>
                         </div>
-                    </div>
-                    <div className="flex justify-end space-x-4 mt-8">
-                        <button
-                            type="button"
-                            className="bg-gray-300 text-gray-800 py-2 px-4 rounded hover:bg-gray-400 focus:outline-none"
-                            onClick={onClose}
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none"
-                        >
-                            {item ? 'Actualizar Tarea' : 'Guardar Tarea'}
-                        </button>
-                    </div>
-                </form>
+                    ))}
+                    <button
+                        type="button"
+                        onClick={addAyudante}
+                        className="bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    >
+                        <RiAddCircleLine className="inline-block mr-2" /> Agregar Ayudante
+                    </button>
+                </div>
+                <div className="col-span-2 flex justify-end space-x-4">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                    >
+                        Cancelar
+                    </button>
+                    <button
+                        type="submit"
+                        onClick={handleSubmit}
+                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                    >
+                        {item ? 'Actualizar' : 'Agregar'}
+                    </button>
+                </div>
             </div>
         </div>
     );
