@@ -33,6 +33,7 @@ export const TareaProvider = ({ children }) => {
     // Función para crear una tarea
     const createTarea = async (data) => {
         try {
+            console.log("Datos a enviar", data)
             const capitalizedData = capitalizeTareaData(data);
             const response = await createTareaRequest(capitalizedData);
             setTareas([...tareas, response.data]);
@@ -91,7 +92,7 @@ export const TareaProvider = ({ children }) => {
 
     const capitalizeTareaData = (data) => {
         const capitalizedAccion = data.accion.charAt(0).toUpperCase() + data.accion.slice(1).toLowerCase();
-        return { ...data, accion: capitalizedNombre };
+        return { ...data, accion: capitalizedAccion };
     };
 
     return (

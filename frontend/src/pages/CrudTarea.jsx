@@ -132,7 +132,7 @@ const CRUDTarea = () => {
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Acción</TableCell>
                                 <TableCell>Fecha</TableCell>
-                                <TableCell>Ayudante</TableCell>
+                                {/* <TableCell>Ayudante</TableCell> */}
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
@@ -154,13 +154,13 @@ const CRUDTarea = () => {
                                                 <p className="text-black">{item.fecha}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Ayudante">
+                                        {/* <TableCell label="Ayudante">
                                             <div>
                                                 <p className="text-black">
                                                     {item.ayudanteNombre} ({item.ayudanteIdentificacion})
                                                 </p>
                                             </div>
-                                        </TableCell>
+                                        </TableCell> */}
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"

@@ -6,14 +6,15 @@ import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
 import TableCell from '../components/table/TableCell';
+import TableActions from '../components/table/TableActions';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import FormModal from '../components/table/modals/ModalBeneficiario';
 import ViewModal from '../components/table/views/ViewBeneficiario';
-import ViewFamiliar from '../components/table/views/ViewFamiliar'; // Importamos el componente ViewFamiliar
-
+import ViewFamiliar from '../components/table/views/ViewFamiliar';
+import showAlert, { showToast } from '../components/table/alertFunctions';
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
@@ -23,7 +24,7 @@ const CRUDTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModalForm, setShowModalForm] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [showFamiliarModal, setShowFamiliarModal] = useState(false); // Estado para mostrar el modal de familiares
+  const [showFamiliarModal, setShowFamiliarModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -64,10 +65,10 @@ const CRUDTable = () => {
     try {
       await updateBeneficiario(updatedItem._id, updatedItem);
       closeModal();
-      show_alert('Beneficiario actualizado exitosamente', 'success');
+      showToast('Beneficiario actualizado exitosamente', 'success');
     } catch (error) {
       console.error('Error updating item:', error);
-      show_alert('Error al actualizar beneficiario', 'error');
+      showToast('Error al actualizar beneficiario', 'error');
     }
   };
 
@@ -84,10 +85,10 @@ const CRUDTable = () => {
       async () => {
         try {
           await deleteBeneficiario(id);
-          show_alert('Beneficiario eliminado exitosamente', 'success');
+          showToast('Beneficiario eliminado exitosamente', 'success');
         } catch (error) {
           console.error('Error deleting item:', error);
-          show_alert('Error al eliminar beneficiario', 'error');
+          showToast('Error al eliminar beneficiario', 'error');
         }
       }
     );
@@ -139,13 +140,13 @@ const CRUDTable = () => {
 
   return (
     <div>
-            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
-                <div className="flex items-center gap-2">
-                    <SearchBar onSearch={handleSearch} />
-                    <CreateButton onClick={handleCreateClick} />
-                </div>
-            </div>
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+        <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
+        <div className="flex items-center gap-2">
+          <SearchBar onSearch={handleSearch} />
+          <CreateButton onClick={handleCreateClick} />
+        </div>
+      </div>
       {filteredData.length === 0 ? (
         <p className="text-center">No hay registros disponibles</p>
       ) : (
@@ -176,28 +177,28 @@ const CRUDTable = () => {
                       </div>
                     </TableCell>
                     <TableCell label="Correo Electrónico" className="pl-4">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
-                    <TableCell label="Familiares" className="pl-4"> {/* Ajustar padding */}
+                    <TableCell label="Familiares" className="pl-4">
                       <button
                         onClick={() => handleFamiliaresButtonClick(item)}
-                        className=" bg-blue-200 rounded-sm text-blue-500 hover:text-blue-700"
+                        className="bg-blue-200 rounded-sm text-blue-500 hover:text-blue-700"
                       >
                         Detalles
                       </button>
                     </TableCell>
-                    <TableCell label="Estado" className="pl-14"> {/* Ajustar padding */}
+                    <TableCell label="Estado" className="pl-14">
                       <Switch
                         name="estado"
                         checked={item.estado === 'activo'}
                         onChange={() => handleSwitchChange(item._id)}
                       />
                     </TableCell>
-                    <TableCell label="Acciones" className="pl-10"> {/* Ajustar padding */}
+                    <TableCell label="Acciones" className="pl-10">
                       <div className="flex gap-1 mr-3">
                         <TableActions
-                        item={item}
-                        handleViewButtonClick={handleViewButtonClick}
-                        handleEditButtonClick={handleEditButtonClick}
-                        handleDeleteButtonClick={handleDeleteButtonClick}
+                          item={item}
+                          handleViewButtonClick={handleViewButtonClick}
+                          handleEditButtonClick={handleEditButtonClick}
+                          handleDeleteButtonClick={handleDeleteButtonClick}
                         />
                       </div>
                     </TableCell>
