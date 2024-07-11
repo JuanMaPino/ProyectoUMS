@@ -129,7 +129,7 @@ const CRUDAyudante = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={6}>
                                 <TableCell>Rol</TableCell> {/* Nueva columna para el cambio de rol */}
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Ayudante</TableCell>
@@ -139,14 +139,13 @@ const CRUDAyudante = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
                                          <TableCell label="Rol">
                                            <TableActions
                                            item={item}
                                            handleRoleChange={handleRoleChange}
                                            />
                                         </TableCell>
-
                                         <TableCell label="Identificación">
                                             <div>
                                                 <p className="text-sm text-gray-600">{item.identificacion}</p>
@@ -162,7 +161,7 @@ const CRUDAyudante = () => {
                                         </TableCell>
                                         <TableCell label="Teléfono">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
                                         
-                                        <TableCell label="Estado">
+                                        <TableCell label="Estado" className='pl-10'>
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}

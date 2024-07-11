@@ -145,7 +145,7 @@ const CRUDInsumos = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={5}>
                                 <TableCell>Nombre de Insumo</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Cantidad</TableCell>
@@ -154,7 +154,7 @@ const CRUDInsumos = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={5}>
                                         <TableCell label="Nombre de Insumo">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>

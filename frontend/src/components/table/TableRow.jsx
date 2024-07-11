@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-const TableRow = ({ children, isActive, className, isMonetario, tipo, ...props }) => {
+const TableRow = ({ children, isActive, className, cols, isMonetario, tipo, ...props }) => {
     let rowClass;
     
     if (isMonetario) {
@@ -15,7 +15,7 @@ const TableRow = ({ children, isActive, className, isMonetario, tipo, ...props }
     }
 
     return (
-        <div className={classNames("grid grid-cols-1 md:grid-cols-6 gap-4 items-center mb-2 p-1.5 rounded-md", rowClass, className)} {...props}>
+        <div className={`grid grid-cols-1 md:grid-cols-${cols} gap-4 items-center mb-2 p-1.5 rounded-md ${rowClass} ${className}`} {...props}>
             {children}
         </div>
     );

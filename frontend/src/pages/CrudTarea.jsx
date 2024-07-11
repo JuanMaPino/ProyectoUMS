@@ -128,7 +128,7 @@ const CRUDTarea = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={5}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Acción</TableCell>
                                 <TableCell>Fecha</TableCell>
@@ -138,7 +138,7 @@ const CRUDTarea = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={5}>
                                         <TableCell label="Nombre">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>

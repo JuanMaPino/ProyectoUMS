@@ -141,7 +141,7 @@ const CRUDDonaciones = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={4}>
                                 <TableCell>Donador</TableCell>
                                 <TableCell>Fecha</TableCell>
                                 <TableCell>Tipo</TableCell>
@@ -153,6 +153,7 @@ const CRUDDonaciones = () => {
                                         key={index}
                                         isMonetario={item.tipo === 'Monetaria'}
                                         tipo={item.tipo}
+                                        cols={4}
                                     >
                                         <TableCell label="Donador">
                                             <div>
