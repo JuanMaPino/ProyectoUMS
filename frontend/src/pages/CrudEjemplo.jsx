@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RiDeleteBin6Line } from 'react-icons/ri';
 import { useBeneficiarios } from '../context/BeneficiariosContext';
+import { BsInfoCircle } from "react-icons/bs";
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -171,17 +172,17 @@ const CRUDTable = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={6}>
                                 <TableCell className="pl-4">Identificación</TableCell>
                                 <TableCell className="pl-4">Beneficiario</TableCell>
                                 <TableCell className="pl-4">Correo Electrónico</TableCell>
-                                <TableCell className="pl-4">Familiares</TableCell>
+                                <TableCell className="pl-8">Familiares</TableCell>
                                 <TableCell className="pl-14">Estado</TableCell> {/* Ajustar padding */}
                                 <TableCell className="pl-10">Acciones</TableCell> {/* Ajustar padding */}
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
                                         <TableCell label="Identificación" className="pl-4">
                                             <div>
                                                 <p className="text-sm text-gray-600 pl-4">{item.identificacion}</p>
@@ -195,12 +196,12 @@ const CRUDTable = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell label="Correo Electrónico" className="pl-4">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
-                                        <TableCell label="Familiares" className="pl-4">
+                                        <TableCell label="Familiares" className="pl-10">
                                             <button
                                                 onClick={() => handleFamiliaresButtonClick(item)}
-                                                className="bg-blue-200 rounded-sm text-blue-500 hover:text-blue-700"
+                                                className="rounded-lg transition-colors text-white bg-gradient-to-r from-indigo-500 from-10% to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 p-2"
                                             >
-                                                Detalles
+                                                <BsInfoCircle />
                                             </button>
                                         </TableCell>
                                         <TableCell label="Estado" className="pl-14">
