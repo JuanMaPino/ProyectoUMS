@@ -1,82 +1,118 @@
-const Actividad = require('../Models/Actividad');
+const Actividad = require('../models/actividadmodel');
 
 exports.obtenerTodasLasActividades = async (req, res) => {
-  try {
-    const actividades = await Actividad.find();
-    res.json(actividades);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+    try {
+        const actividades = await Actividad.find()
+            .populate('tareas')
+            .populate('insumos.insumo');
+        res.json(actividades);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 exports.crearActividad = async (req, res) => {
-  try {
-    const nuevaActividad = new Actividad(req.body);
-    await nuevaActividad.save();
-    res.status(201).json(nuevaActividad);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+    const { nombre, fecha, tipo, descripcion, tareas, insumos } = req.body;
+
+    const nuevaActividad = new Actividad({
+        nombre,
+        fecha,
+        tipo,
+        descripcion,
+        tareas: tareas.map(t => t._id),
+        insumos: insumos.map(i => ({ insumo: i.insumo._id, cantidad: i.cantidad }))
+    });
+
+    try {
+        const actividadGuardada = await nuevaActividad.save();
+        const actividadPoblada = await Actividad.findById(actividadGuardada._id)
+            .populate('tareas')
+            .populate('insumos.insumo');
+        res.status(201).json(actividadPoblada);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
 };
 
 exports.obtenerActividadPorId = async (req, res) => {
-  try {
-    const actividad = await Actividad.findById(req.params.id);
-    if (!actividad) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+    try {
+        const actividad = await Actividad.findById(req.params.id)
+            .populate('tareas')
+            .populate('insumos.insumo');
+        if (actividad == null) {
+            return res.status(404).json({ message: 'No se encontró la actividad' });
+        }
+        res.json(actividad);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-    res.json(actividad);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
 exports.actualizarActividad = async (req, res) => {
-  try {
-    const actividad = await Actividad.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!actividad) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+    const { nombre, fecha, tipo, descripcion, tareas, insumos } = req.body;
+
+    try {
+        const actividad = await Actividad.findById(req.params.id);
+        if (actividad == null) {
+            return res.status(404).json({ message: 'No se encontró la actividad' });
+        }
+
+        actividad.nombre = nombre;
+        actividad.fecha = fecha;
+        actividad.tipo = tipo;
+        actividad.descripcion = descripcion;
+        actividad.tareas = tareas.map(t => t._id);
+        actividad.insumos = insumos.map(i => ({ insumo: i.insumo._id, cantidad: i.cantidad }));
+
+        const actividadActualizada = await actividad.save();
+        const actividadPoblada = await Actividad.findById(actividadActualizada._id)
+            .populate('tareas')
+            .populate('insumos.insumo');
+        res.json(actividadPoblada);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
-    res.json(actividad);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
 };
 
 exports.eliminarActividad = async (req, res) => {
-  try {
-    const actividad = await Actividad.findByIdAndDelete(req.params.id);
-    if (!actividad) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+    try {
+        const actividad = await Actividad.findById(req.params.id);
+        if (actividad == null) {
+            return res.status(404).json({ message: 'No se encontró la actividad' });
+        }
+
+        await actividad.remove();
+        res.status(204).json({ message: 'Actividad eliminada' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-    res.status(204).end();
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
 exports.cambiarEstadoActividad = async (req, res) => {
-  try {
-    const actividad = await Actividad.findById(req.params.id);
-    if (!actividad) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+    try {
+        const actividad = await Actividad.findById(req.params.id);
+        if (actividad == null) {
+            return res.status(404).json({ message: 'No se encontró la actividad' });
+        }
+
+        actividad.estado = actividad.estado === 'activo' ? 'inactivo' : 'activo';
+        const actividadActualizada = await actividad.save();
+        res.json(actividadActualizada);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
-    actividad.estado = actividad.estado === 'activo' ? 'inactivo' : 'activo';
-    await actividad.save();
-    res.json(actividad);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };
 
 exports.obtenerActividadPorNombre = async (req, res) => {
-  try {
-    const actividad = await Actividad.findOne({ nombre: req.params.nombre });
-    if (!actividad) {
-      return res.status(404).json({ error: 'Actividad no encontrada' });
+    try {
+        const actividad = await Actividad.findOne({ nombre: req.params.nombre })
+            .populate('tareas')
+            .populate('insumos.insumo');
+        if (actividad == null) {
+            return res.status(404).json({ message: 'No se encontró la actividad' });
+        }
+        res.json(actividad);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-    res.json(actividad);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
 };

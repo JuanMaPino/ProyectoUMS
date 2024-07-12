@@ -23,27 +23,31 @@ export const ActividadProvider = ({ children }) => {
     const [selectedActividad, setSelectedActividad] = useState(null);
     const [errors, setErrors] = useState([]);
 
+    const handleError = (error) => {
+        const errorMessage = error.response?.data?.message || 'An error occurred';
+        setErrors([errorMessage]);
+        return { success: false, error: errorMessage };
+    };
+
     const createActividad = async (actividad) => {
         try {
             const res = await createActividadRequest(actividad);
-            setActividades([...actividades, res.data]);
+            setActividades(prevActividades => [...prevActividades, res.data]);
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
-            return { success: false, error: errorMessage };
+            return handleError(error);
         }
     };
 
     const updateActividad = async (id, actividad) => {
         try {
             const res = await updateActividadRequest(id, actividad);
-            setActividades(actividades.map(a => a._id === id ? res.data : a));
+            setActividades(prevActividades =>
+                prevActividades.map(a => (a._id === id ? res.data : a))
+            );
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
-            return { success: false, error: errorMessage };
+            return handleError(error);
         }
     };
 
@@ -52,8 +56,7 @@ export const ActividadProvider = ({ children }) => {
             const res = await getActividadByIdRequest(id);
             setSelectedActividad(res.data);
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
+            handleError(error);
         }
     };
 
@@ -62,32 +65,31 @@ export const ActividadProvider = ({ children }) => {
             const res = await getAllActividadesRequest();
             setActividades(res.data);
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
+            handleError(error);
         }
     };
 
     const disableActividad = async (id) => {
         try {
             const res = await disableActividadRequest(id);
-            setActividades(actividades.map(a => a._id === id ? res.data : a));
+            setActividades(prevActividades =>
+                prevActividades.map(a => (a._id === id ? res.data : a))
+            );
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
-            return { success: false, error: errorMessage };
+            return handleError(error);
         }
     };
 
     const deleteActividad = async (id) => {
         try {
             await deleteActividadRequest(id);
-            setActividades(actividades.filter(a => a._id !== id));
+            setActividades(prevActividades =>
+                prevActividades.filter(a => a._id !== id)
+            );
             return { success: true };
         } catch (error) {
-            const errorMessage = error.response.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
-            return { success: false, error: errorMessage };
+            return handleError(error);
         }
     };
 
@@ -103,17 +105,19 @@ export const ActividadProvider = ({ children }) => {
     }, [errors]);
 
     return (
-        <ActividadContext.Provider value={{
-            createActividad,
-            updateActividad,
-            getActividadById,
-            getAllActividades,
-            deleteActividad,
-            disableActividad,
-            actividades,
-            selectedActividad,
-            errors
-        }}>
+        <ActividadContext.Provider
+            value={{
+                createActividad,
+                updateActividad,
+                getActividadById,
+                getAllActividades,
+                deleteActividad,
+                disableActividad,
+                actividades,
+                selectedActividad,
+                errors
+            }}
+        >
             {children}
         </ActividadContext.Provider>
     );
