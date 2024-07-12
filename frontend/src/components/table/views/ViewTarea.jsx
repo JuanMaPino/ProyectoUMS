@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 const ViewTarea = ({ onClose, item }) => {
+    useEffect(() => {
+        console.log('Item data:', item);
+    }, [item]);
+
     return (
         <div className="bg-white p-8 rounded-lg shadow-2xl max-w-md mx-auto">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles de la Tarea</h2>

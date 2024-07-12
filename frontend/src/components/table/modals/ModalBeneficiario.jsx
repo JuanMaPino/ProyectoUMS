@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBeneficiarios } from '../../../context/BeneficiariosContext';
 import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
-import { showAlert } from '../alertFunctions'; // Asegúrate de importar correctamente la función show_alert
+import { showToast } from '../../table/alertFunctions'; // Ajustar la ruta según tu estructura
 
 const ModalBeneficiario = ({ onClose, item }) => {
     const { createBeneficiario, updateBeneficiario } = useBeneficiarios();
@@ -119,15 +119,15 @@ const ModalBeneficiario = ({ onClose, item }) => {
         try {
             if (item && item._id) {
                 await updateBeneficiario(item._id, formData);
-                showAlert('Beneficiario actualizado exitosamente', 'success'); // Mostrar alerta de éxito al actualizar
+                showToast('Beneficiario actualizado exitosamente', 'success'); // Mostrar alerta de éxito al actualizar
             } else {
                 await createBeneficiario(formData);
-                showAlert('Beneficiario creado exitosamente', 'success'); // Mostrar alerta de éxito al crear
+                showToast('Beneficiario creado exitosamente', 'success'); // Mostrar alerta de éxito al crear
             }
             onClose();
         } catch (error) {
             console.error('Error al guardar el beneficiario:', error.response ? error.response.data : error.message);
-            showAlert('Error al guardar el beneficiario', 'error'); // Mostrar alerta de error
+            showToast('Error al guardar el beneficiario', 'error'); // Mostrar alerta de error
         }
     };
 
@@ -209,7 +209,8 @@ const ModalBeneficiario = ({ onClose, item }) => {
                     <label className="block text-gray-700 text-sm font-medium mb-2">Familiares</label>
                     {formData.familiares.map((familiar, index) => (
                         <div key={index} className="border rounded p-4 mb-4">
-                            <div className="grid grid-cols-2 gap-4 mb-4">
+                            <h3 className="text-xl font-medium mb-2">Familiar #{index + 1}</h3>
+                            <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-gray-700 text-sm font-medium mb-2">Documento</label>
                                     <input
@@ -230,9 +231,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                         className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                     />
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div>
+                                <div className="col-span-2">
                                     <label className="block text-gray-700 text-sm font-medium mb-2">Condición Especial</label>
                                     <input
                                         type="text"
@@ -242,40 +241,41 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                         className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                     />
                                 </div>
-                                <div className="flex justify-end items-end">
-                                    <button
-                                        type="button"
-                                        onClick={() => removeFamiliar(index)}
-                                        className="text-red-500 hover:text-red-700"
-                                    >
-                                        <RiDeleteBin6Line size={24} />
-                                    </button>
-                                </div>
                             </div>
+                            <button
+                                type="button"
+                                onClick={() => removeFamiliar(index)}
+                                className="text-red-500 mt-2 hover:text-red-700 focus:outline-none"
+                            >
+                                <RiDeleteBin6Line className="inline-block mr-1" />
+                                Eliminar Familiar
+                            </button>
                         </div>
                     ))}
                     <button
                         type="button"
                         onClick={addFamiliar}
-                        className="flex items-center text-green-500 hover:text-green-700"
+                        className="text-blue-500 hover:text-blue-700 focus:outline-none"
                     >
-                        <RiAddCircleLine size={24} className="mr-2" /> Agregar Familiar
+                        <RiAddCircleLine className="inline-block mr-1" />
+                        Agregar Familiar
                     </button>
                 </div>
-                <div className="col-span-2 flex justify-end mt-6">
+                <div className="col-span-2 flex justify-end">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="bg-gray-500 text-white px-4 py-2 rounded-lg mr-4"
+                        className="text-gray-500 hover:text-gray-700 mr-4 focus:outline-none"
                     >
-                        <RiCloseLine size={24} className="inline-block align-middle" /> Cancelar
+                        <RiCloseLine className="inline-block mr-1" />
+                        Cancelar
                     </button>
                     <button
                         type="submit"
                         onClick={handleSubmit}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg"
+                        className="bg-blue-500 hover:bg-blue-700 text-white rounded py-2 px-6 focus:outline-none"
                     >
-                        {item ? 'Actualizar Beneficiario' : 'Agregar Beneficiario'}
+                        {item ? 'Actualizar Beneficiario' : 'Crear Beneficiario'}
                     </button>
                 </div>
             </div>
