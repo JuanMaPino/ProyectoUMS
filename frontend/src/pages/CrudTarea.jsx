@@ -17,6 +17,7 @@ import CardTarea from '../components/table/CardItems/CardTarea';
 import FloatingButton from '../components/FloatingButton';
 import { useAyudantes } from '../context/AyudantesContext';
 import { Link } from 'react-router-dom';
+import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
 
 const CRUDTarea = () => {
     const {
@@ -80,12 +81,48 @@ const CRUDTarea = () => {
         closeModal();
     };
 
-    const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteTarea(id);
-        } catch (error) {
-            console.error('Error deleting tarea:', error);
-        }
+    const handleDeleteButtonClick = (id) => {
+        showAlert(
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await deleteTarea(id);
+                    showToast('Tarea eliminada', 'success');
+                } catch (error) {
+                    console.error('Error deleting tarea:', error);
+                    showToast('Error al eliminar la tarea', 'error');
+                }
+            }
+        );
+    };
+
+    const handleSwitchChange = (id) => {
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado de la tarea.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await disableTarea(id);
+                    showToast('Estado de la tarea actualizado', 'success');
+                } catch (error) {
+                    console.error('Error updating task status:', error);
+                    showToast('Error al actualizar el estado', 'error');
+                }
+            }
+        );
     };
 
     const handleViewButtonClick = (item) => {
@@ -165,7 +202,7 @@ const CRUDTarea = () => {
                                             <Switch
                                                 name="estado"
                                                 checked={item.estado === 'activo'}
-                                                onChange={() => disableTarea(item._id)}
+                                                onChange={() => handleSwitchChange(item._id)}
                                             />
                                         </TableCell>
                                         <TableCell label="Acciones">
@@ -174,7 +211,7 @@ const CRUDTarea = () => {
                                                 item={item}
                                                 handleViewButtonClick={handleViewButtonClick}
                                                 handleEditButtonClick={handleEditButtonClick}
-                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
                                                 />
                                             </div>
                                         </TableCell>
@@ -197,7 +234,7 @@ const CRUDTarea = () => {
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
                                 onDelete={handleDeleteButtonClick}
-                                onSwitchChange={disableTarea}
+                                onSwitchChange={() => handleSwitchChange(item._id)}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}

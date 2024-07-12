@@ -1,9 +1,8 @@
 const Tarea = require('../Models/Tarea');
 
-
 exports.obtenerTodasLasTareas = async (req, res) => {
   try {
-    const tareas = await Tarea.find();
+    const tareas = await Tarea.find().populate('ayudantes', 'nombre rol');
     res.json(tareas);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -20,10 +19,9 @@ exports.crearTarea = async (req, res) => {
   }
 };
 
-
 exports.obtenerTareaPorId = async (req, res) => {
   try {
-    const tarea = await Tarea.findById(req.params.id);
+    const tarea = await Tarea.findById(req.params.id).populate('ayudantes', 'nombre rol');
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -35,7 +33,7 @@ exports.obtenerTareaPorId = async (req, res) => {
 
 exports.actualizarTarea = async (req, res) => {
   try {
-    const tarea = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const tarea = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('ayudantes', 'nombre rol');
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -70,6 +68,3 @@ exports.cambiarEstadoTarea = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
