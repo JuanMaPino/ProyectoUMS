@@ -26,13 +26,29 @@ const ViewActividad = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Descripción:</span></label>
                     <p className="text-gray-800">{item.descripcion}</p>
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Tarea:</span></label>
-                    <p className="text-gray-800">{item.tarea}</p>
+                <div className="col-span-2">
+                    <label className="block text-gray-700"><span className="font-semibold">Tareas:</span></label>
+                    {item.tareas && item.tareas.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                            {item.tareas.map((tarea, index) => (
+                                <li key={index} className="text-gray-800">{tarea.nombre}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-800">No hay tareas asignadas</p>
+                    )}
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Insumo:</span></label>
-                    <p className="text-gray-800">{item.insumo}</p>
+                <div className="col-span-2">
+                    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
+                    {item.insumos && item.insumos.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                            {item.insumos.map((insumo, index) => (
+                                <li key={index} className="text-gray-800">{insumo.nombre} - Cantidad: {insumo.cantidad}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-800">No hay insumos asignados</p>
+                    )}
                 </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
@@ -41,12 +57,12 @@ const ViewActividad = ({ onClose, item }) => {
                     </p>
                 </div>
             </div>
-            <div className="mt-6 flex justify-center">
+            <div className="flex justify-center mt-6">
                 <button
                     onClick={onClose}
                     className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
                 >
-                    {/* <RiArrowLeftSLine className="inline-block mr-2" /> */}
+                    <RiArrowLeftSLine className="inline-block mr-2" />
                     Cerrar
                 </button>
             </div>

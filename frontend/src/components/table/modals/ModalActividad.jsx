@@ -1,112 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { useActividades } from '../../../context/ActividadContext';
 import axios from 'axios';
 
-const ModalActividad = ({ onClose, item }) => {
-    const { createActividad, updateActividad, actividades } = useActividades();
-    const [insumos, setInsumos] = useState([]);
-    const [tareas, setTareas] = useState([]);
-    const [selectedTareas, setSelectedTareas] = useState([]);
-    const [selectedInsumos, setSelectedInsumos] = useState([]);
+const ModalActividad = ({ onClose, onSave, item }) => {
     const [formData, setFormData] = useState({
         nombre: '',
         fecha: '',
         tipo: 'Recreativa',
         descripcion: '',
-        tarea: [],
-        insumo: [],
-        estado: 'activo'
+        tareas: [],
+        insumos: [],
     });
-
     const [errors, setErrors] = useState({
         nombre: '',
         fecha: '',
         descripcion: '',
-        tarea: [],
-        insumo: []
+        tareas: '',
+        insumos: ''
     });
+    const [tareas, setTareas] = useState([]);
+    const [insumos, setInsumos] = useState([]);
 
     useEffect(() => {
-        const fetchInsumos = async () => {
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3002/insumos');
-                setInsumos(response.data);
+                const tareasResponse = await axios.get('http://localhost:3002/tareas'); // Cambia a tu ruta correcta
+                const insumosResponse = await axios.get('http://localhost:3002/insumos'); // Cambia a tu ruta correcta
+                setTareas(tareasResponse.data);
+                setInsumos(insumosResponse.data);
             } catch (error) {
-                console.error('Error fetching insumos:', error.message);
+                console.error('Error al cargar tareas e insumos:', error);
             }
         };
+        fetchData();
+    }, []);
 
-        const fetchTareas = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/tareas');
-                setTareas(response.data);
-            } catch (error) {
-                console.error('Error fetching tareas:', error.message);
-            }
-        };
-
-        fetchInsumos();
-        fetchTareas();
-
+    useEffect(() => {
         if (item) {
             setFormData({
-                id_actividad: item.id_actividad || '',
                 nombre: item.nombre || '',
                 fecha: item.fecha || '',
                 tipo: item.tipo || 'Recreativa',
                 descripcion: item.descripcion || '',
-                tarea: item.tarea.map(t => t._id) || [],
-                insumo: item.insumo.map(i => i._id) || [],
-                estado: item.estado || 'activo',
-            });
-        } else {
-            setFormData({
-                id_actividad: '',
-                nombre: '',
-                fecha: '',
-                tipo: 'Recreativa',
-                descripcion: '',
-                tarea: [],
-                insumo: [],
-                estado: 'activo'
+                tareas: item.tareas ? item.tareas.map(t => ({ _id: t._id, nombre: t.nombre })) : [],
+                insumos: item.insumos ? item.insumos.map(i => ({ insumo: i.insumo._id || i.insumo, cantidad: i.cantidad })) : [],
             });
         }
     }, [item]);
 
-    const checkIfExists = (id_actividad) => {
-        return actividades.some(actividad => {
-            if (actividad.id_actividad && id_actividad) {
-                return actividad.id_actividad.toString().toLowerCase().trim() === id_actividad.toString().toLowerCase().trim();
-            }
-            return false;
-        });
-    };
-
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        if (name === 'id_actividad') {
-            if (checkIfExists(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'La actividad ya existe.'
-                }));
-            } else if (/^\d{5,10}$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: null
-                }));
-            } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: 'El campo ID debe contener entre 5 y 10 dígitos numéricos.'
-                }));
-            }
-        } else if (name === 'nombre' || name === 'descripcion') {
+        if (name === 'nombre' || name === 'descripcion') {
             if (/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
                 setErrors(prevState => ({
                     ...prevState,
-                    [name]: null
+                    [name]: ''
                 }));
             } else {
                 setErrors(prevState => ({
@@ -114,11 +62,6 @@ const ModalActividad = ({ onClose, item }) => {
                     [name]: `El campo ${name} solo permite letras y espacios.`
                 }));
             }
-        } else {
-            setErrors(prevState => ({
-                ...prevState,
-                [name]: null
-            }));
         }
 
         setFormData(prevState => ({
@@ -127,161 +70,236 @@ const ModalActividad = ({ onClose, item }) => {
         }));
     };
 
-    const handleTareaChange = (e) => {
+    const handleTareaChange = (index, e) => {
         const { value } = e.target;
-        setSelectedTareas(Array.from(value));
+        const selectedTarea = tareas.find(t => t._id === value);
+        const newTareas = [...formData.tareas];
+        newTareas[index] = selectedTarea ? { _id: selectedTarea._id, nombre: selectedTarea.nombre } : {};
         setFormData(prevState => ({
             ...prevState,
-            tarea: Array.from(value)
+            tareas: newTareas
         }));
     };
 
-    const handleInsumoChange = (e) => {
-        const { value } = e.target;
-        setSelectedInsumos(Array.from(value));
+    const handleInsumoChange = (index, field, value) => {
+        const newInsumos = [...formData.insumos];
+        newInsumos[index] = {
+            ...newInsumos[index],
+            [field]: value
+        };
         setFormData(prevState => ({
             ...prevState,
-            insumo: Array.from(value)
+            insumos: newInsumos
+        }));
+    };
+
+    const handleAddTarea = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            tareas: [...prevState.tareas, {}]
+        }));
+    };
+
+    const handleRemoveTarea = (index) => {
+        const newTareas = formData.tareas.filter((_, i) => i !== index);
+        setFormData(prevState => ({
+            ...prevState,
+            tareas: newTareas
+        }));
+    };
+
+    const handleAddInsumo = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            insumos: [...prevState.insumos, {}]
+        }));
+    };
+
+    const handleRemoveInsumo = (index) => {
+        const newInsumos = formData.insumos.filter((_, i) => i !== index);
+        setFormData(prevState => ({
+            ...prevState,
+            insumos: newInsumos
         }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const validationErrors = {};
-        if (!formData.id_actividad) validationErrors.id_actividad = 'Este campo es obligatorio';
-        else if (!/^\d{5,10}$/.test(formData.id_actividad)) validationErrors.id_actividad = 'El campo ID debe contener entre 5 y 10 dígitos numéricos.';
         if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
         if (!formData.fecha) validationErrors.fecha = 'Este campo es obligatorio';
         if (!formData.descripcion) validationErrors.descripcion = 'Este campo es obligatorio';
-        if (formData.tarea.length === 0) validationErrors.tarea = 'Seleccione al menos una tarea';
-        if (formData.insumo.length === 0) validationErrors.insumo = 'Seleccione al menos un insumo';
-
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            alert('Por favor, corrija los errores antes de enviar.');
-            return;
-        }
-
-        try {
-            if (item && item._id) {
-                await updateActividad(item._id, formData);
-                alert('Actividad actualizada con éxito');
-            } else {
-                await createActividad(formData);
-                alert('Actividad creada con éxito');
+        if (formData.tareas.length === 0 || formData.tareas.some(t => !t._id)) validationErrors.tareas = 'Debe agregar al menos una tarea válida';
+        if (formData.insumos.length === 0 || formData.insumos.some(i => !i.insumo || !i.cantidad)) validationErrors.insumos = 'Debe agregar al menos un insumo válido';
+    
+        setErrors(validationErrors);
+    
+        if (Object.keys(validationErrors).length === 0) {
+            try {
+                if (item && item._id) {
+                    await axios.put(`http://localhost:3002/actividades/${item._id}`, formData);
+                    alert('Actividad actualizada exitosamente');
+                } else {
+                    await axios.post('http://localhost:3002/actividades', formData);
+                    alert('Actividad creada exitosamente');
+                }
+    
+                // Llama a onSave solo si es una función
+                if (typeof onSave === 'function') {
+                    onSave();
+                } else {
+                    console.error('Error: onSave no es una función válida');
+                }
+    
+                onClose();
+            } catch (error) {
+                console.error('Error al guardar la actividad:', error);
+                alert('Error al guardar la actividad. Por favor, inténtelo de nuevo.');
             }
-            onClose();
-        } catch (error) {
-            console.error('Error saving item:', error.response ? error.response.data : error.message);
-            alert('Error al guardar la actividad. Por favor, inténtelo de nuevo.');
         }
     };
-
     return (
         <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
             <div className="p-8">
-                <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
+                <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-8">
                         <div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<p className="text-red-500 text-sm">*</p></label>
-                                <input
-                                    type="text"
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Fecha<p className="text-red-500 text-sm">*</p></label>
-                                <input
-                                    type="date"
-                                    name="fecha"
-                                    value={formData.fecha}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.fecha && <p className="text-red-500 text-sm mt-1">{errors.fecha}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<p className="text-red-500 text-sm">*</p></label>
-                                <select
-                                    name="tipo"
-                                    value={formData.tipo}
-                                    onChange={handleChange}
-                                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                    required
-                                >
-                                    <option value="Recreativa">Recreativa</option>
-                                    <option value="Caritativa">Caritativa</option>
-                                </select>
-                            </div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Nombre <span className="text-red-500">*</span></label>
+                            <input
+                                type="text"
+                                name="nombre"
+                                value={formData.nombre}
+                                onChange={handleChange}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
+                                required
+                            />
+                            {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                         </div>
                         <div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Descripción<p className="text-red-500 text-sm">*</p></label>
-                                <textarea
-                                    name="descripcion"
-                                    value={formData.descripcion}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.descripcion ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.descripcion && <p className="text-red-500 text-sm mt-1">{errors.descripcion}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Tareas<p className="text-red-500 text-sm">*</p></label>
-                                <select
-                                    name="tarea"
-                                    value={selectedTareas}
-                                    onChange={handleTareaChange}
-                                    multiple
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tarea ? 'border-red-500' : ''}`}
-                                    required
-                                >
-                                    {tareas.map((tarea) => (
-                                        <option key={tarea._id} value={tarea._id}>{tarea.nombre}</option>
-                                    ))}
-                                </select>
-                                {errors.tarea && <p className="text-red-500 text-sm mt-1">{errors.tarea}</p>}
-                            </div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Insumos<p className="text-red-500 text-sm">*</p></label>
-                                <select
-                                    name="insumo"
-                                    value={selectedInsumos}
-                                    onChange={handleInsumoChange}
-                                    multiple
-                                    className={`shadow-sm mb-2 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.insumo ? 'border-red-500' : ''}`}
-                                    required
-                                >
-                                    {insumos.map((insumo) => (
-                                        <option key={insumo._id} value={insumo._id}>{insumo.nombre}</option>
-                                    ))}
-                                </select>
-                                {errors.insumo && <p className="text-red-500 text-sm mt-1">{errors.insumo}</p>}
-                            </div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Fecha <span className="text-red-500">*</span></label>
+                            <input
+                                type="date"
+                                name="fecha"
+                                value={formData.fecha}
+                                onChange={handleChange}
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
+                                required
+                            />
+                            {errors.fecha && <p className="text-red-500 text-sm mt-1">{errors.fecha}</p>}
                         </div>
                     </div>
-                    <div className="flex justify-end mt-8">
+                    <div className="grid grid-cols-2 gap-8">
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo</label>
+                            <select
+                                name="tipo"
+                                value={formData.tipo}
+                                onChange={handleChange}
+                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                            >
+                                <option value="Recreativa">Recreativa</option>
+                                <option value="Caritativa">Caritativa</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción <span className="text-red-500">*</span></label>
+                        <textarea
+                            name="descripcion"
+                            value={formData.descripcion}
+                            onChange={handleChange}
+                            rows="3"
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 resize-none ${errors.descripcion ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.descripcion && <p className="text-red-500 text-sm mt-1">{errors.descripcion}</p>}
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tareas <span className="text-red-500">*</span></label>
+                        {formData.tareas.map((tarea, index) => (
+                            <div key={index} className="flex items-center space-x-4 mb-2">
+                                <select
+                                    value={tarea._id || ''}
+                                    onChange={(e) => handleTareaChange(index, e)}
+                                    className={`shadow-sm border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tareas ? 'border-red-500' : ''}`}
+                                >
+                                    <option value="">Seleccionar tarea</option>
+                                    {tareas.map(t => (
+                                        <option key={t._id} value={t._id}>{t.nombre}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveTarea(index)}
+                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        ))}
+                        {errors.tareas && <p className="text-red-500 text-sm mt-1">{errors.tareas}</p>}
+                        <button
+                            type="button"
+                            onClick={handleAddTarea}
+                            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                        >
+                            Agregar Tarea
+                        </button>
+                    </div>
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Insumos <span className="text-red-500">*</span></label>
+                        {formData.insumos.map((insumo, index) => (
+                            <div key={index} className="flex items-center space-x-4 mb-2">
+                                <select
+                                    value={insumo.insumo || ''}
+                                    onChange={(e) => handleInsumoChange(index, 'insumo', e.target.value)}
+                                    className={`shadow-sm border rounded w-3/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.insumos ? 'border-red-500' : ''}`}
+                                >
+                                    <option value="">Seleccionar insumo</option>
+                                    {insumos.map(i => (
+                                        <option key={i._id} value={i._id}>{i.nombre}</option>
+                                    ))}
+                                </select>
+                                <input
+                                    type="number"
+                                    value={insumo.cantidad || ''}
+                                    onChange={(e) => handleInsumoChange(index, 'cantidad', e.target.value)}
+                                    className={`shadow-sm border rounded w-1/4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.insumos ? 'border-red-500' : ''}`}
+                                    placeholder="Cantidad"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveInsumo(index)}
+                                    className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    Eliminar
+                                </button>
+                            </div>
+                        ))}
+                        {errors.insumos && <p className="text-red-500 text-sm mt-1">{errors.insumos}</p>}
+                        <button
+                            type="button"
+                            onClick={handleAddInsumo}
+                            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                        >
+                            Agregar Insumo
+                        </button>
+                    </div>
+                    <div className="flex justify-end">
+                        <button
+                            type="submit"
+                            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                        >
+                            Guardar
+                        </button>
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mr-2"
+                            className="bg-gray-400 hover:bg-gray-500 text-white py-2 px-4 rounded ml-2 focus:outline-none focus:ring focus:border-blue-300"
                         >
                             Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
-                        >
-                            {item ? 'Actualizar' : 'Agregar'}
                         </button>
                     </div>
                 </form>
