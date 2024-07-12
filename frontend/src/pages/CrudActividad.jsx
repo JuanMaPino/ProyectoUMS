@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
+import { RiAddLine } from 'react-icons/ri';
 import { useActividades } from '../context/ActividadContext';
 import { useInsumos } from '../context/InsumosContext';
 import { useTareas } from '../context/TareasContext';
@@ -17,6 +17,7 @@ import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
 import { Link } from 'react-router-dom';
+import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
 
 const CRUDActividad = () => {
     const {
@@ -61,11 +62,47 @@ const CRUDActividad = () => {
     };
 
     const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteActividad(id);
-        } catch (error) {
-            console.error('Error deleting actividad:', error);
-        }
+        showAlert(
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await deleteActividad(id);
+                    showToast('Actividad eliminada', 'success');
+                } catch (error) {
+                    console.error('Error deleting actividad:', error);
+                    showToast('Error al eliminar la actividad', 'error');
+                }
+            }
+        );
+    };
+
+    const handleSwitchChange = async (id) => {
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado de la actividad.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await disableActividad(id);
+                    showToast('Estado de la actividad actualizado', 'success');
+                } catch (error) {
+                    console.error('Error updating actividad status:', error);
+                    showToast('Error al actualizar el estado', 'error');
+                }
+            }
+        );
     };
 
     const handleViewButtonClick = (item) => {
@@ -76,13 +113,6 @@ const CRUDActividad = () => {
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
         setShowModalForm(true);
-    };
-
-    const handleSwitchChange = async (id) => {
-        const item = actividades.find(item => item._id === id);
-        if (item) {
-            await disableActividad(id); 
-        }
     };
 
     const closeModal = () => {
@@ -151,7 +181,7 @@ const CRUDActividad = () => {
                                                 item={item}
                                                 handleViewButtonClick={handleViewButtonClick}
                                                 handleEditButtonClick={handleEditButtonClick}
-                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
                                                 />
                                             </div>
                                         </TableCell>
@@ -173,8 +203,8 @@ const CRUDActividad = () => {
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
-                                onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onDelete={() => handleDeleteButtonClick(item._id)}
+                                onSwitchChange={() => handleSwitchChange(item._id)}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
