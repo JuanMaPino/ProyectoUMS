@@ -123,7 +123,7 @@ const CRUDProyecto = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={6}>
                                 <TableCell>Código</TableCell>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
@@ -133,7 +133,7 @@ const CRUDProyecto = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
                                         <TableCell label="Código">{item.codigo}</TableCell>
                                         <TableCell label="Nombre">{item.nombre}</TableCell>
                                         <TableCell label="Descripción">{item.descripcion}</TableCell>

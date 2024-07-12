@@ -147,7 +147,7 @@ const CRUDDonador = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={6}>
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Donador</TableCell>
                                 <TableCell>Contacto</TableCell>
@@ -160,6 +160,7 @@ const CRUDDonador = () => {
                                     <TableRow
                                         key={index}
                                         isActive={item.estado === 'activo'}
+                                        cols={6}
                                     >
                                         <TableCell label="Identificación">
                                             <div>

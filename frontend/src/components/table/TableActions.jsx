@@ -34,13 +34,15 @@ const DeleteButton = ({ item, handleDeleteButtonClick }) => (
     </button>
 );
 
+//Componente de cambio de Rol
 const RoleChangeButton = ({ item, handleRoleChange }) => (
     <button
         onClick={() => handleRoleChange(item._id)}
         className={`flex items-center rounded-full p-2 transition-colors ${
-            item.rol === 'alfabetizador' ? 'bg-blue-400 text-white hover:bg-blue-500' : 'bg-indigo-400 text-white hover:bg-indigo-500'
-        }`}
+            item.rol === 'alfabetizador' ? 'bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white ' : 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white'
+        } ${item.estado !== 'activo' ? 'opacity-20 cursor-not-allowed' : ''}`}
         disabled={item.estado !== 'activo'}
+        style={{ pointerEvents: item.estado !== 'activo' ? 'none' : 'auto' }}
     >
         {item.rol === 'alfabetizador' ? (
             <>
@@ -55,6 +57,7 @@ const RoleChangeButton = ({ item, handleRoleChange }) => (
         )}
     </button>
 );
+
 
 const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, handleDeleteButtonClick, handleRoleChange }) => {
     return (

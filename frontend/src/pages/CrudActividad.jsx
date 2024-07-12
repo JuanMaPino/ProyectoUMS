@@ -123,7 +123,7 @@ const CRUDActividad = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={4}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
                                 <TableCell>Estado</TableCell>
@@ -131,7 +131,7 @@ const CRUDActividad = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={4}>
                                         <TableCell label="Nombre">
                                             <p className="text-black">{item.nombre}</p>
                                         </TableCell>
