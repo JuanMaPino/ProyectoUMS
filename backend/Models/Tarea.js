@@ -13,10 +13,8 @@ const tareaSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  fecha: {
-    type: String,
-    required: true
-  },
+ 
+  
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],

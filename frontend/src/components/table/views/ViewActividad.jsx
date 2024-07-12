@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiArrowLeftSLine } from 'react-icons/ri'; // Ajusta la importación según tu estructura de componentes
+import { RiArrowLeftSLine } from 'react-icons/ri';
 
 const ViewActividad = ({ onClose, item }) => {
     return (
@@ -13,10 +13,6 @@ const ViewActividad = ({ onClose, item }) => {
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre:</span></label>
                     <p className="text-gray-800">{item.nombre}</p>
-                </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Fecha:</span></label>
-                    <p className="text-gray-800">{item.fecha}</p>
                 </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Tipo:</span></label>
@@ -39,17 +35,18 @@ const ViewActividad = ({ onClose, item }) => {
                     )}
                 </div>
                 <div className="col-span-2">
-                    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
-                    {item.insumos && item.insumos.length > 0 ? (
-                        <ul className="list-disc list-inside">
-                            {item.insumos.map((insumo, index) => (
-                                <li key={index} className="text-gray-800">{insumo.nombre} - Cantidad: {insumo.cantidad}</li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-800">No hay insumos asignados</p>
-                    )}
-                </div>
+    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
+    {item.insumos && item.insumos.length > 0 ? (
+        <ul className="list-disc list-inside">
+            {item.insumos.map((insumo, index) => (
+                <li key={index} className="text-gray-800">{insumo.nombre} - Cantidad: {insumo.cantidad}</li>
+            ))}
+        </ul>
+    ) : (
+        <p className="text-gray-800">No hay insumos asignados</p>
+    )}
+</div>
+
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className={`text-gray-800 ${item.estado === 'activo' ? 'text-green-500' : 'text-red-500'}`}>

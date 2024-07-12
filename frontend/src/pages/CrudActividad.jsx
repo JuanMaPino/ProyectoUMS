@@ -140,9 +140,6 @@ const CRUDActividad = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Actividad</h1>
                 <div className="flex items-center gap-2">
-                    <Link to="/proyectos" className="flex items-center gap-2 transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white px-3 py-2 rounded-xl">
-                        Volver
-                    </Link>
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
                 </div>

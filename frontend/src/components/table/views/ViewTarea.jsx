@@ -21,10 +21,6 @@ const ViewTarea = ({ onClose, item }) => {
                     <p className="text-gray-700"><span className="font-medium">Cantidad de Horas:</span></p>
                     <p className="text-gray-800">{item.cantidadHoras}</p>
                 </div>
-                <div>
-                    <p className="text-gray-700"><span className="font-medium">Fecha:</span></p>
-                    <p className="text-gray-800">{item.fecha}</p>
-                </div>
                 <div className="col-span-2">
                     <p className="text-gray-700"><span className="font-medium">Ayudantes:</span></p>
                     {item.ayudantes && item.ayudantes.length > 0 ? (

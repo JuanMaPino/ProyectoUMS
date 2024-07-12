@@ -6,10 +6,6 @@ const actividadSchema = new Schema({
     type: String,
     required: true,
   },
-  fecha: {
-    type: String,
-    required: true,
-  },
   tipo: {
     type: String,
     required: true,

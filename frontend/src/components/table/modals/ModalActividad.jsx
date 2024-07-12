@@ -9,7 +9,6 @@ const ModalActividad = ({ onClose, item }) => {
     const [tareas, setTareas] = useState([]);
     const [formData, setFormData] = useState({
         nombre: '',
-        fecha: '',
         tipo: 'Recreativa',
         descripcion: '',
         tareas: [],
@@ -19,7 +18,6 @@ const ModalActividad = ({ onClose, item }) => {
 
     const [errors, setErrors] = useState({
         nombre: '',
-        fecha: '',
         descripcion: '',
         tareas: '',
         insumos: ''
@@ -50,7 +48,6 @@ const ModalActividad = ({ onClose, item }) => {
         if (item) {
             setFormData({
                 nombre: item.nombre || '',
-                fecha: item.fecha || '',
                 tipo: item.tipo || 'Recreativa',
                 descripcion: item.descripcion || '',
                 tareas: item.tareas ? item.tareas.map(t => ({ _id: t._id, nombre: t.nombre })) : [],
@@ -96,15 +93,25 @@ const ModalActividad = ({ onClose, item }) => {
 
     const handleInsumoChange = (index, field, value) => {
         const newInsumos = [...formData.insumos];
-        newInsumos[index] = {
-            ...newInsumos[index],
-            [field]: value
-        };
+        if (field === 'insumo') {
+            const selectedInsumo = insumos.find(i => i._id === value);
+            newInsumos[index] = {
+                ...newInsumos[index],
+                insumo: value,
+                nombre: selectedInsumo ? selectedInsumo.nombre : ''
+            };
+        } else {
+            newInsumos[index] = {
+                ...newInsumos[index],
+                [field]: value
+            };
+        }
         setFormData(prevState => ({
             ...prevState,
             insumos: newInsumos
         }));
     };
+    
 
     const handleAddTarea = () => {
         setFormData(prevState => ({
@@ -141,7 +148,6 @@ const ModalActividad = ({ onClose, item }) => {
     
         const validationErrors = {};
         if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
-        if (!formData.fecha) validationErrors.fecha = 'Este campo es obligatorio';
         if (!formData.descripcion) validationErrors.descripcion = 'Este campo es obligatorio';
         if (formData.tareas.length === 0 || formData.tareas.some(t => !t._id)) validationErrors.tareas = 'Debe agregar al menos una tarea válida';
         if (formData.insumos.length === 0 || formData.insumos.some(i => !i.insumo || !i.cantidad)) validationErrors.insumos = 'Debe agregar al menos un insumo válido';
@@ -150,11 +156,20 @@ const ModalActividad = ({ onClose, item }) => {
     
         if (Object.keys(validationErrors).length === 0) {
             try {
+                const updatedFormData = {
+                    ...formData,
+                    insumos: formData.insumos.map(i => ({
+                        insumo: i.insumo,
+                        nombre: insumos.find(ins => ins._id === i.insumo)?.nombre || '',
+                        cantidad: i.cantidad
+                    }))
+                };
+    
                 if (item && item._id) {
-                    await updateActividad(item._id, formData);
+                    await updateActividad(item._id, updatedFormData);
                     showToast('Actividad actualizada con éxito.', 'success');
                 } else {
-                    await createActividad(formData);
+                    await createActividad(updatedFormData);
                     showToast('Actividad creada con éxito.', 'success');
                 }
                 onClose();
@@ -166,6 +181,7 @@ const ModalActividad = ({ onClose, item }) => {
             console.log('Validation errors:', validationErrors);
         }
     };
+    
 
     return (
         <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
@@ -189,18 +205,6 @@ const ModalActividad = ({ onClose, item }) => {
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-8">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Fecha<p className="text-red-500 text-sm">*</p></label>
-                            <input
-                                type="date"
-                                name="fecha"
-                                value={formData.fecha}
-                                onChange={handleChange}
-                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
-                                required
-                            />
-                            {errors.fecha && <p className="text-red-500 text-sm mt-1">{errors.fecha}</p>}
-                        </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<p className="text-red-500 text-sm">*</p></label>
                             <select

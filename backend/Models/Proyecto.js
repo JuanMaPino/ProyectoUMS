@@ -14,7 +14,7 @@ const proyectoSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  tipo: {
+  tipo:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Actividad',
     required: true // Si quieres que este campo sea obligatorio
