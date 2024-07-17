@@ -171,7 +171,7 @@ const CRUDTable = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead>
+                            <TableHead cols={6}>
                                 <TableCell className="pl-4">Identificación</TableCell>
                                 <TableCell className="pl-4">Beneficiario</TableCell>
                                 <TableCell className="pl-4">Correo Electrónico</TableCell>
@@ -181,7 +181,7 @@ const CRUDTable = () => {
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
                                         <TableCell label="Identificación" className="pl-4">
                                             <div>
                                                 <p className="text-sm text-gray-600 pl-4">{item.identificacion}</p>
