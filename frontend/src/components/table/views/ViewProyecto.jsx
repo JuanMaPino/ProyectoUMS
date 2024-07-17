@@ -22,10 +22,7 @@ const ViewProyecto = ({ onClose, item }) => {
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles del Proyecto</h2>
             <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Código:</span></label>
-                    <p className="text-gray-800">{item.codigo}</p>
-                </div>
+                
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre:</span></label>
                     <p className="text-gray-800">{item.nombre}</p>

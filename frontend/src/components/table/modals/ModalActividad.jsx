@@ -111,7 +111,7 @@ const ModalActividad = ({ onClose, item }) => {
             insumos: newInsumos
         }));
     };
-    
+
 
     const handleAddTarea = () => {
         setFormData(prevState => ({
@@ -145,15 +145,15 @@ const ModalActividad = ({ onClose, item }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const validationErrors = {};
         if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
         if (!formData.descripcion) validationErrors.descripcion = 'Este campo es obligatorio';
         if (formData.tareas.length === 0 || formData.tareas.some(t => !t._id)) validationErrors.tareas = 'Debe agregar al menos una tarea válida';
         if (formData.insumos.length === 0 || formData.insumos.some(i => !i.insumo || !i.cantidad)) validationErrors.insumos = 'Debe agregar al menos un insumo válido';
-    
+
         setErrors(validationErrors);
-    
+
         if (Object.keys(validationErrors).length === 0) {
             try {
                 const updatedFormData = {
@@ -164,7 +164,7 @@ const ModalActividad = ({ onClose, item }) => {
                         cantidad: i.cantidad
                     }))
                 };
-    
+
                 if (item && item._id) {
                     await updateActividad(item._id, updatedFormData);
                     showToast('Actividad actualizada con éxito.', 'success');
@@ -181,17 +181,17 @@ const ModalActividad = ({ onClose, item }) => {
             console.log('Validation errors:', validationErrors);
         }
     };
-    
+
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-lg mx-auto mt-8 mb-8">
+        <div className="bg-white  rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
             <div className="p-8">
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="grid grid-cols-2 gap-8">
                         <div>
                             <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<p className="text-red-500 text-sm">*</p></label>
+                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
                                 <input
                                     type="text"
                                     name="nombre"
@@ -200,13 +200,13 @@ const ModalActividad = ({ onClose, item }) => {
                                     className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
                                     required
                                 />
-                                {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
+                                {errors.nombre && <span className="text-red-500 text-sm mt-1">{errors.nombre}</span>}
                             </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 gap-8">
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<p className="text-red-500 text-sm">*</p></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<span className="text-red-500 text-sm">*</span></label>
                             <select
                                 name="tipo"
                                 value={formData.tipo}
@@ -220,7 +220,7 @@ const ModalActividad = ({ onClose, item }) => {
                         </div>
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción<p className="text-red-500 text-sm">*</p></label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción<span className="text-red-500 text-sm">*</span></label>
                         <textarea
                             name="descripcion"
                             value={formData.descripcion}
@@ -229,11 +229,11 @@ const ModalActividad = ({ onClose, item }) => {
                             rows="3"
                             required
                         />
-                        {errors.descripcion && <p className="text-red-500 text-sm mt-1">{errors.descripcion}</p>}
+                        {errors.descripcion && <span className="text-red-500 text-sm mt-1">{errors.descripcion}</span>}
                     </div>
                     <div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tareas<p className="text-red-500 text-sm">*</p></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Tareas<span className="text-red-500 text-sm">*</span></label>
                             {formData.tareas.map((tarea, index) => (
                                 <div key={index} className="flex items-center space-x-2">
                                     <select
@@ -250,17 +250,17 @@ const ModalActividad = ({ onClose, item }) => {
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveTarea(index)}
-                                        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                                        className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
                                     >
                                         Eliminar
                                     </button>
                                 </div>
                             ))}
-                            {errors.tareas && <p className="text-red-500 text-sm mt-1">{errors.tareas}</p>}
+                            {errors.tareas && <span className="text-red-500 text-sm mt-1">{errors.tareas}</span>}
                             <button
                                 type="button"
                                 onClick={handleAddTarea}
-                                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 mt-2"
+                                className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 mt-2"
                             >
                                 Agregar Tarea
                             </button>
@@ -268,9 +268,9 @@ const ModalActividad = ({ onClose, item }) => {
                     </div>
                     <div>
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Insumos<p className="text-red-500 text-sm">*</p></label>
+                            <label className="block text-gray-700 text-sm font-medium mb-2">Insumos<span className="text-red-500 text-sm">*</span></label>
                             {formData.insumos.map((insumo, index) => (
-                                <div key={index} className="grid grid-cols-3 gap-4 items-center">
+                                <div key={index} className="flex items-center space-x-2">
                                     <select
                                         value={insumo.insumo}
                                         onChange={(e) => handleInsumoChange(index, 'insumo', e.target.value)}
@@ -293,36 +293,35 @@ const ModalActividad = ({ onClose, item }) => {
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveInsumo(index)}
-                                        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
+                                        className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
                                     >
                                         Eliminar
                                     </button>
                                 </div>
                             ))}
-                            {errors.insumos && <p className="text-red-500 text-sm mt-1">{errors.insumos}</p>}
+                            {errors.insumos && <span className="text-red-500 text-sm mt-1">{errors.insumos}</span>}
                             <button
                                 type="button"
                                 onClick={handleAddInsumo}
-                                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 mt-2"
+                                className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 mt-2"
                             >
                                 Agregar Insumo
                             </button>
                         </div>
                     </div>
-                    <div className="flex justify-end">
-                        <button
-                            type="button"
-                            onClick={onClose}
-                            className="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300 mr-2"
-                        >
-                            Cancelar
-                        </button>
-                        <button
-                            type="submit"
-                            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded focus:outline-none focus:ring focus:border-blue-300"
-                        >
-                            {item ? 'Actualizar' : 'Guardar'}
-                        </button>
+                    <div className="sm:col-span-2">
+                        <div className="flex flex-col justify-center mt-6">
+                            <button type="submit" className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
+                                {item ? 'Actualizar Ayudante' : 'Agregar Ayudante'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
+                            >
+                                Cancelar
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

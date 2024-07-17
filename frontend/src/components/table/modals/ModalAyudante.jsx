@@ -141,7 +141,7 @@ const ModalAyudante = ({ onClose, item }) => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-2xl max-w-2xl mx-auto mt-8 mb-8">
+        <div className="bg-white rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
             <div className="p-8">
                 <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
