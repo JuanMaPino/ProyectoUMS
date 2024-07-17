@@ -1,5 +1,5 @@
 import React from 'react';
-import { RiArrowLeftSLine } from 'react-icons/ri'; // Ajusta la importación según tu estructura de componentes
+import { RiArrowLeftSLine } from 'react-icons/ri';
 
 const ViewActividad = ({ onClose, item }) => {
     return (
@@ -15,10 +15,6 @@ const ViewActividad = ({ onClose, item }) => {
                     <p className="text-gray-800">{item.nombre}</p>
                 </div>
                 <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Fecha:</span></label>
-                    <p className="text-gray-800">{item.fecha}</p>
-                </div>
-                <div>
                     <label className="block text-gray-700"><span className="font-semibold">Tipo:</span></label>
                     <p className="text-gray-800">{item.tipo}</p>
                 </div>
@@ -26,14 +22,31 @@ const ViewActividad = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Descripción:</span></label>
                     <p className="text-gray-800">{item.descripcion}</p>
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Tarea:</span></label>
-                    <p className="text-gray-800">{item.tarea}</p>
+                <div className="col-span-2">
+                    <label className="block text-gray-700"><span className="font-semibold">Tareas:</span></label>
+                    {item.tareas && item.tareas.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                            {item.tareas.map((tarea, index) => (
+                                <li key={index} className="text-gray-800">{tarea.nombre}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-800">No hay tareas asignadas</p>
+                    )}
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Insumo:</span></label>
-                    <p className="text-gray-800">{item.insumo}</p>
-                </div>
+                <div className="col-span-2">
+    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
+    {item.insumos && item.insumos.length > 0 ? (
+        <ul className="list-disc list-inside">
+            {item.insumos.map((insumo, index) => (
+                <li key={index} className="text-gray-800">{insumo.nombre} - Cantidad: {insumo.cantidad}</li>
+            ))}
+        </ul>
+    ) : (
+        <p className="text-gray-800">No hay insumos asignados</p>
+    )}
+</div>
+
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className={`text-gray-800 ${item.estado === 'activo' ? 'text-green-500' : 'text-red-500'}`}>
@@ -41,12 +54,12 @@ const ViewActividad = ({ onClose, item }) => {
                     </p>
                 </div>
             </div>
-            <div className="mt-6 flex justify-center">
+            <div className="flex justify-center mt-6">
                 <button
                     onClick={onClose}
                     className="bg-gradient-to-tr from-red-400 from-10% to-red-600 hover:from-red-600 hover:to-red-600 text-white font-bold py-2 px-6 rounded-xl focus:outline-none focus:shadow-outline"
                 >
-                    {/* <RiArrowLeftSLine className="inline-block mr-2" /> */}
+                    <RiArrowLeftSLine className="inline-block mr-2" />
                     Cerrar
                 </button>
             </div>

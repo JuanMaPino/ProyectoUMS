@@ -153,7 +153,6 @@ const CRUDTarea = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Tareas</h1>
                 <div className="flex items-center gap-2">
-                    <Link to="/proyectos" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600y">Volver</Link>
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
                    
@@ -165,17 +164,16 @@ const CRUDTarea = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead cols={5}>
+                            <TableHead cols={4}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Acción</TableCell>
-                                <TableCell>Fecha</TableCell>
                                 {/* <TableCell>Ayudante</TableCell> */}
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={5}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={4}>
                                         <TableCell label="Nombre">
                                             <div>
                                                 <p className="text-black">{item.nombre}</p>
@@ -186,11 +184,7 @@ const CRUDTarea = () => {
                                                 <p className="text-black">{item.accion}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Fecha">
-                                            <div>
-                                                <p className="text-black">{item.fecha}</p>
-                                            </div>
-                                        </TableCell>
+                                        
                                         {/* <TableCell label="Ayudante">
                                             <div>
                                                 <p className="text-black">

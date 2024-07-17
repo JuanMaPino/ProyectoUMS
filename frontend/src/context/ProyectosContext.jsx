@@ -1,122 +1,102 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
-  createProjectRequest,
-  updateProjectRequest,
-  getProjectByIdRequest,
-  getAllProjectsRequest,
-  disableProjectRequest,
-  getProjectByCodigoRequest,
-  deleteProjectRequest
+    createProyectoRequest,
+    updateProyectoRequest,
+    getProyectoByIdRequest,
+    getAllProyectosRequest,
+    disableProyectoRequest,
+    deleteProyectoRequest
 } from '../api/ApiProyectos';
 
-export const ProjectContext = createContext();
+const ProyectoContext = createContext();
 
-export const useProjects = () => {
-  const context = useContext(ProjectContext);
-  if (!context) {
-    throw new Error('useProjects must be used within a ProjectProvider');
-  }
-  return context;
-};
+export const useProyectos = () => useContext(ProyectoContext);
 
-export const ProjectProvider = ({ children }) => {
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [errors, setErrors] = useState([]);
+export const ProyectoProvider = ({ children }) => {
+    const [proyectos, setProyectos] = useState([]);
+    const [errors, setErrors] = useState([]);
 
-  const createProject = async (project) => {
-    try {
-      const res = await createProjectRequest(project);
-      // Realiza la población de tipo después de crear para actualizar localmente
-      const updatedProject = await getProjectByIdRequest(res.data._id);
-      setProjects([...projects, updatedProject.data]);
-      return { success: true };
-    } catch (error) {
-      const errorMessage = error.response.data?.message || 'An error occurred';
-      setErrors([errorMessage]);
-      return { success: false, error: errorMessage };
-    }
-  };
+    const fetchProyectos = async () => {
+        try {
+            const response = await getAllProyectosRequest();
+            setProyectos(response.data);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
 
-  const updateProject = async (id, project) => {
-    try {
-      const res = await updateProjectRequest(id, project);
-      setProjects(projects.map(p => p._id === id ? res.data : p));
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    const createProyecto = async (data) => {
+        try {
+            const response = await createProyectoRequest(data);
+            setProyectos([...proyectos, response.data]);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
 
-  const getProjectById = async (id) => {
-    try {
-      const res = await getProjectByIdRequest(id);
-      setSelectedProject(res.data);
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    const updateProyecto = async (id, data) => {
+        try {
+            const response = await updateProyectoRequest(id, data);
+            const updatedProyectos = proyectos.map(proyecto =>
+                proyecto._id === response.data._id ? response.data : proyecto
+            );
+            setProyectos(updatedProyectos);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
 
-  const getAllProjects = async () => {
-    try {
-      const res = await getAllProjectsRequest();
-      setProjects(res.data);
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    const disableProyecto = async (id) => {
+        try {
+            const response = await disableProyectoRequest(id);
+            setProyectos(proyectos.map(proyecto =>
+                proyecto._id === id ? response.data : proyecto
+            ));
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
 
-  const disableProject = async (id) => {
-    try {
-      const res = await disableProjectRequest(id);
-      setProjects(projects.map(p => p._id === id ? res.data : p));
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    const deleteProyecto = async (id) => {
+        try {
+            await deleteProyectoRequest(id);
+            const updatedProyectos = proyectos.filter(proyecto => proyecto._id !== id);
+            setProyectos(updatedProyectos);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
 
-  const deleteProject = async (id) => {
-    try {
-      await deleteProjectRequest(id);
-      setProjects(projects.filter(p => p._id !== id));
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    const handleErrors = (error) => {
+        if (error.response && error.response.data) {
+            setErrors([error.response.data.error]);
+        } else {
+            setErrors([error.message]);
+        }
+    };
 
-  const getProjectByCodigo = async (codigo) => {
-    try {
-      const res = await getProjectByCodigoRequest(codigo);
-      setSelectedProject(res.data);
-    } catch (error) {
-      setErrors(error.response.data);
-    }
-  };
+    useEffect(() => {
+        fetchProyectos();
+    }, []);
 
-  useEffect(() => {
-    getAllProjects();
-  }, []);
-
-  useEffect(() => {
-    if (errors.length > 0) {
-      const timer = setTimeout(() => setErrors([]), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [errors]);
-
-  return (
-    <ProjectContext.Provider value={{
-      createProject,
-      updateProject,
-      getProjectById,
-      getAllProjects,
-      deleteProject,
-      disableProject,
-      getProjectByCodigo,
-      projects,
-      selectedProject,
-      errors
-    }}>
-      {children}
-    </ProjectContext.Provider>
-  );
+    return (
+        <ProyectoContext.Provider
+            value={{
+                proyectos,
+                errors,
+                createProyecto,
+                updateProyecto,
+                deleteProyecto,
+                disableProyecto,
+                fetchProyectos // Asegúrate de incluir fetchProyectos en el contexto
+            }}
+        >
+            {children}
+        </ProyectoContext.Provider>
+    );
 };
