@@ -28,6 +28,7 @@ export const ProyectoProvider = ({ children }) => {
 
     const createProyecto = async (data) => {
         try {
+            console.log("Datos a enviar", data)
             const response = await createProyectoRequest(data);
             setProyectos([...proyectos, response.data]);
             setErrors([]);

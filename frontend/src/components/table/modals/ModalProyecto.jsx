@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useProyectos } from '../../../context/ProyectosContext';
 import { useActividades } from '../../../context/ActividadContext';
 import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
+import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
 
 const ModalProyecto = ({ onClose, item }) => {
     const { createProyecto, updateProyecto } = useProyectos();
@@ -70,12 +71,15 @@ const ModalProyecto = ({ onClose, item }) => {
         try {
             if (item && item._id) {
                 await updateProyecto(item._id, formData);
+                showToast('Proyecto actualizado correctamente.', 'success');
             } else {
                 await createProyecto(formData);
+                showToast('Proyecto creado correctamente.', 'success');
             }
             onClose();
         } catch (error) {
             console.error('Error saving project:', error.response ? error.response.data : error.message);
+            showToast('Error al guardar el proyecto.', 'error');
         }
     };
 
