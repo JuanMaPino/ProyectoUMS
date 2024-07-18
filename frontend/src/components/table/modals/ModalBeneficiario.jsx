@@ -53,6 +53,8 @@ const ModalBeneficiario = ({ onClose, item }) => {
             case 'identificacion':
                 if (!/^\d{8,10}$/.test(value)) {
                     error = 'El documento debe contener entre 8 y 10 dígitos numéricos';
+                } else if (/^0/.test(value)) {
+                    error = 'El documento no puede comenzar con 0';
                 }
                 break;
             case 'nombre':
