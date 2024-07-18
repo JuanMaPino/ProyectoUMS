@@ -14,6 +14,7 @@ import ViewProyecto from '../components/table/views/ViewProyecto';
 import { useProyectos } from '../context/ProyectosContext';
 import CardItem from '../components/table/CardItems/CardItem';
 import TableActions from '../components/table/TableActions';
+import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
 
 const CRUDProyecto = () => {
     const {
@@ -57,12 +58,26 @@ const CRUDProyecto = () => {
         closeModal();
     };
 
-    const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteProyecto(id);
-        } catch (error) {
-            console.error('Error deleting project:', error);
-        }
+    const handleDeleteButtonClick = (id) => {
+        showAlert(
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await deleteProyecto(id);
+                    showToast('Proyecto eliminado', 'success');
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    showToast('Error al eliminar el proyecto', 'error');
+                }
+            }
+        );
     };
 
     const handleViewButtonClick = (item) => {
@@ -75,11 +90,26 @@ const CRUDProyecto = () => {
         setShowModalForm(true);
     };
 
-    const handleSwitchChange = async (id) => {
-        const item = proyectos.find(item => item._id === id);
-        if (item) {
-            await disableProyecto(id);
-        }
+    const handleSwitchChange = (id) => {
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado del proyecto.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await disableProyecto(id);
+                    showToast('Estado del proyecto actualizado', 'success');
+                } catch (error) {
+                    console.error('Error updating project status:', error);
+                    showToast('Error al actualizar el estado', 'error');
+                }
+            }
+        );
     };
 
     const closeModal = () => {
@@ -117,21 +147,17 @@ const CRUDProyecto = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead cols={5}>
+                            <TableHead cols={4}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>Tipo</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={5}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={4}>
                                         <TableCell label="Nombre">{item.nombre}</TableCell>
                                         <TableCell label="Descripción">{item.descripcion}</TableCell>
-                                        <TableCell label="Tipo">
-                                            <p className="text-black">{item.tipo?.nombre || 'Desconocido'}</p>
-                                        </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -145,7 +171,7 @@ const CRUDProyecto = () => {
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
                                                     handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={handleDeleteButtonClick}
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
                                                 />
                                             </div>
                                         </TableCell>
@@ -167,8 +193,8 @@ const CRUDProyecto = () => {
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
-                                onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onDelete={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                onSwitchChange={() => handleSwitchChange(item._id)}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
