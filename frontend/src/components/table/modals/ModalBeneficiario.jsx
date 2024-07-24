@@ -65,7 +65,9 @@ const ModalBeneficiario = ({ onClose, item }) => {
             case 'telefono':
                 if (!/^\d{10}$/.test(value)) {
                     error = 'El teléfono debe tener 10 dígitos numéricos';
-                }
+                } else if (/^0/.test(value)) {
+                    error = 'El Telefono no puede comenzar con 0';
+                }   
                 break;
             case 'correoElectronico':
                 if (value && !/.+@.+\..+/.test(value)) {
