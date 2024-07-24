@@ -1,11 +1,21 @@
 import axios from 'axios';
 
-const API = 'http://localhost:3002/proyectos'; // Asegúrate de que esta URL es correcta
+const API = 'http://localhost:3002/proyectos';
 
-export const createProjectRequest = (project) => axios.post(`${API}`, project);
-export const updateProjectRequest = (id, project) => axios.put(`${API}/${id}`, project);
-export const getProjectByIdRequest = (id) => axios.get(`${API}/${id}`);
-export const getAllProjectsRequest = () => axios.get(`${API}`);
-export const disableProjectRequest = (id) => axios.patch(`${API}/${id}/estado`);
-export const getProjectByCodigoRequest = (codigo) => axios.get(`${API}/buscar/${codigo}`);
-export const deleteProjectRequest = (id) => axios.delete(`${API}/${id}`);
+// Crear un nuevo proyecto
+export const createProyectoRequest = (proyecto) => axios.post(`${API}/`, proyecto);
+
+// Actualizar un proyecto existente
+export const updateProyectoRequest = (id, proyecto) => axios.put(`${API}/${id}`, proyecto);
+
+// Obtener un proyecto por su ID
+export const getProyectoByIdRequest = (id) => axios.get(`${API}/${id}`);
+
+// Obtener todos los proyectos
+export const getAllProyectosRequest = () => axios.get(`${API}/`);
+
+// Deshabilitar un proyecto (cambiar su estado)
+export const disableProyectoRequest = (id) => axios.patch(`${API}/${id}/estado`);
+
+// Eliminar un proyecto
+export const deleteProyectoRequest = (id) => axios.delete(`${API}/${id}`);

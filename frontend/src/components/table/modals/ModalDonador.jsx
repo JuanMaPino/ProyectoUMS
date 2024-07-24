@@ -190,6 +190,7 @@ const ModalDonador = ({ onClose, item }) => {
                 } else {
                     show_alert(errors[0], 'error');
                 }
+                onClose();
             }
             onClose();
         } catch (error) {

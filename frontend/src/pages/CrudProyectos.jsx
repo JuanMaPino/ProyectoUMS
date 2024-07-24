@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiAddLine } from 'react-icons/ri';
+import { RiAddLine } from 'react-icons/ri';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -11,22 +11,21 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import ModalProyecto from '../components/table/modals/ModalProyecto';
 import ViewProyecto from '../components/table/views/ViewProyecto';
-import { useProjects } from '../context/ProyectosContext'; // Importamos el contexto de Proyectos
+import { useProyectos } from '../context/ProyectosContext';
 import CardItem from '../components/table/CardItems/CardItem';
-
-import { Link } from 'react-router-dom';
 import TableActions from '../components/table/TableActions';
+import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
 
 const CRUDProyecto = () => {
     const {
-        createProject,
-        updateProject,
-        deleteProject,
-        disableProject,
-        getAllProjects,
-        projects,
+        createProyecto,
+        updateProyecto,
+        deleteProyecto,
+        disableProyecto,
+        fetchProyectos,
+        proyectos,
         errors
-    } = useProjects(); // Utilizamos el contexto de proyectos
+    } = useProyectos();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -37,9 +36,9 @@ const CRUDProyecto = () => {
     const itemsPerPage = 10;
 
     useEffect(() => {
-        getAllProjects();
+        fetchProyectos();
         setCurrentPage(1); // Reset to first page on new search or load
-    }, [getAllProjects]);
+    }, [fetchProyectos]);
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -52,19 +51,33 @@ const CRUDProyecto = () => {
 
     const handleCreateOrUpdate = async (item) => {
         if (item._id) {
-            await updateProject(item._id, item);
+            await updateProyecto(item._id, item);
         } else {
-            await createProject(item);
+            await createProyecto(item);
         }
         closeModal();
     };
 
-    const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteProject(id);
-        } catch (error) {
-            console.error('Error deleting project:', error);
-        }
+    const handleDeleteButtonClick = (id) => {
+        showAlert(
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await deleteProyecto(id);
+                    showToast('Proyecto eliminado', 'success');
+                } catch (error) {
+                    console.error('Error deleting project:', error);
+                    showToast('Error al eliminar el proyecto', 'error');
+                }
+            }
+        );
     };
 
     const handleViewButtonClick = (item) => {
@@ -77,11 +90,26 @@ const CRUDProyecto = () => {
         setShowModalForm(true);
     };
 
-    const handleSwitchChange = async (id) => {
-        const item = projects.find(item => item._id === id);
-        if (item) {
-            await disableProject(id); 
-        }
+    const handleSwitchChange = (id) => {
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado del proyecto.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await disableProyecto(id);
+                    showToast('Estado del proyecto actualizado', 'success');
+                } catch (error) {
+                    console.error('Error updating project status:', error);
+                    showToast('Error al actualizar el estado', 'error');
+                }
+            }
+        );
     };
 
     const closeModal = () => {
@@ -96,12 +124,11 @@ const CRUDProyecto = () => {
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const filteredData = searchTerm
-        ? projects.filter(item =>
-            item.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ? proyectos.filter(item =>
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
         )
-        : projects;
+        : proyectos;
 
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
@@ -110,36 +137,27 @@ const CRUDProyecto = () => {
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Proyectos</h1>
                 <div className="flex items-center gap-2">
-                        <Link to="/actividades" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600y">Actividades</Link>
-                        <Link to="/insumos" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600">Insumos</Link>
-                        <Link to="/tareas" className="flex items-center gap-2  transition ease-in-out delay-150 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-300  hover:to-blue-700 text-white px-3 py-2 rounded-xl  hover:bg-blue-600">Tareas</Link>
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
                 </div>
             </div>
-            {projects.length === 0 ? (
+            {proyectos.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead cols={6}>
-                                <TableCell>Código</TableCell>
+                            <TableHead cols={4}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
-                                <TableCell>Tipo</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
-                                        <TableCell label="Código">{item.codigo}</TableCell>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={4}>
                                         <TableCell label="Nombre">{item.nombre}</TableCell>
                                         <TableCell label="Descripción">{item.descripcion}</TableCell>
-                                        <TableCell label="Tipo">
-                                            <p className="text-black">{item.tipo?.nombre || 'Desconocido'}</p>
-                                        </TableCell>
                                         <TableCell label="Estado">
                                             <Switch
                                                 name="estado"
@@ -149,12 +167,12 @@ const CRUDProyecto = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
-                                               <TableActions
-                                                item={item}
-                                                handleViewButtonClick={handleViewButtonClick}
-                                                handleEditButtonClick={handleEditButtonClick}
-                                                handleDeleteButtonClick={handleDeleteButtonClick}
-                                               />
+                                                <TableActions
+                                                    item={item}
+                                                    handleViewButtonClick={handleViewButtonClick}
+                                                    handleEditButtonClick={handleEditButtonClick}
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                                />
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -175,8 +193,8 @@ const CRUDProyecto = () => {
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
-                                onDelete={handleDeleteButtonClick}
-                                onSwitchChange={handleSwitchChange}
+                                onDelete={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                onSwitchChange={() => handleSwitchChange(item._id)}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}

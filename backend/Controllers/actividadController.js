@@ -1,4 +1,4 @@
-const Actividad = require('../models/actividadmodel');
+const Actividad = require('../Models/Actividad');
 
 exports.obtenerTodasLasActividades = async (req, res) => {
     try {

@@ -10,7 +10,6 @@ const ModalTarea = ({ onClose, item }) => {
         nombre: '',
         accion: '',
         cantidadHoras: '',
-        fecha: '',
         estado: 'activo',
         ayudantes: []
     });
@@ -34,7 +33,6 @@ const ModalTarea = ({ onClose, item }) => {
                 nombre: item.nombre || '',
                 accion: item.accion || '',
                 cantidadHoras: item.cantidadHoras || '',
-                fecha: item.fecha ? item.fecha.split('T')[0] : '',
                 estado: item.estado || 'activo',
                 ayudantes: item.ayudantes ? item.ayudantes.map(ayudante => ({
                     _id: ayudante._id || '',
@@ -109,12 +107,6 @@ const ModalTarea = ({ onClose, item }) => {
                         value < 1 ? 'La cantidad de horas debe ser al menos 1' :
                             value > 12 ? 'La cantidad de horas no debe ser más de 12' :
                                 '';
-                break;
-            case 'fecha':
-                const today = new Date().toISOString().split('T')[0];
-                errorMessage = !value ? 'La fecha es obligatoria' :
-                    value < today ? 'La fecha no puede estar en el pasado' :
-                        '';
                 break;
             case 'ayudante':
                 errorMessage = !value ? 'Debe seleccionar un ayudante' : '';
@@ -195,18 +187,6 @@ const ModalTarea = ({ onClose, item }) => {
                         required
                     />
                     {errors.cantidadHoras && <p className="text-red-500 text-xs italic">{errors.cantidadHoras}</p>}
-                </div>
-                <div className="col-span-2">
-                    <label className="block text-gray-700 text-sm font-medium mb-2">Fecha <span className="text-red-500">*</span></label>
-                    <input
-                        type="date"
-                        name="fecha"
-                        value={formData.fecha}
-                        onChange={handleChange}
-                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fecha ? 'border-red-500' : ''}`}
-                        required
-                    />
-                    {errors.fecha && <p className="text-red-500 text-xs italic">{errors.fecha}</p>}
                 </div>
                 <div className="col-span-2">
                     <label className="block text-gray-700 text-sm font-medium mb-2">Ayudantes</label>

@@ -1,31 +1,10 @@
 import React from 'react';
-// import { getAllBeneficiariosRequest } from '../../../api/ApiBeneficiario'; 
-
-// useEffect(() => {
-//     const fetchBeneficiario = async () => {
-//       try {
-//         const res = await getAllBeneficiariosRequest();
-//         setRoles(res.data);
-//       } catch (error) {
-//         console.error("Failed to fetch roles:", error);
-//       }
-//     };
-
-//     fetchBeneficiario();
-//   }, []);
-// useEffect(() => {
-//     getAllProjects();
-// }, []);
 
 const ViewProyecto = ({ onClose, item }) => {
     return (
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles del Proyecto</h2>
             <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Código:</span></label>
-                    <p className="text-gray-800">{item.codigo}</p>
-                </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre:</span></label>
                     <p className="text-gray-800">{item.nombre}</p>
@@ -45,6 +24,14 @@ const ViewProyecto = ({ onClose, item }) => {
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className="text-gray-800">{item.estado}</p>
+                </div>
+                <div>
+                    <label className="block text-gray-700"><span className="font-semibold">Actividades:</span></label>
+                    {item.tipo.map((tipo, index) => (
+                        <div key={index} className="flex items-center">
+                            <p className="text-gray-800">{tipo.nombre} - {tipo.tipo}</p>
+                        </div>
+                    ))}
                 </div>
             </div>
             <div className="mt-6 flex justify-center">

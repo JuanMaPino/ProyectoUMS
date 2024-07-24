@@ -6,6 +6,10 @@ const proyectoSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  descripcion: {
+    type: String,
+    required: true
+  },
   fechaInicio: {
     type: Date,
     required: true
@@ -14,23 +18,18 @@ const proyectoSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
-  tipo: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Actividad',
-    required: true // Si quieres que este campo sea obligatorio
-  },
-  descripcion: {
-    type: String,
-    required: true
-  },
-  direccion: {
-    type: String,
-    required: true
-  },
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],
     default: 'activo'
+  },
+  tipo: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Actividad'
+  }],
+  direccion: {
+    type: String,
+    required: true
   }
 });
 

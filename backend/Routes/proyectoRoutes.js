@@ -12,6 +12,5 @@ router.delete('/:id', proyectoController.eliminarProyecto);
 
 // Otras rutas específicas
 router.patch('/:id/estado', proyectoController.cambiarEstadoProyecto);
-router.get('/buscar/:codigo', proyectoController.obtenerProyectoPorCodigo);
 
 module.exports = router;

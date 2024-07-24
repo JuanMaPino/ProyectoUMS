@@ -196,7 +196,7 @@ const CRUDTable = () => {
                                             </div>
                                         </TableCell>
                                         <TableCell label="Correo Electrónico" className="pl-4">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
-                                        <TableCell label="Familiares" className="pl-10">
+                                        <TableCell label="Familiares" className="pl-14">
                                             <button
                                                 onClick={() => handleFamiliaresButtonClick(item)}
                                                 className="rounded-lg transition-colors text-white bg-gradient-to-r from-indigo-500 from-10% to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 p-2"
