@@ -132,10 +132,10 @@ const ModalDonador = ({ onClose, item }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         // Validación final antes de enviar el formulario
         const validationErrors = { ...formErrors };
-
+    
         if (!formData.identificacion || !/^\d{5,12}$/.test(formData.identificacion)) {
             validationErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
         }
@@ -154,7 +154,7 @@ const ModalDonador = ({ onClose, item }) => {
         if (!formData.telefono || !/^\d{9,10}$/.test(formData.telefono)) {
             validationErrors.telefono = 'El teléfono debe contener solo números y estar entre 9 y 10 caracteres.';
         }
-
+    
         if (Object.values(validationErrors).some(error => error !== '')) {
             setFormErrors(validationErrors);
             return;
@@ -172,7 +172,7 @@ const ModalDonador = ({ onClose, item }) => {
                 return;
             }
         }
-
+    
         try {
             if (item && item._id) {
                 const response = await updateDonador(item._id, formData);
@@ -192,12 +192,11 @@ const ModalDonador = ({ onClose, item }) => {
                 }
                 onClose();
             }
-            onClose();
         } catch (error) {
             console.error('Error saving item:', error.response ? error.response.data : error.message);
         }
-
     };
+    
 
     const capitalizeWords = (string) => {
         return string.replace(/\b\w/g, char => char.toUpperCase());
@@ -330,6 +329,7 @@ const ModalDonador = ({ onClose, item }) => {
 
                             <button
                                 type="submit"
+                                onClick={handleSubmit}
                                 className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                             >
                                 {item ? 'Actualizar' : 'Agregar'}
