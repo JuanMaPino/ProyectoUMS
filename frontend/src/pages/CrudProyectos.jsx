@@ -1,5 +1,7 @@
+// CRUDProyecto.js
 import React, { useState, useEffect } from 'react';
 import { RiAddLine } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom'; // Importar useNavigate
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -14,7 +16,7 @@ import ViewProyecto from '../components/table/views/ViewProyecto';
 import { useProyectos } from '../context/ProyectosContext';
 import CardItem from '../components/table/CardItems/CardItem';
 import TableActions from '../components/table/TableActions';
-import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
+import { showAlert, showToast } from '../components/table/alertFunctions';
 
 const CRUDProyecto = () => {
     const {
@@ -34,10 +36,11 @@ const CRUDProyecto = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const itemsPerPage = 10;
+    const navigate = useNavigate(); // Instanciar useNavigate
 
     useEffect(() => {
         fetchProyectos();
-        setCurrentPage(1); // Reset to first page on new search or load
+        setCurrentPage(1);
     }, [fetchProyectos]);
 
     const handleCreateClick = () => {
@@ -112,6 +115,10 @@ const CRUDProyecto = () => {
         );
     };
 
+    const handleActivitiesClick = (id) => {
+        navigate(`/projects/${id}/activities`);
+    };
+
     const closeModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);
@@ -147,15 +154,16 @@ const CRUDProyecto = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead cols={4}>
+                            <TableHead cols={5}>
                                 <TableCell>Nombre</TableCell>
                                 <TableCell>Descripción</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
+                                <TableCell>Actividades</TableCell> {/* Nueva columna */}
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={4}>
+                                    <TableRow key={index} isActive={item.estado === 'activo'} cols={5}>
                                         <TableCell label="Nombre">{item.nombre}</TableCell>
                                         <TableCell label="Descripción">{item.descripcion}</TableCell>
                                         <TableCell label="Estado">
@@ -171,9 +179,17 @@ const CRUDProyecto = () => {
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
                                                     handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)}
                                                 />
                                             </div>
+                                        </TableCell>
+                                        <TableCell label="Actividades"> {/* Nueva celda */}
+                                            <button
+                                                onClick={() => handleActivitiesClick(item._id)}
+                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                            >
+                                                Ver Actividades
+                                            </button>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -193,10 +209,17 @@ const CRUDProyecto = () => {
                                 item={item}
                                 onEdit={handleEditButtonClick}
                                 onView={handleViewButtonClick}
-                                onDelete={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                onDelete={() => handleDeleteButtonClick(item._id)}
                                 onSwitchChange={() => handleSwitchChange(item._id)}
                                 isActive={item.estado === 'activo'}
-                            />
+                            >
+                                <button
+                                    onClick={() => handleActivitiesClick(item._id)}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+                                >
+                                    Ver Actividades
+                                </button>
+                            </CardItem>
                         ))}
                         <Pagination
                             totalItems={filteredData.length}
@@ -204,7 +227,6 @@ const CRUDProyecto = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        {/* Botón flotante para crear */}
                         <button
                             onClick={handleCreateClick}
                             className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
