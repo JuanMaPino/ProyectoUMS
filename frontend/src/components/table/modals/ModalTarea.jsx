@@ -223,7 +223,7 @@ const ModalTarea = ({ onClose, item }) => {
                     <button
                         type="button"
                         onClick={addAyudante}
-                        className="bg-green-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                     >
                         <RiAddCircleLine className="inline-block mr-2" /> Agregar Ayudante
                     </button>

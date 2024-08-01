@@ -16,6 +16,7 @@ const ModalProyecto = ({ onClose, item }) => {
         tipo: [],
         direccion: ''
     });
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         if (item) {
@@ -31,9 +32,52 @@ const ModalProyecto = ({ onClose, item }) => {
         }
     }, [item]);
 
+    const validateField = (name, value) => {
+        let error = '';
+        switch (name) {
+            case 'nombre':
+                if (!value) {
+                    error = 'El nombre es obligatorio';
+                } else if (!/^[a-zA-Z\s]+$/.test(value)) {
+                    error = 'El nombre solo debe contener letras y espacios';
+                }
+                break;
+            case 'descripcion':
+                if (!value) {
+                    error = 'La descripción es obligatoria';
+                } else if (value.length < 10) {
+                    error = 'La descripción debe tener al menos 10 caracteres';
+                }
+                break;
+            case 'fechaInicio':
+                if (!value) {
+                    error = 'La fecha de inicio es obligatoria';
+                }
+                break;
+            case 'fechaFin':
+                if (!value) {
+                    error = 'La fecha de fin es obligatoria';
+                } else if (new Date(value) <= new Date(formData.fechaInicio)) {
+                    error = 'La fecha de fin debe ser posterior a la fecha de inicio';
+                }
+                break;
+            case 'direccion':
+                if (!value) {
+                    error = 'La dirección es obligatoria';
+                } else if (value.length < 5) {
+                    error = 'La dirección debe tener al menos 5 caracteres';
+                }
+                break;
+            default:
+                break;
+        }
+        setErrors(prevState => ({ ...prevState, [name]: error }));
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({ ...prevState, [name]: value }));
+        validateField(name, value);
     };
 
     const handleActividadChange = (e, index) => {
@@ -62,9 +106,9 @@ const ModalProyecto = ({ onClose, item }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { nombre, descripcion, fechaInicio, fechaFin, tipo } = formData;
-        if (!nombre || !descripcion || !fechaInicio || !fechaFin || tipo.some(tipo => !tipo)) {
-            alert('Por favor, complete todos los campos obligatorios.');
+        const hasErrors = Object.values(errors).some(error => error);
+        if (hasErrors) {
+            console.error('Validation errors:', errors);
             return;
         }
 
@@ -96,9 +140,10 @@ const ModalProyecto = ({ onClose, item }) => {
                                 name="nombre"
                                 value={formData.nombre}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.nombre && <p className="text-red-500 text-sm">{errors.nombre}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
@@ -107,9 +152,10 @@ const ModalProyecto = ({ onClose, item }) => {
                                 name="direccion"
                                 value={formData.direccion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.direccion ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.direccion && <p className="text-red-500 text-sm">{errors.direccion}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Fecha de Inicio</label>
@@ -118,9 +164,10 @@ const ModalProyecto = ({ onClose, item }) => {
                                 name="fechaInicio"
                                 value={formData.fechaInicio}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fechaInicio ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.fechaInicio && <p className="text-red-500 text-sm">{errors.fechaInicio}</p>}
                         </div>
                         <div>
                             <label className="block text-gray-700 text-sm font-medium mb-2">Fecha de Fin</label>
@@ -129,9 +176,10 @@ const ModalProyecto = ({ onClose, item }) => {
                                 name="fechaFin"
                                 value={formData.fechaFin}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.fechaFin ? 'border-red-500' : ''}`}
                                 required
                             />
+                            {errors.fechaFin && <p className="text-red-500 text-sm">{errors.fechaFin}</p>}
                         </div>
                         <div className="col-span-2">
                             <label className="block text-gray-700 text-sm font-medium mb-2">Descripción</label>
@@ -139,10 +187,11 @@ const ModalProyecto = ({ onClose, item }) => {
                                 name="descripcion"
                                 value={formData.descripcion}
                                 onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.descripcion ? 'border-red-500' : ''}`}
                                 rows="3"
                                 required
                             />
+                            {errors.descripcion && <p className="text-red-500 text-sm">{errors.descripcion}</p>}
                         </div>
                         <div className="col-span-2">
                             <label className="block text-gray-700 text-sm font-medium mb-2">Actividades</label>
@@ -151,7 +200,7 @@ const ModalProyecto = ({ onClose, item }) => {
                                     <select
                                         value={tipo}
                                         onChange={(e) => handleActividadChange(e, index)}
-                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tipo && errors.tipo[index] ? 'border-red-500' : ''}`}
                                         required
                                     >
                                         <option value="">Seleccione una actividad</option>
@@ -171,29 +220,36 @@ const ModalProyecto = ({ onClose, item }) => {
                             <button
                                 type="button"
                                 onClick={addTipoActividad}
-                                className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+                                className="flex items-center bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white px-3 py-2 rounded"
                             >
-                                <RiAddCircleLine className="inline-block mr-2" /> Agregar Actividad
+                                <RiAddCircleLine className="mr-2" /> Agregar Actividad
                             </button>
                         </div>
                     </div>
-                    <div className="flex justify-end space-x-4 mt-8">
+                    <div className="flex justify-end space-x-4">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                            className="bg-gradient-to-r from-green-500 to-green-700 hover:from-green-700 hover:to-green-900 text-white px-4 py-2 rounded"
                         >
-                            {item ? 'Actualizar' : 'Agregar'}
+                            {item ? 'Actualizar' : 'Guardar'}
                         </button>
                     </div>
                 </form>
             </div>
+            <button
+                type="button"
+                onClick={onClose}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+                <RiCloseLine className="text-2xl" />
+            </button>
         </div>
     );
 };

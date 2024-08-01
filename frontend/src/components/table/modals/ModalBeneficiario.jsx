@@ -136,7 +136,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
     };
 
     return (
-        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8">
+        <div className="bg-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
             <div className="grid grid-cols-2 gap-8">
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
                 <div className="col-span-2 grid grid-cols-2 gap-8">

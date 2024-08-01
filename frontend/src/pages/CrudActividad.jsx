@@ -16,7 +16,6 @@ import Switch from '../components/table/Switch';
 import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
-import { Link } from 'react-router-dom';
 import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
 
 const CRUDActividad = () => {
@@ -128,8 +127,8 @@ const CRUDActividad = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const filteredData = searchTerm
         ? actividades.filter(item =>
-            item.id_actividad.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+            (item.id_actividad ? item.id_actividad.toString().toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+            (item.nombre ? item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) : false)
         )
         : actividades;
 
@@ -156,7 +155,6 @@ const CRUDActividad = () => {
                                 <TableCell>Tipo</TableCell>
                                 <TableCell>Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
-                                
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
@@ -180,10 +178,10 @@ const CRUDActividad = () => {
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
                                                 <TableActions
-                                                item={item}
-                                                handleViewButtonClick={handleViewButtonClick}
-                                                handleEditButtonClick={handleEditButtonClick}
-                                                handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                                    item={item}
+                                                    handleViewButtonClick={handleViewButtonClick}
+                                                    handleEditButtonClick={handleEditButtonClick}
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
                                                 />
                                             </div>
                                         </TableCell>

@@ -169,14 +169,7 @@ const CRUDDonaciones = () => {
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
                                                 />
-                                                <button
-                                                    name="estado"
-                                                    checked={item.estado === 'activa'}
-                                                    onChange={() => handleAnularButtonClick(item._id)}
-                                                    className={`rounded-lg transition-colors text-white bg-gradient-to-r from-rose-400 from-10% to-red-600 hover:from-rose-700 hover:to-red-700' : 'bg-gray-300 cursor-not-allowed'} p-2`}
-                                                >
-                                                    <RiDeleteBin6Line />
-                                                </button>
+                                               
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -219,13 +212,7 @@ const CRUDDonaciones = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-            {(donacionesErrors.length > 0 || donadoresErrors.length > 0) && (
-                <div className="fixed bottom-0 left-0 right-0 p-4 bg-red-500 text-white text-center">
-                    {[...donacionesErrors, ...donadoresErrors].map((error, index) => (
-                        <p key={index}>{error}</p>
-                    ))}
-                </div>
-            )}
+
         </div>
     );
 };
