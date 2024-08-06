@@ -1,4 +1,3 @@
-// CRUDProyecto.js
 import React, { useState, useEffect } from 'react';
 import { RiAddLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
@@ -116,7 +115,7 @@ const CRUDProyecto = () => {
     };
 
     const handleActivitiesClick = (id) => {
-        navigate(`/projects/${id}/activities`);
+        navigate(`/Actividades/${id}`); // Cambiar la ruta de redirección
     };
 
     const closeModal = () => {
