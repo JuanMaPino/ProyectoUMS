@@ -24,6 +24,9 @@ const actividadSchema = new Schema({
       cantidad: { type: Number, required: true }
     }
   ],
+  proyectos: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Proyecto' }
+  ],
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],
