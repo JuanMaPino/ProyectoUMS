@@ -114,8 +114,13 @@ const CRUDProyecto = () => {
         );
     };
 
+<<<<<<< HEAD
     const handleActivitiesClick = () => {
         navigate('/actividades'); // Redirigir sin pasar ID
+=======
+    const handleActivitiesClick = (id) => {
+        navigate(`/Actividades/${id}`); // Cambiar la ruta de redirección
+>>>>>>> dc893c45b7aeb3aaada322076326edc54858aed2
     };
 
     const closeModal = () => {

@@ -313,7 +313,7 @@ const ModalActividad = ({ onClose, item }) => {
                     <div className="sm:col-span-2">
                         <div className="flex flex-col justify-center mt-6">
                             <button type="submit" className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
-                                {item ? 'Actualizar Ayudante' : 'Agregar Ayudante'}
+                                {item ? 'Actualizar Actividad' : 'Agregar Actividad'}
                             </button>
                             <button
                                 type="button"
