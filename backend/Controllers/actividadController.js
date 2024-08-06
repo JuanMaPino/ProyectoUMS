@@ -11,8 +11,20 @@ exports.obtenerTodasLasActividades = async (req, res) => {
     }
 };
 
+exports.obtenerActividadesPorProyecto = async (req, res) => {
+    const { proyectoId } = req.params;
+    try {
+        const actividades = await Actividad.find({ proyecto: proyectoId })
+            .populate('tareas')
+            .populate('insumos.insumo');
+        res.json(actividades);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.crearActividad = async (req, res) => {
-    const { nombre, fecha, tipo, descripcion, tareas, insumos } = req.body;
+    const { nombre, fecha, tipo, descripcion, tareas, insumos, proyecto } = req.body;
 
     const nuevaActividad = new Actividad({
         nombre,
@@ -20,7 +32,8 @@ exports.crearActividad = async (req, res) => {
         tipo,
         descripcion,
         tareas: tareas.map(t => t._id),
-        insumos: insumos.map(i => ({ insumo: i.insumo._id, cantidad: i.cantidad }))
+        insumos: insumos.map(i => ({ insumo: i.insumo._id, cantidad: i.cantidad })),
+        proyecto
     });
 
     try {

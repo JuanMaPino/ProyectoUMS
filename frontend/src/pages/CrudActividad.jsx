@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiAddLine } from 'react-icons/ri';
+import { useParams, useNavigate } from 'react-router-dom'; // Importar hooks de react-router-dom
 import { useActividades } from '../context/ActividadContext';
 import { useInsumos } from '../context/InsumosContext';
 import { useTareas } from '../context/TareasContext';
@@ -16,17 +17,21 @@ import Switch from '../components/table/Switch';
 import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
-import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
+import { showAlert, showToast } from '../components/table/alertFunctions';
 
 const CRUDActividad = () => {
+    const { proyectoId } = useParams();
+    const navigate = useNavigate();
+
     const {
         actividades,
+        getActividadesByProyecto,
         createActividad,
         updateActividad,
         deleteActividad,
         disableActividad,
     } = useActividades();
-    
+
     const { insumos } = useInsumos();
     const { tareas } = useTareas();
 
@@ -37,6 +42,12 @@ const CRUDActividad = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const itemsPerPage = 10;
+
+    useEffect(() => {
+        if (proyectoId) {
+            getActividadesByProyecto(proyectoId);
+        }
+    }, [proyectoId, getActividadesByProyecto]);
 
     useEffect(() => {
         setCurrentPage(1); // Reset to first page on new search
@@ -181,7 +192,7 @@ const CRUDActividad = () => {
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
                                                     handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)}
                                                 />
                                             </div>
                                         </TableCell>
@@ -214,7 +225,6 @@ const CRUDActividad = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         />
-                        {/* Botón flotante para crear */}
                         <button
                             onClick={handleCreateClick}
                             className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"

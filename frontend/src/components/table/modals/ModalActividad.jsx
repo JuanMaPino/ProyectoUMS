@@ -238,6 +238,7 @@ const ModalActividad = ({ onClose, item }) => {
                                 <div key={index} className="flex items-center space-x-2">
                                     <select
                                         value={tarea._id}
+                                        
                                         onChange={(e) => handleTareaChange(index, e)}
                                         className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tareas ? 'border-red-500' : ''}`}
                                         required
@@ -256,7 +257,7 @@ const ModalActividad = ({ onClose, item }) => {
                                     </button>
                                 </div>
                             ))}
-                            {errors.tareas && <span className="text-red-500 text-sm mt-1">{errors.tareas}</span>}
+                            {errors.tareas && <p className="text-red-500 text-sm mt-1">{errors.tareas}</p>}
                             <button
                                 type="button"
                                 onClick={handleAddTarea}

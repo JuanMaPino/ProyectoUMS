@@ -4,6 +4,7 @@ import {
     updateActividadRequest,
     getActividadByIdRequest,
     getAllActividadesRequest,
+    getActividadesByProyectoRequest, // Agregar esta importación
     disableActividadRequest,
     deleteActividadRequest
 } from '../api/ApiActividad'; // Ajusta las importaciones según tu estructura de API
@@ -69,6 +70,15 @@ export const ActividadProvider = ({ children }) => {
         }
     };
 
+    const getActividadesByProyecto = async (proyectoId) => {
+        try {
+            const res = await getActividadesByProyectoRequest(proyectoId);
+            setActividades(res.data);
+        } catch (error) {
+            handleError(error);
+        }
+    };
+
     const disableActividad = async (id) => {
         try {
             const res = await disableActividadRequest(id);
@@ -111,6 +121,7 @@ export const ActividadProvider = ({ children }) => {
                 updateActividad,
                 getActividadById,
                 getAllActividades,
+                getActividadesByProyecto, // Añadir esta función al proveedor
                 deleteActividad,
                 disableActividad,
                 actividades,
