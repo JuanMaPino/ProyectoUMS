@@ -5,7 +5,7 @@ import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
 import TableRow from '../components/table/TableRow';
-import TableCell from '../compongients/table/TableCell';
+import TableCell from '../components/table/TableCell';
 import Pagination from '../components/table/Pagination';
 import CreateButton from '../components/table/CreateButton';
 import SearchBar from '../components/table/SearchBar';

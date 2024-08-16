@@ -151,7 +151,7 @@ const CRUDTarea = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Tareas</h1>
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Tareas</h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />

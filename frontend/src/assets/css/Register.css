@@ -1,0 +1,132 @@
+/* General Styles */
+.register-body {
+  margin: 0;
+  padding: 0;
+  background: url('../img/bosquesito.jpeg') no-repeat center top;
+  font-family: sans-serif;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-y: auto;
+  /* Permitir scroll si es necesario */
+
+
+  @media (max-width: 768px) {
+    .register-body {
+      background-size: contain;
+    }
+  }
+
+  /* Register Box Styles */
+  .register-box {
+    width: 320px;
+    height: 570px;/* Ajusta la altura automáticamente */
+    color: #000;
+    top: 50%;/* Centrado verticalmente */
+    left: 50%;/* Centrado horizontalmente */
+    position: absolute;
+    transform: translate(-50%, -50%);
+    box-sizing: border-box;
+    padding: 40px 30px;/* Reducido para hacer espacio */
+    border-radius: 15px;
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semitransparente */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+    /* Añadir sombra */
+  }
+
+  /* Avatar Styles */
+  .register-box .avatar {
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    top: -60px;
+    left: calc(50% - 65px);
+    /* Centrar avatar */
+    border-radius: 50%;
+    /* Hacer avatar circular */
+  }
+
+  /* Heading Styles */
+  .register-box h1 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    font-size: 22px;
+    
+    /* Espacio inferior */
+  }
+
+  /* Label Styles */
+  .register-box label {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+    /* Añadir espacio debajo del label */
+  }
+
+  /* Input Styles */
+  .register-box input {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    /* Asegura que el padding esté dentro del ancho */
+  }
+
+  .register-box input[type="text"],
+  .register-box input[type="email"],
+  .register-box input[type="password"],
+  .register-box select {
+    border: none;
+    border-bottom: 1px solid #000;
+    background: transparent;
+    outline: none;
+    color: #000;
+  }
+
+  .register-box input[type="submit"] {
+    border: none;
+    outline: none;
+    height: 40px;
+    background: #08c1e2;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    margin-top: 3px;
+    /* Añadir transiciones */
+  }
+
+  .register-box input[type="submit"]:hover {
+    background: #ffc107;
+    color: #000;
+  }
+
+  /* Link Styles */
+  .register-box a {
+    text-decoration: none;
+    font-size: 12px;
+    color: #000;
+}
+
+  .register-box a:hover {
+    color: #0d00c5;
+  }
+
+  /* General Form Control Styles */
+  .form-control.s {
+    border: none;
+    border-bottom: 1px solid #000;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #000;
+    font-size: 16px;
+  }
+  
+}

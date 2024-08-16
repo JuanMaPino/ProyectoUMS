@@ -114,13 +114,8 @@ const CRUDProyecto = () => {
         );
     };
 
-<<<<<<< HEAD
-    const handleActivitiesClick = () => {
-        navigate('/actividades'); // Redirigir sin pasar ID
-=======
     const handleActivitiesClick = (id) => {
         navigate(`/Actividades/${id}`); // Cambiar la ruta de redirección
->>>>>>> dc893c45b7aeb3aaada322076326edc54858aed2
     };
 
     const closeModal = () => {
@@ -146,7 +141,7 @@ const CRUDProyecto = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Proyectos</h1>
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Proyectos</h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
