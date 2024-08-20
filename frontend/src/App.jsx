@@ -26,9 +26,7 @@ import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
 import CRUDRoles from './pages/CrudRol';
-import Activities from './pages/Activities'; // Importar el componente Activities
-import { GrDashboard } from 'react-icons/gr';
-import Activities from './pages/Activities';
+
 import Login from './pages/Login';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
@@ -96,7 +94,7 @@ const App = () => {
                                 <Route path="/donadores" element={<CRUDDonador />} />
                                 <Route path="/beneficiarios" element={<CRUDTable />} />
                                 <Route path="/proyectos" element={<CRUDProyecto />} />
-                                <Route path="/proyectos/:id/actividades" element={<Activities />} />
+                                <Route path="/roles" element={<CRUDRoles />} />
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
