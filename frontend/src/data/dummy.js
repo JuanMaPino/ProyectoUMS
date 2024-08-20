@@ -515,7 +515,11 @@ export const links = [
        {
          name: 'Actividades',
          icon: <RiFolderLine/>
-       }
+       },
+       {
+        name: 'Roles',
+        icon: <RiFolderLine/>
+      }
     ],
   },
 

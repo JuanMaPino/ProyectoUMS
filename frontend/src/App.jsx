@@ -12,6 +12,7 @@ import { BeneficiarioProvider } from './context/BeneficiariosContext';
 import { DonadorProvider } from './context/DonadoresContext';
 import { DonacionesProvider } from './context/DonacionesContext';
 import { InsumoProvider } from './context/InsumosContext';
+import { RolProvider } from './context/RolesContext';
 
 import { useStateContext } from './context/ContextProvider';
 
@@ -26,6 +27,7 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
+import CRUDRoles from './pages/CrudRol';
 import Activities from './pages/Activities'; // Importar el componente Activities
 import { GrDashboard } from 'react-icons/gr';
 import { DarkModeProvider } from './context/DarkModeContext';
@@ -48,6 +50,7 @@ const App = () => {
                     <InsumoProvider>
                       <AyudanteProvider>
                         <TareaProvider>
+                          <RolProvider>
                           {activeMenu ? (
                             <div className="w-[5%] fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
                               <Sidebar />
@@ -78,12 +81,14 @@ const App = () => {
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
                                 <Route path="/actividades" element={<CRUDActividad />} />
+                                <Route path="/roles" element={<CRUDRoles />} />
 
                                 {/* Ejemplo de gráfico */}
                                 <Route path="/line-chart" element={<LineChart />} />
                               </Routes>
                             </div>
                           </div>
+                          </RolProvider>
                         </TareaProvider>
                       </AyudanteProvider>
                     </InsumoProvider>
