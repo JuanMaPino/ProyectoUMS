@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const connectDB = require('./Config/database');
 const morgan = require('morgan');
+const cors = require('cors');
+const auth = require('./Routes/authRoutes');
 const beneficiarioRoutes = require('./Routes/beneficiarioRoutes');
 const ayudanteRoutes = require('./Routes/ayudanteRoutes');
 const tareaRoutes = require('./Routes/tareaRoutes'); 
@@ -14,10 +16,14 @@ const rolRoutes = require('./Routes/rolRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-app.use(require('cors')());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use('/auth', auth);
 app.use('/beneficiarios', beneficiarioRoutes);
 app.use('/ayudantes', ayudanteRoutes);
 app.use('/tareas', tareaRoutes);  

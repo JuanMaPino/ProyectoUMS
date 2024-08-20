@@ -1,4 +1,3 @@
-// CRUDProyecto.js
 import React, { useState, useEffect } from 'react';
 import { RiAddLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
@@ -116,7 +115,7 @@ const CRUDProyecto = () => {
     };
 
     const handleActivitiesClick = (id) => {
-        navigate(`/projects/${id}/activities`);
+        navigate(`/Actividades/${id}`); // Cambiar la ruta de redirección
     };
 
     const closeModal = () => {
@@ -142,7 +141,7 @@ const CRUDProyecto = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Proyectos</h1>
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Proyectos</h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
@@ -185,7 +184,7 @@ const CRUDProyecto = () => {
                                         </TableCell>
                                         <TableCell label="Actividades"> {/* Nueva celda */}
                                             <button
-                                                onClick={() => handleActivitiesClick(item._id)}
+                                                onClick={handleActivitiesClick}
                                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                                             >
                                                 Ver Actividades
@@ -214,7 +213,7 @@ const CRUDProyecto = () => {
                                 isActive={item.estado === 'activo'}
                             >
                                 <button
-                                    onClick={() => handleActivitiesClick(item._id)}
+                                    onClick={handleActivitiesClick}
                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
                                 >
                                     Ver Actividades
