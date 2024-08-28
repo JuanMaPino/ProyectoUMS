@@ -1,10 +1,10 @@
 import React from 'react';
 import { RiDeleteBin6Line, RiPlaneFill, RiEyeLine } from 'react-icons/ri';
 import Switch from '../Switch'; // Ajusta la ruta según tu estructura de componentes
-import { useActividades } from '../../../context/ActividadContext'; // Ajusta la ruta según tu estructura de contexto
+import { useProyectos } from '../../../context/ProyectosContext'; // Ajusta la ruta según tu estructura de contexto
 
 const CardDonador = ({ item, onEdit, onView, onDelete, onSwitchChange, isActive }) => {
-    const { disableActividad } = useActividades();
+    const { disableActividad } = useProyectos();
 
     const cardClass = isActive ? "shadow-inner bg-gradient-to-r from-gray-200 from-35% via-sky-300 via-55% to-blue-500 shadow-inner" : "bg-gradient-to-r from-gray-200 from-35% via-red-300 to-red-600 shadow-inner animate-pulse";
 

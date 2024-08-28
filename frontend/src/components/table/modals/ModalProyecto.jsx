@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useProyectos } from '../../../context/ProyectosContext';
-import { useActividades } from '../../../context/ActividadContext';
+
 import { RiCloseLine, RiDeleteBin6Line, RiAddCircleLine } from 'react-icons/ri';
 import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
 
 const ModalProyecto = ({ onClose, item }) => {
     const { createProyecto, updateProyecto } = useProyectos();
-    const { actividades } = useActividades();
     const [formData, setFormData] = useState({
         nombre: '',
         descripcion: '',
@@ -192,38 +191,6 @@ const ModalProyecto = ({ onClose, item }) => {
                                 required
                             />
                             {errors.descripcion && <p className="text-red-500 text-sm">{errors.descripcion}</p>}
-                        </div>
-                        <div className="col-span-2">
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Actividades</label>
-                            {formData.tipo.map((tipo, index) => (
-                                <div key={index} className="flex items-center mb-2">
-                                    <select
-                                        value={tipo}
-                                        onChange={(e) => handleActividadChange(e, index)}
-                                        className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.tipo && errors.tipo[index] ? 'border-red-500' : ''}`}
-                                        required
-                                    >
-                                        <option value="">Seleccione una actividad</option>
-                                        {actividades && actividades.map(act => (
-                                            <option key={act._id} value={act._id}>{act.nombre} - {act.tipo}</option>
-                                        ))}
-                                    </select>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeTipoActividad(index)}
-                                        className="ml-2 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900 text-white p-2 rounded"
-                                    >
-                                        <RiDeleteBin6Line />
-                                    </button>
-                                </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={addTipoActividad}
-                                className="flex items-center bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white px-3 py-2 rounded"
-                            >
-                                <RiAddCircleLine className="mr-2" /> Agregar Actividad
-                            </button>
                         </div>
                     </div>
                     <div className="flex justify-end space-x-4">

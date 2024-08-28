@@ -25,13 +25,17 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
+
+
+import { GrDashboard } from 'react-icons/gr';
+
 import CRUDRoles from './pages/CrudRol';
 
 import Login from './pages/Login';
+
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
-import { ActividadProvider } from './context/ActividadContext';
 
 const AppLayout = ({ children }) => {
   const { activeMenu } = useStateContext();
@@ -73,9 +77,12 @@ const AppLayout = ({ children }) => {
 const App = () => {
   return (
     <DarkModeProvider>
+
+      <div className="flex relative dark:bg-main-dark-bg">
+        <BrowserRouter>
+
       <BrowserRouter>
         <AuthProvider>
-          <ActividadProvider>
             <ProyectoProvider>
               <BeneficiarioProvider>
                 <DonadorProvider>
@@ -94,11 +101,19 @@ const App = () => {
                                 <Route path="/donadores" element={<CRUDDonador />} />
                                 <Route path="/beneficiarios" element={<CRUDTable />} />
                                 <Route path="/proyectos" element={<CRUDProyecto />} />
+
                                 <Route path="/roles" element={<CRUDRoles />} />
+
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
                                 <Route path="/actividades" element={<CRUDActividad />} />
+
+                                
+
+                                {/* Ejemplo de gráfico */}
+                                <Route path="/line-chart" element={<LineChart />} />
+
                               </Routes>
                             </AppLayout>
                           </RolProvider>
@@ -109,7 +124,10 @@ const App = () => {
                 </DonadorProvider>
               </BeneficiarioProvider>
             </ProyectoProvider>
-          </ActividadProvider>
+        </BrowserRouter>
+      </div>
+
+          
         </AuthProvider>
       </BrowserRouter>
     </DarkModeProvider>

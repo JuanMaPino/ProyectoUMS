@@ -19,3 +19,16 @@ export const disableProyectoRequest = (id) => axios.patch(`${API}/${id}/estado`)
 
 // Eliminar un proyecto
 export const deleteProyectoRequest = (id) => axios.delete(`${API}/${id}`);
+
+// Obtener actividades de un proyecto
+export const getActividadesByProyectoIdRequest = (id) => axios.get(`${API}/${id}/actividades`);
+
+// Crear una nueva actividad en un proyecto
+export const createActividadRequest = (id, actividad) => axios.post(`${API}/${id}/actividades`, actividad);
+
+// Actualizar una actividad existente en un proyecto
+export const updateActividadRequest = (id, actividadId, actividad) => axios.put(`${API}/${id}/actividades/${actividadId}`, actividad);
+
+// Eliminar una actividad de un proyecto
+export const deleteActividadRequest = (id, actividadId) => axios.delete(`${API}/${id}/actividades/${actividadId}`);
+

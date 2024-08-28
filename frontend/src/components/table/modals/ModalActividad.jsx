@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useActividades } from '../../../context/ActividadContext';
+import { useProyectos } from '../../../context/ProyectosContext';
 import axios from 'axios';
-import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
 
-const ModalActividad = ({ onClose, item }) => {
-    const { createActividad, updateActividad } = useActividades();
+const ModalActividad = ({ onClose, item, proyectoId }) => {
+    const { createActividad, updateActividad } = useProyectos();
     const [insumos, setInsumos] = useState([]);
     const [tareas, setTareas] = useState([]);
     const [formData, setFormData] = useState({
@@ -15,13 +14,9 @@ const ModalActividad = ({ onClose, item }) => {
         insumos: [],
         estado: 'activo'
     });
-
-    const [errors, setErrors] = useState({
-        nombre: '',
-        descripcion: '',
-        tareas: '',
-        insumos: ''
-    });
+    
+    console.log("idproyecto",proyectoId)
+    const [errors, setErrors] = useState({});
 
     useEffect(() => {
         const fetchInsumos = async () => {
@@ -50,33 +45,88 @@ const ModalActividad = ({ onClose, item }) => {
                 nombre: item.nombre || '',
                 tipo: item.tipo || 'Recreativa',
                 descripcion: item.descripcion || '',
-                tareas: item.tareas ? item.tareas.map(t => ({ _id: t._id, nombre: t.nombre })) : [],
-                insumos: item.insumos ? item.insumos.map(i => ({ insumo: i.insumo._id || i.insumo, cantidad: i.cantidad })) : [],
+                tareas: item.tareas || [],
+                insumos: item.insumos || [],
                 estado: item.estado || 'activo',
             });
         }
     }, [item]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleValidation = (name, value) => {
+        const newErrors = { ...errors };
 
         if (name === 'nombre' || name === 'descripcion') {
-            if (/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: ''
-                }));
+            if (!value) {
+                newErrors[name] = `El campo ${name} es obligatorio`;
+            } else if (!/^[A-Za-záéíóúüñÁÉÍÓÚÜÑ\s]+$/.test(value)) {
+                newErrors[name] = `El campo ${name} solo permite letras y espacios.`;
             } else {
-                setErrors(prevState => ({
-                    ...prevState,
-                    [name]: `El campo ${name} solo permite letras y espacios.`
-                }));
+                delete newErrors[name];
             }
         }
+
+        setErrors(newErrors);
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
 
         setFormData(prevState => ({
             ...prevState,
             [name]: value
+        }));
+
+        handleValidation(name, value);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        Object.keys(formData).forEach(key => handleValidation(key, formData[key]));
+
+        if (Object.keys(errors).length > 0) {
+            return;
+        }
+
+        try {
+            if (item && item._id) {
+                await updateActividad(proyectoId, item._id, formData);
+            } else {
+                await createActividad(proyectoId, formData);
+            }
+            onClose();
+        } catch (error) {
+            console.error('Error saving activity:', error.message);
+        }
+    };
+
+    const handleAddTarea = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            tareas: [...prevState.tareas, { _id: '', nombre: '' }]
+        }));
+    };
+
+    const handleRemoveTarea = (index) => {
+        const newTareas = formData.tareas.filter((_, i) => i !== index);
+        setFormData(prevState => ({
+            ...prevState,
+            tareas: newTareas
+        }));
+    };
+
+    const handleAddInsumo = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            insumos: [...prevState.insumos, { insumo: '', cantidad: '' }]
+        }));
+    };
+
+    const handleRemoveInsumo = (index) => {
+        const newInsumos = formData.insumos.filter((_, i) => i !== index);
+        setFormData(prevState => ({
+            ...prevState,
+            insumos: newInsumos
         }));
     };
 
@@ -113,123 +163,46 @@ const ModalActividad = ({ onClose, item }) => {
     };
 
 
-    const handleAddTarea = () => {
-        setFormData(prevState => ({
-            ...prevState,
-            tareas: [...prevState.tareas, { _id: '', nombre: '' }]
-        }));
-    };
-
-    const handleRemoveTarea = (index) => {
-        const newTareas = formData.tareas.filter((_, i) => i !== index);
-        setFormData(prevState => ({
-            ...prevState,
-            tareas: newTareas
-        }));
-    };
-
-    const handleAddInsumo = () => {
-        setFormData(prevState => ({
-            ...prevState,
-            insumos: [...prevState.insumos, { insumo: '', cantidad: '' }]
-        }));
-    };
-
-    const handleRemoveInsumo = (index) => {
-        const newInsumos = formData.insumos.filter((_, i) => i !== index);
-        setFormData(prevState => ({
-            ...prevState,
-            insumos: newInsumos
-        }));
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        const validationErrors = {};
-        if (!formData.nombre) validationErrors.nombre = 'Este campo es obligatorio';
-        if (!formData.descripcion) validationErrors.descripcion = 'Este campo es obligatorio';
-        if (formData.tareas.length === 0 || formData.tareas.some(t => !t._id)) validationErrors.tareas = 'Debe agregar al menos una tarea válida';
-        if (formData.insumos.length === 0 || formData.insumos.some(i => !i.insumo || !i.cantidad)) validationErrors.insumos = 'Debe agregar al menos un insumo válido';
-
-        setErrors(validationErrors);
-
-        if (Object.keys(validationErrors).length === 0) {
-            try {
-                const updatedFormData = {
-                    ...formData,
-                    insumos: formData.insumos.map(i => ({
-                        insumo: i.insumo,
-                        nombre: insumos.find(ins => ins._id === i.insumo)?.nombre || '',
-                        cantidad: i.cantidad
-                    }))
-                };
-
-                if (item && item._id) {
-                    await updateActividad(item._id, updatedFormData);
-                    showToast('Actividad actualizada con éxito.', 'success');
-                } else {
-                    await createActividad(updatedFormData);
-                    showToast('Actividad creada con éxito.', 'success');
-                }
-                onClose();
-            } catch (error) {
-                console.error('Error saving item:', error.response ? error.response.data : error.message);
-                showToast('Error al guardar la actividad. Por favor, inténtelo de nuevo.', 'error');
-            }
-        } else {
-            console.log('Validation errors:', validationErrors);
-        }
-    };
-
-
     return (
-        <div className="bg-white  rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
+        <div className="bg-white rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
             <div className="p-8">
-                <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                    <div className="grid grid-cols-2 gap-8">
-                        <div>
-                            <div>
-                                <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
-                                <input
-                                    type="text"
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
-                                    className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
-                                    required
-                                />
-                                {errors.nombre && <span className="text-red-500 text-sm mt-1">{errors.nombre}</span>}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-8">
-                        <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<span className="text-red-500 text-sm">*</span></label>
-                            <select
-                                name="tipo"
-                                value={formData.tipo}
-                                onChange={handleChange}
-                                className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
-                                required
-                            >
-                                <option value="Recreativa">Recreativa</option>
-                                <option value="Caritativa">Caritativa</option>
-                            </select>
-                        </div>
+                <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
+                <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                        <input
+                            type="text"
+                            name="nombre"
+                            value={formData.nombre}
+                            onChange={handleChange}
+                            className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.nombre ? 'border-red-500' : ''}`}
+                            required
+                        />
+                        {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción<span className="text-red-500 text-sm">*</span></label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo</label>
+                        <select
+                            name="tipo"
+                            value={formData.tipo}
+                            onChange={handleChange}
+                            className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                            required
+                        >
+                            <option value="Recreativa">Recreativa</option>
+                            <option value="Educativa">Educativa</option>
+                        </select>
+                    </div>
+                    <div className="sm:col-span-2">
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción</label>
                         <textarea
                             name="descripcion"
                             value={formData.descripcion}
                             onChange={handleChange}
                             className={`shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300 ${errors.descripcion ? 'border-red-500' : ''}`}
-                            rows="3"
                             required
                         />
-                        {errors.descripcion && <span className="text-red-500 text-sm mt-1">{errors.descripcion}</span>}
+                        {errors.descripcion && <p className="text-red-500 text-sm mt-1">{errors.descripcion}</p>}
                     </div>
                     <div>
                         <div>
@@ -318,7 +291,7 @@ const ModalActividad = ({ onClose, item }) => {
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
+                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
                             >
                                 Cancelar
                             </button>
