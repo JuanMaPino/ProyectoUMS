@@ -24,6 +24,7 @@ import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
 import Activities from './pages/Activities';
 import Login from './pages/Login';
+import ResetPassword from './pages/RecuperarContraseña';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
@@ -33,10 +34,14 @@ const AppLayout = ({ children }) => {
   const { activeMenu } = useStateContext();
   const location = useLocation();
   
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  // Incluir '/olvide-' en la verificación de páginas de autenticación
+  const isAuthPage = ['/login', '/register', '/olvide-contrasena'].includes(location.pathname);
+
+  console.log("Current Path:", location.pathname); // Depuración
+  console.log("Is Auth Page:", isAuthPage); // Depuración
 
   return (
-    <div className="flex relative dark:bg-main-dark-bg">
+    <div className="flex relative dark:bg-main-dark-bg h-screen">
       {!isAuthPage && (
         <>
           {activeMenu ? (
@@ -51,20 +56,22 @@ const AppLayout = ({ children }) => {
         </>
       )}
 
-      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[15%]' : 'md:ml-0'}`}>
+      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[15%]' : 'md:ml-0'} overflow-auto`}>
         {!isAuthPage && (
           <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
             <Navbar />
           </div>
         )}
 
-        <div>
+        <div className="min-h-[100vh] h-full overflow-y-auto">
           {children}
         </div>
       </div>
     </div>
   );
 };
+
+
 
 const App = () => {
   return (
@@ -83,17 +90,20 @@ const App = () => {
                             <Routes>
                               <Route path="/register" element={<Register />} />
                               <Route path="/login" element={<Login />} />
-                              <Route path="/dashboard" element={<Dashboard />} />
+                              <Route path="/olvide-contrasena" element={<ResetPassword />} />
                               <Route path="/" element={<Navigate to="/login" />} />
-                              <Route path="/donaciones" element={<CRUDDonacion />} />
-                              <Route path="/donadores" element={<CRUDDonador />} />
-                              <Route path="/beneficiarios" element={<CRUDTable />} />
-                              <Route path="/proyectos" element={<CRUDProyecto />} />
-                              <Route path="/proyectos/:id/actividades" element={<Activities />} />
-                              <Route path="/insumos" element={<CRUDInsumos />} />
-                              <Route path="/ayudantes" element={<CRUDAyudante />} />
-                              <Route path="/tareas" element={<CRUDTarea />} />
-                              <Route path="/actividades" element={<CRUDActividad />} />
+                              {/*<Route element={<ProtectedRoute/>}> */}
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/donaciones" element={<CRUDDonacion />} />
+                                <Route path="/donadores" element={<CRUDDonador />} />
+                                <Route path="/beneficiarios" element={<CRUDTable />} />
+                                <Route path="/proyectos" element={<CRUDProyecto />} />
+                                <Route path="/proyectos/:id/actividades" element={<Activities />} />
+                                <Route path="/insumos" element={<CRUDInsumos />} />
+                                <Route path="/ayudantes" element={<CRUDAyudante />} />
+                                <Route path="/tareas" element={<CRUDTarea />} />
+                                <Route path="/actividades" element={<CRUDActividad />} />
+                              {/*</Route>*/}
                             </Routes>
                           </AppLayout>
                         </TareaProvider>
