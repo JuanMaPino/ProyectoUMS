@@ -26,12 +26,11 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
-import Activities from './pages/Activities'; // Importar el componente Activities
+
 import { GrDashboard } from 'react-icons/gr';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
-import { ActividadProvider } from './context/ActividadContext';
 
 const App = () => {
   const { activeMenu } = useStateContext();
@@ -40,7 +39,6 @@ const App = () => {
     <DarkModeProvider>
       <div className="flex relative dark:bg-main-dark-bg">
         <BrowserRouter>
-          <ActividadProvider>
             <ProyectoProvider>
               <BeneficiarioProvider>
                 <DonadorProvider>
@@ -73,11 +71,11 @@ const App = () => {
                                 <Route path="/donadores" element={<CRUDDonador />} />
                                 <Route path="/beneficiarios" element={<CRUDTable />} />
                                 <Route path="/proyectos" element={<CRUDProyecto />} />
-                                <Route path="/proyectos/:id/actividades" element={<Activities />} /> {/* Ruta para actividades del proyecto */}
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
                                 <Route path="/actividades" element={<CRUDActividad />} />
+                                
 
                                 {/* Ejemplo de gráfico */}
                                 <Route path="/line-chart" element={<LineChart />} />
@@ -91,7 +89,6 @@ const App = () => {
                 </DonadorProvider>
               </BeneficiarioProvider>
             </ProyectoProvider>
-          </ActividadProvider>
         </BrowserRouter>
       </div>
     </DarkModeProvider>

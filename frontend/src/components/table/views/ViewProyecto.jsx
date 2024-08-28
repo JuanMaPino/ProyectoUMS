@@ -25,14 +25,6 @@ const ViewProyecto = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className="text-gray-800">{item.estado}</p>
                 </div>
-                <div>
-                    <label className="block text-gray-700"><span className="font-semibold">Actividades:</span></label>
-                    {item.tipo.map((tipo, index) => (
-                        <div key={index} className="flex items-center">
-                            <p className="text-gray-800">{tipo.nombre} - {tipo.tipo}</p>
-                        </div>
-                    ))}
-                </div>
             </div>
             <div className="mt-6 flex justify-center">
                 <button

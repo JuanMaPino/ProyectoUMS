@@ -1,5 +1,34 @@
-// Models/Proyecto.js
 const mongoose = require('mongoose');
+
+const actividadSchema = new mongoose.Schema({
+  nombre: {
+    type: String,
+    required: true,
+  },
+  tipo: {
+    type: String,
+    required: true,
+    enum: ['Recreativa', 'Caritativa']
+  },
+  descripcion: {
+    type: String,
+    required: true,
+  },
+  tareas: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Tarea' }
+  ],
+  insumos: [
+    { 
+      insumo: { type: mongoose.Schema.Types.ObjectId, ref: 'Insumo' },
+      cantidad: { type: Number, required: true }
+    }
+  ],
+  estado: {
+    type: String,
+    enum: ['activo', 'inactivo'],
+    default: 'activo'
+  }
+});
 
 const proyectoSchema = new mongoose.Schema({
   nombre: {
@@ -23,10 +52,7 @@ const proyectoSchema = new mongoose.Schema({
     enum: ['activo', 'inactivo'],
     default: 'activo'
   },
-  tipo: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Actividad'
-  }],
+  actividades: [actividadSchema],  // Nesting actividadSchema directly within proyectoSchema
   direccion: {
     type: String,
     required: true
