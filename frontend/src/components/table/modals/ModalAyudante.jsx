@@ -95,8 +95,8 @@ const ModalAyudante = ({ onClose, item }) => {
             case 'institucion':
                 if (!value) {
                     newErrors.institucion = 'Este campo es obligatorio';
-                } else if (value.length < 3) {
-                    newErrors.institucion = 'La institución debe tener al menos 3 caracteres';
+                } else if (value.length < 5) {
+                    newErrors.institucion = 'La institución debe tener al menos 5 caracteres';
                 } else {
                     delete newErrors.institucion;
                 }

@@ -113,7 +113,7 @@ const CRUDProyecto = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Proyectos</h1>
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Proyectos</h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
@@ -150,6 +150,17 @@ const CRUDProyecto = () => {
                                                 />
                                             </div>
                                         </TableCell>
+
+
+                                        <TableCell label="Actividades"> {/* Nueva celda */}
+                                            <button
+                                                onClick={handleActivitiesClick}
+                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                            >
+                                                Ver Actividades
+                                            </button>
+                                        </TableCell>
+
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -162,6 +173,27 @@ const CRUDProyecto = () => {
                         </Table>
                     </div>
                     <div className="md:hidden">
+
+
+
+                        {currentData.map((item, index) => (
+                            <CardItem
+                                key={index}
+                                item={item}
+                                onEdit={handleEditButtonClick}
+                                onView={handleViewButtonClick}
+                                onDelete={() => handleDeleteButtonClick(item._id)}
+                                onSwitchChange={() => handleSwitchChange(item._id)}
+                                isActive={item.estado === 'activo'}
+                            >
+                                <button
+                                    onClick={handleActivitiesClick}
+                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
+                                >
+                                    Ver Actividades
+                                </button>
+                            </CardItem>
+                        ))}
 
                         <Pagination
                             totalItems={filteredData.length}

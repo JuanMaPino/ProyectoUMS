@@ -15,7 +15,7 @@ import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
 import { showAlert, showToast } from '../components/table/alertFunctions';
-q
+
 
 const CRUDActividad = () => {
     const { proyectoId } = useParams();
@@ -175,7 +175,11 @@ const CRUDActividad = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Actividades</h1>
+
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Actividades</h1>
+
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />

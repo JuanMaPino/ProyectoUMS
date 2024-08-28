@@ -19,7 +19,7 @@ import { showAlert, showToast } from '../components/table/alertFunctions';
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
-const CRUDTable = () => {
+const   CRUDTable = () => {
     const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -160,7 +160,7 @@ const CRUDTable = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Beneficiarios</h1>
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Beneficiarios</h1>
                 <div className="flex items-center gap-2">
                     <SearchBar onSearch={handleSearch} />
                     <CreateButton onClick={handleCreateClick} />
