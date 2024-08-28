@@ -5,7 +5,11 @@ import {
     getProyectoByIdRequest,
     getAllProyectosRequest,
     disableProyectoRequest,
-    deleteProyectoRequest
+    deleteProyectoRequest,
+    getActividadesByProyectoIdRequest,
+    createActividadRequest, 
+    updateActividadRequest, 
+    deleteActividadRequest 
 } from '../api/ApiProyectos';
 
 const ProyectoContext = createContext();
@@ -14,9 +18,10 @@ export const useProyectos = () => useContext(ProyectoContext);
 
 export const ProyectoProvider = ({ children }) => {
     const [proyectos, setProyectos] = useState([]);
+    const [actividades, setActividades] = useState([]);
     const [errors, setErrors] = useState([]);
 
-    const fetchProyectos = async () => {
+    const getProyectos = async () => {
         try {
             const response = await getAllProyectosRequest();
             setProyectos(response.data);
@@ -26,9 +31,19 @@ export const ProyectoProvider = ({ children }) => {
         }
     };
 
+    const fetchActividades = async (id) => {
+        try {
+            const response = await getActividadesByProyectoIdRequest(id);
+            setActividades(response.data.actividades || []); // Ensure this matches your response structure
+            console.log(response.data.actividades); // Log activities to the console
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
     const createProyecto = async (data) => {
         try {
-            console.log("Datos a enviar", data)
             const response = await createProyectoRequest(data);
             setProyectos([...proyectos, response.data]);
             setErrors([]);
@@ -73,6 +88,43 @@ export const ProyectoProvider = ({ children }) => {
         }
     };
 
+    // Create a new activity within a project
+    const createActividad = async (proyectoId, data) => {
+        try {
+            const response = await createActividadRequest(proyectoId, data);
+            setActividades([...actividades, response.data]);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
+    // Update an existing activity within a project
+    const updateActividad = async (proyectoId, actividadId, data) => {
+        try {
+            const response = await updateActividadRequest(proyectoId, actividadId, data);
+            const updatedActividades = actividades.map(actividad =>
+                actividad._id === response.data._id ? response.data : actividad
+            );
+            setActividades(updatedActividades);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
+    // Delete an activity from a project
+    const deleteActividad = async (proyectoId, actividadId) => {
+        try {
+            await deleteActividadRequest(proyectoId, actividadId);
+            const updatedActividades = actividades.filter(actividad => actividad._id !== actividadId);
+            setActividades(updatedActividades);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
     const handleErrors = (error) => {
         if (error.response && error.response.data) {
             setErrors([error.response.data.error]);
@@ -82,19 +134,24 @@ export const ProyectoProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        fetchProyectos();
+        getProyectos();
     }, []);
 
     return (
         <ProyectoContext.Provider
             value={{
                 proyectos,
+                actividades,
                 errors,
                 createProyecto,
                 updateProyecto,
                 deleteProyecto,
                 disableProyecto,
-                fetchProyectos // Asegúrate de incluir fetchProyectos en el contexto
+                getProyectos,
+                fetchActividades, // Include fetchActividades in the context
+                createActividad,  // Include createActividad in the context
+                updateActividad,  // Include updateActividad in the context
+                deleteActividad   // Include deleteActividad in the context
             }}
         >
             {children}

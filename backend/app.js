@@ -11,8 +11,8 @@ const donadorRoutes = require('./Routes/donadorRoutes');
 const donacionRoutes = require('./Routes/donacionRoutes');
 const proyectoRoutes = require('./Routes/proyectoRoutes'); 
 const insumoRoutes = require('./Routes/insumoRoutes'); 
-const actividadRoutes = require('./Routes/actividadRoutes'); 
-const rolRoutes = require('./Routes/rolRoutes'); 
+
+
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -31,7 +31,6 @@ app.use('/donadores', donadorRoutes);
 app.use('/donaciones', donacionRoutes);
 app.use('/proyectos', proyectoRoutes); 
 app.use('/insumos', insumoRoutes) 
-app.use('/actividades', actividadRoutes) 
 app.use('/roles', rolRoutes) 
 
 
