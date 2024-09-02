@@ -26,7 +26,7 @@ import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
 import Activities from './pages/Activities';
 import Login from './pages/Login';
-
+import ResetPassword from './pages/RecuperarContraseña';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
@@ -93,7 +93,7 @@ const App = () => {
                               <Routes>
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/login" element={<Login />} />
-                                
+                                <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/" element={<Navigate to="/login" />} />
                                 {/*<Route element={<ProtectedRoute/>}> */}
                                 <Route path="/dashboard" element={<Dashboard />} />
@@ -102,12 +102,19 @@ const App = () => {
                                 <Route path="/donadores" element={<CRUDDonador />} />
                                 <Route path="/beneficiarios" element={<CRUDTable />} />
                                 <Route path="/proyectos" element={<CRUDProyecto />} />
-                                <Route path="" element={<Activities />} />
+
+                                <Route path="/roles" element={<CRUDRoles />} />
+
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
-                                <Route path="/actividades/:proyectoId" element={<CRUDActividad />} />
-                                {/*</Route>*/}
+                                <Route path="/actividades" element={<CRUDActividad />} />
+
+                                
+
+                                {/* Ejemplo de gráfico */}
+                                <Route path="/line-chart" element={<LineChart />} />
+
                               </Routes>
                             </AppLayout>
                           </TareaProvider>

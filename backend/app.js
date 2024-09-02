@@ -32,9 +32,6 @@ app.use('/donadores', donadorRoutes);
 app.use('/donaciones', donacionRoutes);
 app.use('/proyectos', proyectoRoutes); 
 app.use('/insumos', insumoRoutes) 
-
-
-
 app.use('/roles', rolRoutes) 
 
 

@@ -95,7 +95,7 @@ function Register() {
               onClick={handleTogglePasswordVisibility}
               className='absolute inset-y-a right-8 translate-y-10 '
             >
-              {passwordVisible ? <RiEyeCloseLine/> :<RiEyeLine/>}   
+              {passwordVisible ? <RiEyeLine/>:<RiEyeCloseLine/>}    
             </button>
           </label>
           <input type={passwordVisible ? "text" : "password"}

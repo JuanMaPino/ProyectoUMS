@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import logo from "../assets/img/logoums.png"; // Importa la imagen utilizando import
+import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
 
 import '../assets/css/Login.css';
 
@@ -10,6 +11,11 @@ function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ usernameOrEmail: '', contraseña: '' });
 
+  const [passwordVisible, setPasswordVisible] = useState(false);
+
+    const handleTogglePasswordVisibility = () => {
+        setPasswordVisible(prev => !prev);
+    };
   useEffect(() => {
     document.body.classList.add('login-body');
     return () => {
@@ -44,11 +50,24 @@ function Login() {
         <input type="text" name="usernameOrEmail" placeholder="Ingrese su usuario o email" onChange={handleChange} value={formData.usernameOrEmail} required />
         
         <label htmlFor="contraseña">Contraseña</label>
-        <input type="password" name="contraseña" placeholder="Ingrese su contraseña" onChange={handleChange} value={formData.contraseña} required />
-        
+        <div className="relative">
+                                <input 
+                                    type={passwordVisible ? "text" : "password"} 
+                                    name="contraseña"
+                                    placeholder="Ingrese su contraseña" 
+                                    onChange={handleChange} 
+                                    value={formData.contraseña} required /> 
+                                <button
+                                    type="button"
+                                    onClick={handleTogglePasswordVisibility}
+                                    className="absolute inset-y-0 -translate-y-2 right-0 flex items-center p-3 text-gray-700"
+                                >
+                                    {passwordVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
+                                </button>
+                            </div>
         <input type="submit" value="Ingresar" disabled={loading}/>
         {errors && errors.length > 0 && <p>Error: {errors.join(', ')}</p>}
-        <a href="#">¿Olvidaste tu contraseña?</a><br />
+        <a href="/olvide-contrasena">¿Olvidaste tu contraseña?</a><br />
         <Link to="/register">¿No tienes cuenta?</Link>
       </form>
     </div>
