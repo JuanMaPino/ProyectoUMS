@@ -32,3 +32,4 @@ export const updateActividadRequest = (id, actividadId, actividad) => axios.put(
 // Eliminar una actividad de un proyecto
 export const deleteActividadRequest = (id, actividadId) => axios.delete(`${API}/${id}/actividades/${actividadId}`);
 
+export const changeActividadStateRequest = (id, actividadId) => axios.patch(`${API}/${id}/actividades/${actividadId}/estado`);

@@ -19,11 +19,11 @@ const CRUDProyecto = () => {
     const {
         createProyecto,
         updateProyecto,
-        getAllProyectos,
+        getProyectos,
         disableProyecto,
         deleteProyecto,
         proyectos,
-        errors
+        errors,
     } = useProyectos();
 
     const [filteredData, setFilteredData] = useState([]);
@@ -50,7 +50,7 @@ const CRUDProyecto = () => {
 
     const fetchData = async () => {
         try {
-            await getAllProyectos();
+            await getProyectos();
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -103,8 +103,7 @@ const CRUDProyecto = () => {
     };
 
     const handleViewActividadesButtonClick = (item) => {
-        setSelectedItem(item._id);
-        navigate(`/actividades`); // Redirige a la ruta con el ID del proyecto
+        navigate(`/actividades/${item}`); // Redirige a la ruta con el ID del proyecto
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -152,15 +151,7 @@ const CRUDProyecto = () => {
                                         </TableCell>
 
 
-                                        <TableCell label="Actividades"> {/* Nueva celda */}
-                                            <button
-                                                onClick={handleActivitiesClick}
-                                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                            >
-                                                Ver Actividades
-                                            </button>
-                                        </TableCell>
-
+                                        
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -176,24 +167,7 @@ const CRUDProyecto = () => {
 
 
 
-                        {currentData.map((item, index) => (
-                            <CardItem
-                                key={index}
-                                item={item}
-                                onEdit={handleEditButtonClick}
-                                onView={handleViewButtonClick}
-                                onDelete={() => handleDeleteButtonClick(item._id)}
-                                onSwitchChange={() => handleSwitchChange(item._id)}
-                                isActive={item.estado === 'activo'}
-                            >
-                                <button
-                                    onClick={handleActivitiesClick}
-                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-                                >
-                                    Ver Actividades
-                                </button>
-                            </CardItem>
-                        ))}
+                       
 
                         <Pagination
                             totalItems={filteredData.length}
