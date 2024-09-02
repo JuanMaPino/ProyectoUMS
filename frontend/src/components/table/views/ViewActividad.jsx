@@ -27,7 +27,7 @@ const ViewActividad = ({ onClose, item }) => {
                     {item.tareas && item.tareas.length > 0 ? (
                         <ul className="list-disc list-inside">
                             {item.tareas.map((tarea, index) => (
-                                <li key={index} className="text-gray-800">{tarea.nombre}</li>
+                                <li key={index} className="text-gray-800">{tarea.nombre || "Nombre de tarea no disponible"}</li>
                             ))}
                         </ul>
                     ) : (
@@ -35,18 +35,19 @@ const ViewActividad = ({ onClose, item }) => {
                     )}
                 </div>
                 <div className="col-span-2">
-    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
-    {item.insumos && item.insumos.length > 0 ? (
-        <ul className="list-disc list-inside">
-            {item.insumos.map((insumo, index) => (
-                <li key={index} className="text-gray-800">{insumo.nombre} - Cantidad: {insumo.cantidad}</li>
-            ))}
-        </ul>
-    ) : (
-        <p className="text-gray-800">No hay insumos asignados</p>
-    )}
-</div>
-
+                    <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
+                    {item.insumos && item.insumos.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                            {item.insumos.map((insumo, index) => (
+                                <li key={index} className="text-gray-800">
+                                    {insumo.nombre || "Nombre de insumo no disponible"} - Cantidad: {insumo.cantidad}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="text-gray-800">No hay insumos asignados</p>
+                    )}
+                </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className={`text-gray-800 ${item.estado === 'activo' ? 'text-green-500' : 'text-red-500'}`}>

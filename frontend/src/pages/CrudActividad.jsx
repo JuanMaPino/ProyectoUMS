@@ -16,7 +16,6 @@ import ViewActividad from '../components/table/views/ViewActividad';
 import CardItem from '../components/table/CardItems/CardActividad';
 import { showAlert, showToast } from '../components/table/alertFunctions';
 
-
 const CRUDActividad = () => {
     const { proyectoId } = useParams();
     const navigate = useNavigate();
@@ -29,7 +28,8 @@ const CRUDActividad = () => {
         updateProyecto,
         deleteProyecto,
         disableProyecto,
-        fetchProyectos
+        fetchProyectos,
+        updateActividad // Añade la función para actualizar la actividad
     } = useProyectos();
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -44,7 +44,7 @@ const CRUDActividad = () => {
         if (proyectoId) {
             fetchActividades(proyectoId);
         }
-    }, []);
+    }, [proyectoId, fetchActividades]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -63,10 +63,7 @@ const CRUDActividad = () => {
         try {
             const proyecto = proyectos.find(p => p._id === proyectoId);
             if (item._id) {
-                await updateProyecto(proyectoId, {
-                    ...proyecto,
-                    actividades: proyecto.actividades.map(a => a._id === item._id ? item : a)
-                });
+                await updateActividad(proyectoId, item._id, item);
                 showToast('Actividad actualizada', 'success');
             } else {
                 item.proyectoId = proyectoId;
@@ -127,10 +124,8 @@ const CRUDActividad = () => {
                         ...actividad,
                         estado: actividad.estado === 'activo' ? 'inactivo' : 'activo'
                     };
-                    await updateProyecto(proyectoId, {
-                        ...proyecto,
-                        actividades: proyecto.actividades.map(a => a._id === id ? updatedActividad : a)
-                    });
+                    await updateActividad(proyectoId, id, updatedActividad);
+                    fetchActividades(proyectoId); // Refresh activities after update
                     showToast('Estado de la actividad actualizado', 'success');
                 } catch (error) {
                     console.error('Error updating activity status:', error);
@@ -175,11 +170,7 @@ const CRUDActividad = () => {
     return (
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-
-                <h1 className="text-3xl font-semibold text-left text-gray-800">Actividades</h1>
-
                 <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Actividades</h1>
-
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
                     <SearchBar onSearch={handleSearch} />
@@ -274,3 +265,4 @@ const CRUDActividad = () => {
 };
 
 export default CRUDActividad;
+

@@ -149,3 +149,29 @@ exports.eliminarActividad = async (req, res) => {
     res.status(500).json({ error: 'Error al eliminar actividad', details: error.message });
   }
 };
+
+// Cambiar el estado de una actividad (de 'activo' a 'inactivo' o viceversa)
+exports.cambiarEstadoActividad = async (req, res) => {
+  try {
+    const { id, idActividad } = req.params;
+    const proyecto = await Proyecto.findById(id);
+    
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    const actividad = proyecto.actividades.id(idActividad);
+    if (!actividad) {
+      return res.status(404).json({ error: 'Actividad no encontrada' });
+    }
+
+    // Alternar el estado de la actividad
+    actividad.estado = actividad.estado === 'activo' ? 'inactivo' : 'activo';
+    await proyecto.save();
+
+    res.json(actividad);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al cambiar el estado de la actividad', details: error.message });
+  }
+};
+
