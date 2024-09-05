@@ -15,7 +15,7 @@ const TableRow = ({ children, isActive, className, cols, isMonetario, tipo, ...p
     }
 
     return (
-        <div className={`grid grid-cols-1 md:grid-cols-${cols} gap-4 items-center mb-2 p-1.5 rounded-md ${rowClass} ${className}`} {...props}>
+        <div className={`grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-2 p-1.5 rounded-md ${rowClass} ${className}`} {...props}>
             {children}
         </div>
     );

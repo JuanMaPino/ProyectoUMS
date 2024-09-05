@@ -11,7 +11,8 @@ const donadorRoutes = require('./Routes/donadorRoutes');
 const donacionRoutes = require('./Routes/donacionRoutes');
 const proyectoRoutes = require('./Routes/proyectoRoutes'); 
 const insumoRoutes = require('./Routes/insumoRoutes'); 
-
+const rolRoutes = require('./Routes/rolRoutes')
+const permisosRoutes = require('./Routes/permisosRoutes')
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/donaciones', donacionRoutes);
 app.use('/proyectos', proyectoRoutes); 
 app.use('/insumos', insumoRoutes) 
 app.use('/roles', rolRoutes) 
+app.use('/permisos', permisosRoutes)
 
 
 connectDB().then(() => {
