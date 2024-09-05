@@ -12,6 +12,7 @@ router.delete('/:id', proyectoController.eliminarProyecto);
 router.post('/:id/actividades', proyectoController.agregarActividad);
 router.put('/:id/actividades/:idActividad', proyectoController.actualizarActividad);
 router.delete('/:id/actividades/:idActividad', proyectoController.eliminarActividad);
+router.patch('/:id/actividades/:idActividad/estado', proyectoController.cambiarEstadoActividad);
 
 
 // Ruta para obtener actividades de un proyecto

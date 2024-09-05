@@ -93,7 +93,7 @@ const App = () => {
                               <Routes>
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/login" element={<Login />} />
-                                <Route path="/olvide-contrasena" element={<ResetPassword />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/" element={<Navigate to="/login" />} />
                                 {/*<Route element={<ProtectedRoute/>}> */}
                                 <Route path="/dashboard" element={<Dashboard />} />
@@ -102,12 +102,19 @@ const App = () => {
                                 <Route path="/donadores" element={<CRUDDonador />} />
                                 <Route path="/beneficiarios" element={<CRUDTable />} />
                                 <Route path="/proyectos" element={<CRUDProyecto />} />
-                                <Route path="/proyectos/:id/actividades" element={<Activities />} />
+
+                                <Route path="/roles" element={<CRUDRoles />} />
+
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
                                 <Route path="/actividades" element={<CRUDActividad />} />
-                                {/*</Route>*/}
+
+                                
+
+                                {/* Ejemplo de gráfico */}
+                                <Route path="/line-chart" element={<LineChart />} />
+
                               </Routes>
                             </AppLayout>
                           </TareaProvider>

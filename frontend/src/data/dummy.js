@@ -512,10 +512,7 @@ export const links = [
          name: 'Insumos',
          icon: <RiShoppingBasket2Line/>
        },
-       {
-         name: 'Actividades',
-         icon: <RiFolderLine/>
-       },
+
        {
         name: 'Roles',
         icon: <RiFolderLine/>

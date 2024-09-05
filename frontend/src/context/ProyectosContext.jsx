@@ -9,7 +9,8 @@ import {
     getActividadesByProyectoIdRequest,
     createActividadRequest, 
     updateActividadRequest, 
-    deleteActividadRequest 
+    deleteActividadRequest,
+    changeActividadStateRequest
 } from '../api/ApiProyectos';
 
 const ProyectoContext = createContext();
@@ -20,6 +21,7 @@ export const ProyectoProvider = ({ children }) => {
     const [proyectos, setProyectos] = useState([]);
     const [actividades, setActividades] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [proyectoId, setProyectoId] = useState();
 
     const getProyectos = async () => {
         try {
@@ -31,11 +33,11 @@ export const ProyectoProvider = ({ children }) => {
         }
     };
 
-    const fetchActividades = async (id) => {
+    const fetchActividades = async (proyectoId) => {
         try {
-            const response = await getActividadesByProyectoIdRequest(id);
-            setActividades(response.data.actividades || []); // Ensure this matches your response structure
-            console.log(response.data.actividades); // Log activities to the console
+            const response = await getActividadesByProyectoIdRequest(proyectoId);
+            setActividades(response.data || []); // Ensure this matches your response structure
+            console.log(response.data); // Log activities to the console
             setErrors([]);
         } catch (error) {
             handleErrors(error);
@@ -92,7 +94,7 @@ export const ProyectoProvider = ({ children }) => {
     const createActividad = async (proyectoId, data) => {
         try {
             const response = await createActividadRequest(proyectoId, data);
-            setActividades([...actividades, response.data]);
+            setActividades(response.data);
             setErrors([]);
         } catch (error) {
             handleErrors(error);
@@ -103,6 +105,19 @@ export const ProyectoProvider = ({ children }) => {
     const updateActividad = async (proyectoId, actividadId, data) => {
         try {
             const response = await updateActividadRequest(proyectoId, actividadId, data);
+            const updatedActividades = actividades.map(actividad =>
+                actividad._id === response.data._id ? response.data : actividad
+            );
+            setActividades(updatedActividades);
+            setErrors([]);
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
+    const changeActividadState = async (proyectoId, actividadId) => {
+        try {
+            const response = await changeActividadStateRequest(proyectoId, actividadId);
             const updatedActividades = actividades.map(actividad =>
                 actividad._id === response.data._id ? response.data : actividad
             );
@@ -151,7 +166,8 @@ export const ProyectoProvider = ({ children }) => {
                 fetchActividades, // Include fetchActividades in the context
                 createActividad,  // Include createActividad in the context
                 updateActividad,  // Include updateActividad in the context
-                deleteActividad   // Include deleteActividad in the context
+                deleteActividad,
+                changeActividadState   // Include deleteActividad in the context
             }}
         >
             {children}
