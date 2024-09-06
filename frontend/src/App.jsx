@@ -24,6 +24,8 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
+import LineChart from './components/Charts/LineChart';
+
 import Activities from './pages/Activities';
 import Login from './pages/Login';
 import ResetPassword from './pages/RecuperarContraseña';
@@ -93,6 +95,7 @@ const App = () => {
                               <Routes>
                                 <Route path="/register" element={<Register />} />
                                 <Route path="/login" element={<Login />} />
+                                <Route path="/olvide-contrasena" element={<ResetPassword/>}/>
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/" element={<Navigate to="/login" />} />
                                 {/*<Route element={<ProtectedRoute/>}> */}

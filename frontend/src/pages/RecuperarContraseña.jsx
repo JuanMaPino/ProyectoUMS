@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { sendRecoveryCode, validateRecoveryCode, changePassword } from '../api/ApiAuth';
 import logo from "../assets/img/logoums.png";
 import bosque from "../assets/img/bosquesito.jpeg";
@@ -122,6 +122,9 @@ function ResetPassword() {
                     )}
                     <input type="submit" value={loading ? 'Cargando...' : 'Continuar'} disabled={loading} className="w-full p-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 disabled:bg-gray-400" />
                     {message && <p className="mt-4 text-sm text-red-500 text-center">{message}</p>}
+                    <div className="flex justify-center mt-4 text-sm text-gray-600 hover:text-blue-800">
+                        <Link to ="/login"><u>Volver</u></Link>
+                    </div>
                 </form>
             </div>
         </div>
