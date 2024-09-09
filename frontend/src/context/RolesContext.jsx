@@ -3,6 +3,7 @@ import axios from 'axios';
 import {
     createRolRequest,
     updateRolRequest,
+    ObtenerTodosLosPermisos,
     getRolByIdRequest,
     getAllRolesRequest,
     disableRolRequest,
@@ -19,8 +20,19 @@ export const useRoles = () => useContext(RolContext);
 export const RolProvider = ({ children }) => {
     const [roles, setRoles] = useState([]);
     const [errors, setErrors] = useState([]);
-
+    const [permisos, setPermisos] = useState([]);
     // Función para obtener todos los roles
+    const fetchPermisos = async () => {
+        try {
+            const response = await ObtenerTodosLosPermisos();
+            console.log(response)
+            setPermisos(response.data);
+            setErrors([]); // Limpiar errores en caso de éxito
+        } catch (error) {
+            handleErrors(error);
+        }
+    };
+
     const fetchRoles = async () => {
         try {
             const response = await getAllRolesRequest();
@@ -111,7 +123,10 @@ export const RolProvider = ({ children }) => {
                 createRol,
                 updateRol,
                 disableRol,
-                deleteRol
+                deleteRol,
+                fetchPermisos,
+                permisos,
+                fetchRoles
             }}
         >
             {children}

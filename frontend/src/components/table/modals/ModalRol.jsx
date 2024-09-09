@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRoles } from '../../../context/RolesContext';
 
 const ModalRol = ({ onClose, item }) => {
-    const { createRol, updateRol, roles } = useRoles();
+    const { createRol, updateRol, roles, permisos, fetchPermisos } = useRoles();
     const [formData, setFormData] = useState({
         nombre: '',
         descripcion: '',
@@ -10,6 +10,10 @@ const ModalRol = ({ onClose, item }) => {
         estado: 'activo'
     });
     const [errors, setErrors] = useState({});
+
+    useEffect(() => {
+        fetchPermisos();
+    }, []);
 
     useEffect(() => {
         if (item) {
@@ -83,7 +87,10 @@ const ModalRol = ({ onClose, item }) => {
         }
     };
 
-    const permisosOptions = ['donadores', 'donaciones', 'beneficiarios', 'ayudantes', 'tareas', 'proyectos', 'insumos', 'actividades'];
+    const permisosOptions = permisos.map(permiso => ({
+        value: permiso._id,
+        label: permiso.nombre,
+    }));
 
     return (
         <div className="bg-white rounded-lg shadow-2xl max-w-4xl mx-auto mt-8 mb-8 max-h-[90vh] overflow-y-auto">
@@ -116,16 +123,16 @@ const ModalRol = ({ onClose, item }) => {
                         <label className="block text-gray-700 text-sm font-medium mb-2">Permisos</label>
                         <div className="grid grid-cols-2 gap-4">
                             {permisosOptions.map(permiso => (
-                                <div key={permiso} className="flex items-center">
+                                <div key={permiso.value} className="flex items-center">
                                     <input
                                         type="checkbox"
                                         name="permisos"
-                                        value={permiso}
-                                        checked={formData.permisos.includes(permiso)}
+                                        value={permiso.value}
+                                        checked={formData.permisos.includes(permiso.value)}
                                         onChange={handleChange}
                                         className="mr-2 leading-tight"
                                     />
-                                    <span className="text-gray-700">{permiso}</span>
+                                    <span className="text-gray-700">{permiso.label}</span>
                                 </div>
                             ))}
                         </div>

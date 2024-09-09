@@ -117,14 +117,14 @@ const CRUDRoles = () => {
                 <div>
                     <div className="hidden md:block">
                         <Table>
-                            <TableHead cols={4}>
+                            <TableHead cols={3}>
                                 <TableCell className="pl-4">Nombre</TableCell>
                                 <TableCell className="pl-4">Descripción</TableCell>
                                 <TableCell className="pl-10">Acciones</TableCell> {/* Ajustar padding */}
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
-                                    <TableRow key={index} cols={4}>
+                                    <TableRow key={index} cols={3}>
                                         <TableCell label="Nombre" className="pl-4">
                                             <p className="text-sm text-gray-600 pl-4">{item.nombre}</p>
                                         </TableCell>
