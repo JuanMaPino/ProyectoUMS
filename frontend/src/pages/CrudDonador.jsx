@@ -109,20 +109,8 @@ const CRUDDonador = () => {
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
-    
-    // Ordenar los donadores para que los inactivos estén al final
-    const sortedDonadores = donadores.sort((a, b) => {
-        if (a.estado === 'inactivo' && b.estado === 'activo') {
-            return 1;
-        }
-        if (a.estado === 'activo' && b.estado === 'inactivo') {
-            return -1;
-        }
-        return 0;
-    });
-
     const filteredData = searchTerm
-        ? sortedDonadores.filter(
+        ? donadores.filter(
               (item) =>
                   item.identificacion
                       .toString()
@@ -135,7 +123,7 @@ const CRUDDonador = () => {
                           .toLowerCase()
                           .includes(searchTerm.toLowerCase()))
           )
-        : sortedDonadores;
+        : donadores;
 
     const currentData = filteredData.slice(
         startIndex,
@@ -288,10 +276,7 @@ const CRUDDonador = () => {
             )}
             {showViewModal && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewDonador
-                        onClose={closeViewModal}
-                        item={selectedItem}
-                    />
+                    <ViewDonador onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
         </div>

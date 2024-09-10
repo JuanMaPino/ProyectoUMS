@@ -1,9 +1,8 @@
-// Controllers/proyectoController.js
 const Proyecto = require('../Models/Proyecto');
 
 exports.obtenerTodosLosProyectos = async (req, res) => {
   try {
-    const proyectos = await Proyecto.find().populate('tipo');
+    const proyectos = await Proyecto.find();
     res.json(proyectos);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener todos los proyectos', details: error.message });
@@ -11,10 +10,15 @@ exports.obtenerTodosLosProyectos = async (req, res) => {
 };
 
 exports.crearProyecto = async (req, res) => {
+  const { nombre, descripcion } = req.body;
+
+  if (!nombre || !descripcion) {
+    return res.status(400).json({ error: 'El nombre y la descripción son obligatorios.' });
+  }
+
   try {
     const nuevoProyecto = new Proyecto(req.body);
     await nuevoProyecto.save();
-    await nuevoProyecto.populate('tipo');
     res.status(201).json(nuevoProyecto);
   } catch (error) {
     res.status(400).json({ error: 'Error al crear proyecto', details: error.message });
@@ -23,7 +27,7 @@ exports.crearProyecto = async (req, res) => {
 
 exports.obtenerProyectoPorId = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findById(req.params.id).populate('tipo');
+    const proyecto = await Proyecto.findById(req.params.id);
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -34,8 +38,14 @@ exports.obtenerProyectoPorId = async (req, res) => {
 };
 
 exports.actualizarProyecto = async (req, res) => {
+  const { nombre, descripcion } = req.body;
+
+  if (!nombre || !descripcion) {
+    return res.status(400).json({ error: 'El nombre y la descripción son obligatorios.' });
+  }
+
   try {
-    const proyecto = await Proyecto.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('tipo');
+    const proyecto = await Proyecto.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -65,9 +75,103 @@ exports.cambiarEstadoProyecto = async (req, res) => {
     }
     proyecto.estado = proyecto.estado === 'activo' ? 'inactivo' : 'activo';
     await proyecto.save();
-    await proyecto.populate('tipo');
     res.json(proyecto);
   } catch (error) {
     res.status(500).json({ error: 'Error al cambiar estado del proyecto', details: error.message });
   }
 };
+
+exports.obtenerActividadesPorProyecto = async (req, res) => {
+  try {
+    const proyecto = await Proyecto.findById(req.params.id).select('actividades');
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+    res.json(proyecto.actividades);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al obtener actividades del proyecto', details: error.message });
+  }
+};
+
+
+// Añadir una nueva actividad a un proyecto
+exports.agregarActividad = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const proyecto = await Proyecto.findById(id);
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    proyecto.actividades.push(req.body);
+    await proyecto.save();
+    res.status(201).json(proyecto.actividades);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al agregar actividad', details: error.message });
+  }
+};
+
+// Actualizar una actividad existente
+exports.actualizarActividad = async (req, res) => {
+  try {
+    const { id, idActividad } = req.params;
+    const proyecto = await Proyecto.findById(id);
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    const actividad = proyecto.actividades.id(idActividad);
+    if (!actividad) {
+      return res.status(404).json({ error: 'Actividad no encontrada' });
+    }
+
+    Object.assign(actividad, req.body);
+    await proyecto.save();
+    res.json(actividad);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al actualizar actividad', details: error.message });
+  }
+};
+
+// Eliminar una actividad de un proyecto
+exports.eliminarActividad = async (req, res) => {
+  try {
+    const { id, idActividad } = req.params;
+    const proyecto = await Proyecto.findById(id);
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    proyecto.actividades.id(idActividad).remove();
+    await proyecto.save();
+    res.status(204).end();
+  } catch (error) {
+    res.status(500).json({ error: 'Error al eliminar actividad', details: error.message });
+  }
+};
+
+// Cambiar el estado de una actividad (de 'activo' a 'inactivo' o viceversa)
+exports.cambiarEstadoActividad = async (req, res) => {
+  try {
+    const { id, idActividad } = req.params;
+    const proyecto = await Proyecto.findById(id);
+    
+    if (!proyecto) {
+      return res.status(404).json({ error: 'Proyecto no encontrado' });
+    }
+
+    const actividad = proyecto.actividades.id(idActividad);
+    if (!actividad) {
+      return res.status(404).json({ error: 'Actividad no encontrada' });
+    }
+
+    // Alternar el estado de la actividad
+    actividad.estado = actividad.estado === 'activo' ? 'inactivo' : 'activo';
+    await proyecto.save();
+
+    res.json(actividad);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al cambiar el estado de la actividad', details: error.message });
+  }
+};
+

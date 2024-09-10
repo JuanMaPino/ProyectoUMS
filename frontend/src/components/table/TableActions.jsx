@@ -1,6 +1,5 @@
-// src/components/table/TableActions.jsx
 import React from 'react';
-import { RiDeleteBin6Line, RiEyeLine, RiPencilFill, RiUserHeartFill, RiUserStarFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiFolderLine ,RiEyeLine, RiPencilFill, RiUserHeartFill, RiUserStarFill } from 'react-icons/ri';
 
 // Componente de botón para ver
 const ViewButton = ({ item, handleViewButtonClick }) => (
@@ -34,7 +33,7 @@ const DeleteButton = ({ item, handleDeleteButtonClick }) => (
     </button>
 );
 
-//Componente de cambio de Rol
+// Componente de botón para cambiar rol
 const RoleChangeButton = ({ item, handleRoleChange }) => (
     <button
         onClick={() => handleRoleChange(item._id)}
@@ -58,8 +57,17 @@ const RoleChangeButton = ({ item, handleRoleChange }) => (
     </button>
 );
 
+// Componente de botón para ver actividades
+const ViewActividadesButton = ({ item, handleViewActividadesButtonClick }) => (
+    <button
+        onClick={() => handleViewActividadesButtonClick(item._id)}
+        className="rounded-lg transition-colors text-white bg-gradient-to-r from-neutral-400 from-10% to-neutral-500 hover:from-neutral-500 hover:to-neutral-600 p-2"
+    >
+        <RiFolderLine /> {/* Puedes reemplazar este ícono por uno más adecuado si lo prefieres */}
+    </button>
+);
 
-const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, handleDeleteButtonClick, handleRoleChange }) => {
+const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, handleDeleteButtonClick, handleRoleChange, handleViewActividadesButtonClick }) => {
     return (
         <div className="flex gap-2">
             {/* Botón de ver */}
@@ -73,6 +81,9 @@ const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, hand
             
             {/* Botón de cambiar rol */}
             {handleRoleChange && <RoleChangeButton item={item} handleRoleChange={handleRoleChange} />}
+            
+            {/* Botón de ver actividades */}
+            {handleViewActividadesButtonClick && <ViewActividadesButton item={item} handleViewActividadesButtonClick={handleViewActividadesButtonClick} />}
         </div>
     );
 };

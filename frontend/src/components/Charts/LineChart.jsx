@@ -1,6 +1,6 @@
 import React from 'react'
 
-const LinecChart = () => {
+const LineChart = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const LinecChart = () => {
   )
 }
 
-export default LinecChart
+export default LineChart

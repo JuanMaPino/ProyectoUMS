@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { RiAddLine } from 'react-icons/ri';
-import { useParams, useNavigate } from 'react-router-dom'; // Importar hooks de react-router-dom
-import { useActividades } from '../context/ActividadContext';
-import { useInsumos } from '../context/InsumosContext';
-import { useTareas } from '../context/TareasContext';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useProyectos } from '../context/ProyectosContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
 import TableBody from '../components/table/TableBody';
@@ -24,16 +21,16 @@ const CRUDActividad = () => {
     const navigate = useNavigate();
 
     const {
+        proyectos,
         actividades,
-        getActividadesByProyecto,
-        createActividad,
-        updateActividad,
-        deleteActividad,
-        disableActividad,
-    } = useActividades();
-
-    const { insumos } = useInsumos();
-    const { tareas } = useTareas();
+        fetchActividades,
+        createProyecto,
+        updateProyecto,
+        deleteProyecto,
+        disableProyecto,
+        fetchProyectos,
+        updateActividad // Añade la función para actualizar la actividad
+    } = useProyectos();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
@@ -45,12 +42,12 @@ const CRUDActividad = () => {
 
     useEffect(() => {
         if (proyectoId) {
-            getActividadesByProyecto(proyectoId);
+            fetchActividades(proyectoId);
         }
-    }, [proyectoId, getActividadesByProyecto]);
+    }, [proyectoId, fetchActividades]);
 
     useEffect(() => {
-        setCurrentPage(1); // Reset to first page on new search
+        setCurrentPage(1);
     }, [searchTerm]);
 
     const handleCreateClick = () => {
@@ -63,12 +60,24 @@ const CRUDActividad = () => {
     };
 
     const handleCreateOrUpdate = async (item) => {
-        if (item._id) {
-            await updateActividad(item._id, item);
-        } else {
-            await createActividad(item);
+        try {
+            const proyecto = proyectos.find(p => p._id === proyectoId);
+            if (item._id) {
+                await updateActividad(proyectoId, item._id, item);
+                showToast('Actividad actualizada', 'success');
+            } else {
+                item.proyectoId = proyectoId;
+                await updateProyecto(proyectoId, {
+                    ...proyecto,
+                    actividades: [...proyecto.actividades, item]
+                });
+                showToast('Actividad creada', 'success');
+            }
+            closeModal();
+        } catch (error) {
+            console.error('Error saving activity:', error);
+            showToast('Error al guardar la actividad', 'error');
         }
-        closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
@@ -83,10 +92,14 @@ const CRUDActividad = () => {
             },
             async () => {
                 try {
-                    await deleteActividad(id);
+                    const proyecto = proyectos.find(p => p._id === proyectoId);
+                    await updateProyecto(proyectoId, {
+                        ...proyecto,
+                        actividades: proyecto.actividades.filter(a => a._id !== id)
+                    });
                     showToast('Actividad eliminada', 'success');
                 } catch (error) {
-                    console.error('Error deleting actividad:', error);
+                    console.error('Error deleting activity:', error);
                     showToast('Error al eliminar la actividad', 'error');
                 }
             }
@@ -105,10 +118,17 @@ const CRUDActividad = () => {
             },
             async () => {
                 try {
-                    await disableActividad(id);
+                    const proyecto = proyectos.find(p => p._id === proyectoId);
+                    const actividad = proyecto.actividades.find(a => a._id === id);
+                    const updatedActividad = {
+                        ...actividad,
+                        estado: actividad.estado === 'activo' ? 'inactivo' : 'activo'
+                    };
+                    await updateActividad(proyectoId, id, updatedActividad);
+                    fetchActividades(proyectoId); // Refresh activities after update
                     showToast('Estado de la actividad actualizado', 'success');
                 } catch (error) {
-                    console.error('Error updating actividad status:', error);
+                    console.error('Error updating activity status:', error);
                     showToast('Error al actualizar el estado', 'error');
                 }
             }
@@ -135,11 +155,13 @@ const CRUDActividad = () => {
         setShowViewModal(false);
     };
 
+    const proyecto = proyectos.find(p => p._id === proyectoId);
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const filteredData = searchTerm
         ? actividades.filter(item =>
-            (item.id_actividad ? item.id_actividad.toString().toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
-            (item.nombre ? item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) : false)
+            (item.nombre ? item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) : false) ||
+            (item.descripcion ? item.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) : false)
         )
         : actividades;
 
@@ -212,36 +234,30 @@ const CRUDActividad = () => {
                             <CardItem
                                 key={index}
                                 item={item}
-                                onEdit={handleEditButtonClick}
-                                onView={handleViewButtonClick}
+                                onEdit={() => handleEditButtonClick(item)}
+                                onView={() => handleViewButtonClick(item)}
                                 onDelete={() => handleDeleteButtonClick(item._id)}
-                                onSwitchChange={() => handleSwitchChange(item._id)}
-                                isActive={item.estado === 'activo'}
                             />
                         ))}
-                        <Pagination
-                            totalItems={filteredData.length}
-                            itemsPerPage={itemsPerPage}
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                        />
-                        <button
-                            onClick={handleCreateClick}
-                            className="fixed bottom-4 right-2 bg-gradient-to-tr from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 text-white font-bold py-3 px-3 rounded-lg shadow-lg transition-transform transform hover:scale-105"
-                        >
-                            <RiAddLine size={24} />
-                        </button>
                     </div>
                 </div>
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ModalActividad onClose={closeModal} item={selectedItem} tareas={tareas} insumos={insumos} />
+                    <ModalActividad
+                        onClose={closeModal}
+                        item={selectedItem}
+                        onSubmit={handleCreateOrUpdate}
+                        proyectoId={proyectoId}
+                    />
                 </div>
             )}
-            {showViewModal && selectedItem && (
+            {showViewModal && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <ViewActividad onClose={closeViewModal} item={selectedItem} tareas={tareas} insumos={insumos} />
+                    <ViewActividad
+                        onClose={closeViewModal}
+                        item={selectedItem}
+                    />
                 </div>
             )}
         </div>
@@ -249,3 +265,4 @@ const CRUDActividad = () => {
 };
 
 export default CRUDActividad;
+

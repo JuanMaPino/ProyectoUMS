@@ -7,12 +7,13 @@ import { BeneficiarioProvider } from './context/BeneficiariosContext';
 import { DonadorProvider } from './context/DonadoresContext';
 import { DonacionesProvider } from './context/DonacionesContext';
 import { InsumoProvider } from './context/InsumosContext';
-import { RolProvider } from './context/RolesContext';
 import { AuthProvider } from './context/AuthContext';
 import { useStateContext } from './context/ContextProvider';
+import { RolProvider } from './context/RolesContext';
 import ProtectedRoute from './components/ProtectedRoutes';
 
 import './App.css';
+import CRUDRoles from './pages/CrudRol';
 import Register from './pages/Register';
 import CRUDTable from './pages/CrudEjemplo';
 import Dashboard from './pages/dashboard';
@@ -23,9 +24,11 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
-import CRUDRoles from './pages/CrudRol';
+import LineChart from './components/Charts/LineChart';
+
 import Activities from './pages/Activities';
 import Login from './pages/Login';
+import ResetPassword from './pages/RecuperarContraseña';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { AyudanteProvider } from './context/AyudantesContext';
 import { TareaProvider } from './context/TareasContext';
@@ -34,8 +37,12 @@ import { ActividadProvider } from './context/ActividadContext';
 const AppLayout = ({ children }) => {
   const { activeMenu } = useStateContext();
   const location = useLocation();
-  
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+  // Incluir '/olvide-' en la verificación de páginas de autenticación
+  const isAuthPage = ['/login', '/register', '/olvide-contrasena'].includes(location.pathname);
+
+  console.log("Current Path:", location.pathname); // Depuración
+  console.log("Is Auth Page:", isAuthPage); // Depuración
 
   return (
     <div className="flex relative dark:bg-main-dark-bg h-screen">
@@ -46,21 +53,21 @@ const AppLayout = ({ children }) => {
               <Sidebar />
             </div>
           ) : (
-            <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
+            <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg  bg-white transition-all duration-300">
               <Sidebar />
             </div>
           )}
         </>
       )}
 
-      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[15%]' : 'md:ml-0'} overflow-auto`}>
+      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[16%]':  'md:ml-auto'} overflow-auto`}>
         {!isAuthPage && (
-          <div className="fixed top-0 left-0 right-0 bg-main-bg dark:bg-main-dark-bg navbar w-full z-50">
+          <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
             <Navbar />
           </div>
         )}
 
-        <div className="pt-[5rem] px-5 min-h-[100vh] h-full overflow-y-auto "> {/* Ajusta el padding-top para compensar el espacio ocupado por el navbar */}
+        <div className="min-h-[100vh] h-full overflow-y-auto ">
           {children}
         </div>
       </div>
@@ -82,27 +89,39 @@ const App = () => {
                   <DonacionesProvider>
                     <InsumoProvider>
                       <AyudanteProvider>
-                        <TareaProvider>
-                          <RolProvider>
-                          <AppLayout>
-                            <Routes>
-                              <Route path="/register" element={<Register />} />
-                              <Route path="/login" element={<Login />} />
-                              <Route path="/dashboard" element={<Dashboard />} />
-                              <Route path="/" element={<Navigate to="/login" />} />
-                              <Route path="/donaciones" element={<CRUDDonacion />} />
-                              <Route path="/donadores" element={<CRUDDonador />} />
-                              <Route path="/beneficiarios" element={<CRUDTable />} />
-                              <Route path="/proyectos" element={<CRUDProyecto />} />
-                              <Route path="/roles" element={<CRUDRoles />} />
-                              <Route path="/insumos" element={<CRUDInsumos />} />
-                              <Route path="/ayudantes" element={<CRUDAyudante />} />
-                              <Route path="/tareas" element={<CRUDTarea />} />
-                              <Route path="/actividades" element={<CRUDActividad />} />
-                            </Routes>
-                          </AppLayout>
-                          </RolProvider>
-                        </TareaProvider>
+                        <RolProvider>
+                          <TareaProvider>
+                            <AppLayout>
+                              <Routes>
+                                <Route path="/register" element={<Register />} />
+                                <Route path="/login" element={<Login />} />
+                                <Route path="/olvide-contrasena" element={<ResetPassword/>}/>
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/" element={<Navigate to="/login" />} />
+                                {/*<Route element={<ProtectedRoute/>}> */}
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/roles" element={<CRUDRoles />} />
+                                <Route path="/donaciones" element={<CRUDDonacion />} />
+                                <Route path="/donadores" element={<CRUDDonador />} />
+                                <Route path="/beneficiarios" element={<CRUDTable />} />
+                                <Route path="/proyectos" element={<CRUDProyecto />} />
+
+                                <Route path="/roles" element={<CRUDRoles />} />
+
+                                <Route path="/insumos" element={<CRUDInsumos />} />
+                                <Route path="/ayudantes" element={<CRUDAyudante />} />
+                                <Route path="/tareas" element={<CRUDTarea />} />
+                                <Route path="/actividades" element={<CRUDActividad />} />
+
+                                
+
+                                {/* Ejemplo de gráfico */}
+                                <Route path="/line-chart" element={<LineChart />} />
+
+                              </Routes>
+                            </AppLayout>
+                          </TareaProvider>
+                        </RolProvider>
                       </AyudanteProvider>
                     </InsumoProvider>
                   </DonacionesProvider>

@@ -1,24 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useRoles } from '../context/RolesContext'
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/img/logoums.png";
-import '../assets/css/Register.css';
-import { RiEyeCloseLine, RiEyeLine, RiLockLine } from 'react-icons/ri';
+import bosque from "../assets/img/bosquesito.jpeg";
+import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
 
 function Register() {
-  const { signup, errors, loading } = useAuth(); // Asegurarse de que loading es una variable booleana
+  const { signup, errors, loading } = useAuth();
+  const { roles } = useRoles();
   const [formData, setFormData] = useState({
     usuario: '',
     email: '',
     contraseña: '',
     confirmarContraseña: '',
-    tipo: 'Donador',
+    tipo: '',
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
     setPasswordVisible(prev => !prev);
   }
+
+  const rolOptions = roles.map(rol => ({
+    value: rol._id,
+    label: rol.nombre,
+  }));
 
   const [localErrors, setLocalErrors] = useState([]);
   const navigate = useNavigate();
@@ -46,7 +53,7 @@ function Register() {
   };
 
   const validatePassword = (contraseña) => {
-    return contraseña.length >= 6; // Ejemplo de validación, mínimo 6 caracteres
+    return contraseña.length >= 6;
   };
 
   const handleSubmit = async (e) => {
@@ -70,7 +77,7 @@ function Register() {
     }
 
     try {
-      await signup({usuario, email, contraseña, tipo});
+      await signup({ usuario, email, contraseña, tipo });
       navigate('/login');
     } catch (error) {
       console.error('Error al registrar', error);
@@ -78,42 +85,108 @@ function Register() {
   };
 
   return (
-    <div className="register-body">
-      <div className="register-box">
-        <img src={logo} className="avatar" alt="Avatar" />
-        <h1>Registro</h1>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url(${bosque})` }}>
+      <div className="w-full max-w-4xl p-8 bg-white opacity-90 rounded-xl shadow-md">
+        <div className="flex flex-col items-center ">
+          <img src={logo} className="w-24 mb-4" alt="Logo" />
+          <h1 className="text-2xl font-semibold">Registro</h1>
+        </div>
         <form onSubmit={handleSubmit}>
-          <label htmlFor="usuario">Nombre</label>
-          <input type="text" name="usuario" placeholder="Ingrese su nombre" onChange={handleChange} value={formData.usuario} required />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="usuario" className="block mb-2 text-sm font-medium text-gray-700">Nombre</label>
+              <input
+                type="text"
+                name="usuario"
+                placeholder="Ingrese su nombre"
+                onChange={handleChange}
+                value={formData.usuario}
+                required
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-700">Correo Electrónico</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Ingrese su correo electrónico"
+                onChange={handleChange}
+                value={formData.email}
+                required
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
 
-          <label htmlFor="email">Correo Electrónico</label>
-          <input type="email" name="email" placeholder="Ingrese su correo electrónico" onChange={handleChange} value={formData.email} required />
-          
-          <label htmlFor="contraseña">Contraseña
-          <button
-              type="button"
-              onClick={handleTogglePasswordVisibility}
-              className='absolute inset-y-a right-8 translate-y-10 '
-            >
-              {passwordVisible ? <RiEyeCloseLine/> :<RiEyeLine/>}   
-            </button>
-          </label>
-          <input type={passwordVisible ? "text" : "password"}
-            name="contraseña"
-            placeholder="Ingrese su contraseña" 
-            onChange={handleChange} 
-            value={formData.contraseña} required
-            icon={RiLockLine} />
-          <label htmlFor="confirmarContraseña">Confirmar Contraseña</label>
-          <input type={passwordVisible ? "text" : "password"} name="confirmarContraseña" placeholder="Confirme su contraseña" onChange={handleChange} value={formData.confirmarContraseña} required />
-          <label htmlFor="tipo">Tipo</label>
-          <select id="tipo" name="tipo" onChange={handleChange} value={formData.tipo} required>
-            <option value="Donador">Donador</option>
-            <option value="Beneficiario">Beneficiario</option>
-          </select>
-          <input type="submit" value="Registrar" disabled={loading} />
-          {localErrors.length > 0 && <p>Error: {localErrors.join(', ')}</p>}
-          <a href="/login">¿Ya tienes cuenta?</a>
+            <div className="relative">
+              <label htmlFor="contraseña" className="block mb-2 text-sm font-medium text-gray-700">Contraseña</label>
+              <input
+                type={passwordVisible ? "text" : "password"}
+                name="contraseña"
+                placeholder="Ingrese su contraseña"
+                onChange={handleChange}
+                value={formData.contraseña}
+                required
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+              <button
+                type="button"
+                onClick={handleTogglePasswordVisibility}
+                className="absolute inset-y-0 right-0 flex items-center p-3 text-gray-700"
+              >
+                {passwordVisible ? <RiEyeLine /> : <RiEyeCloseLine />}
+              </button>
+            </div>
+
+            <div>
+              <label htmlFor="confirmarContraseña" className="block mb-2 text-sm font-medium text-gray-700">Confirmar Contraseña</label>
+              <input
+                type={passwordVisible ? "text" : "password"}
+                name="confirmarContraseña"
+                placeholder="Confirme su contraseña"
+                onChange={handleChange}
+                value={formData.confirmarContraseña}
+                required
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="tipo" className="block mb-2 text-sm font-medium  text-gray-700">Tipo</label>
+              <select
+                id="tipo"
+                name="tipo"
+                onChange={handleChange}
+                value={formData.tipo}
+                required
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+              >
+                {rolOptions.map(rol => (
+                  <option value={rol.value}>{rol.label}</option>
+
+                ))}
+
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <input
+              type="submit"
+              value={loading ? 'Cargando...' : 'Registrar'}
+              disabled={loading}
+              className="w-full max-w-xs p-2 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 disabled:bg-gray-400"
+            />
+          </div>
+
+          {localErrors.length > 0 && (
+            <p className="mt-4 text-sm text-red-500 text-center">Error: {localErrors.join(', ')}</p>
+          )}
+
+          <div className="mt-4 text-sm text-gray-600 text-center">
+            <a href="/login">¿Ya tienes cuenta?</a>
+          </div>
         </form>
       </div>
     </div>

@@ -19,7 +19,7 @@ import { showAlert, showToast } from '../components/table/alertFunctions';
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
-const CRUDTable = () => {
+const   CRUDTable = () => {
     const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,20 +41,8 @@ const CRUDTable = () => {
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
-
-        // Ordenar los beneficiarios: los inactivos al final
-        const sortedData = filtered.sort((a, b) => {
-            if (a.estado === 'inactivo' && b.estado === 'activo') {
-                return 1; // 'a' se va al final
-            }
-            if (a.estado === 'activo' && b.estado === 'inactivo') {
-                return -1; // 'b' se va al final
-            }
-            return 0; // Sin cambios
-        });
-
-        setFilteredData(sortedData);
-        setCurrentPage(1); // Reiniciar a la primera página después de aplicar el filtro
+        setFilteredData(filtered);
+        setCurrentPage(1);
     }, [beneficiarios, searchTerm]);
 
     const fetchData = async () => {
@@ -189,8 +177,8 @@ const CRUDTable = () => {
                                 <TableCell className="pl-4">Beneficiario</TableCell>
                                 <TableCell className="pl-4">Correo Electrónico</TableCell>
                                 <TableCell className="pl-8">Familiares</TableCell>
-                                <TableCell className="pl-14">Estado</TableCell>
-                                <TableCell className="pl-10">Acciones</TableCell>
+                                <TableCell className="pl-14">Estado</TableCell> {/* Ajustar padding */}
+                                <TableCell className="pl-10">Acciones</TableCell> {/* Ajustar padding */}
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
@@ -249,10 +237,10 @@ const CRUDTable = () => {
                             <CardItem
                                 key={index}
                                 item={item}
-                                onEdit={() => handleEditButtonClick(item)}
-                                onView={() => handleViewButtonClick(item)}
-                                onDelete={() => handleDeleteButtonClick(item._id)}
-                                onSwitchChange={() => handleSwitchChange(item._id)}
+                                onEdit={handleEditButtonClick}
+                                onView={handleViewButtonClick}
+                                onDelete={handleDeleteButtonClick}
+                                onSwitchChange={handleSwitchChange}
                                 isActive={item.estado === 'activo'}
                             />
                         ))}
