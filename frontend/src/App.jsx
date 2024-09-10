@@ -53,21 +53,21 @@ const AppLayout = ({ children }) => {
               <Sidebar />
             </div>
           ) : (
-            <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg bg-white transition-all duration-300">
+            <div className="w-20 fixed sidebar dark:bg-secondary-dark-bg  bg-white transition-all duration-300">
               <Sidebar />
             </div>
           )}
         </>
       )}
 
-      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[15%]' : 'md:ml-0'} overflow-auto`}>
+      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[16%]':  'md:ml-auto'} overflow-auto`}>
         {!isAuthPage && (
           <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
             <Navbar />
           </div>
         )}
 
-        <div className="min-h-[100vh] h-full overflow-y-auto">
+        <div className="min-h-[100vh] h-full overflow-y-auto ">
           {children}
         </div>
       </div>

@@ -9,10 +9,9 @@ const rolSchema = new Schema({
   descripcion: {
     type: String,
   },
-  permisos: [{
-    type: String, // Cambiado a un array de strings
-    enum: ['donadores', 'donaciones', 'beneficiarios', 'ayudantes', 'tareas', 'proyectos', 'insumos', 'actividades'],
-  }],
+  permisos: [
+  { type: mongoose.Schema.Types.ObjectId, ref: 'Permisos'}
+  ],
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],

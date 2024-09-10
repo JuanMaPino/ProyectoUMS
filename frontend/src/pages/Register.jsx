@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useRoles } from '../context/RolesContext'
 import { useNavigate } from 'react-router-dom';
 import logo from "../assets/img/logoums.png";
 import bosque from "../assets/img/bosquesito.jpeg";
@@ -7,18 +8,24 @@ import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
 
 function Register() {
   const { signup, errors, loading } = useAuth();
+  const { roles } = useRoles();
   const [formData, setFormData] = useState({
     usuario: '',
     email: '',
     contraseña: '',
     confirmarContraseña: '',
-    tipo: 'Donador',
+    tipo: '',
   });
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
     setPasswordVisible(prev => !prev);
   }
+
+  const rolOptions = roles.map(rol => ({
+    value: rol._id,
+    label: rol.nombre,
+  }));
 
   const [localErrors, setLocalErrors] = useState([]);
   const navigate = useNavigate();
@@ -145,21 +152,23 @@ function Register() {
               />
             </div>
 
-            <div className="flex flex-col items-center justify-center">
-              <label htmlFor="tipo" className="block mb-2 text-sm font-medium text-gray-700 text-center">Tipo</label>
+            <div>
+              <label htmlFor="tipo" className="block mb-2 text-sm font-medium  text-gray-700">Tipo</label>
               <select
                 id="tipo"
                 name="tipo"
                 onChange={handleChange}
                 value={formData.tipo}
                 required
-                className="w-full max-w-xs p-2 mb-4 border rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-600 text-center mx-auto"
+                className="w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
               >
-                <option value="Donador">Donador</option>
-                <option value="Beneficiario">Beneficiario</option>
-              </select>
-            </div>|
+                {rolOptions.map(rol => (
+                  <option value={rol.value}>{rol.label}</option>
 
+                ))}
+
+              </select>
+            </div>
           </div>
 
           <div className="flex justify-center">
