@@ -111,7 +111,7 @@ const App = () => {
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
-                                <Route path="/actividades/:ProyectoId" element={<CRUDActividad />} />
+                                <Route path="/actividades/:proyectoId" element={<CRUDActividad />} />
 
                                 
 
