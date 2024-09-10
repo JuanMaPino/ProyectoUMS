@@ -169,7 +169,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                 <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Actividad' : 'Agregar Actividad'}</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="nombre"
@@ -181,7 +181,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo<span className="text-red-500 text-sm">*</span></label>
                         <select
                             name="tipo"
                             value={formData.tipo}
@@ -194,7 +194,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         </select>
                     </div>
                     <div className="sm:col-span-2">
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Descripción<span className="text-red-500 text-sm">*</span></label>
                         <textarea
                             name="descripcion"
                             value={formData.descripcion}

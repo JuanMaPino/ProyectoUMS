@@ -111,12 +111,10 @@ const App = () => {
                                 <Route path="/insumos" element={<CRUDInsumos />} />
                                 <Route path="/ayudantes" element={<CRUDAyudante />} />
                                 <Route path="/tareas" element={<CRUDTarea />} />
-                                <Route path="/actividades" element={<CRUDActividad />} />
+                                <Route path="/actividades/:proyectoId" element={<CRUDActividad />} />
 
                                 
 
-                                {/* Ejemplo de gráfico */}
-                                <Route path="/line-chart" element={<LineChart />} />
 
                               </Routes>
                             </AppLayout>
