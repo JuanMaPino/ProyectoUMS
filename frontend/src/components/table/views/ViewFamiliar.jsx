@@ -19,6 +19,9 @@ const ViewFamiliar = ({ item, onClose }) => {
             <p className="text-gray-700 mb-2">
               <span className="font-semibold">Condicion Especial:</span> {familiar.condicionEspecial}
             </p>
+            <p className="text-gray-700 mb-2">
+              <span className="font-semibold">Parentesco:</span> {familiar.parentesco}
+            </p>
           </div>
         ))}
       </div>

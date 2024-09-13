@@ -47,8 +47,16 @@ const CRUDAyudante = () => {
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setFilteredData(filtered);
-        setCurrentPage(1); // Reset to first page on new search
+
+        // Mover ayudantes inactivos al final
+        const sortedData = [...filtered].sort((a, b) => {
+            if (a.estado === 'activo' && b.estado === 'inactivo') return -1;
+            if (a.estado === 'inactivo' && b.estado === 'activo') return 1;
+            return 0;
+        });
+
+        setFilteredData(sortedData);
+        setCurrentPage(1); // Resetear a la primera página en una nueva búsqueda
     }, [ayudantes, searchTerm]);
 
     const fetchData = async () => {
@@ -133,18 +141,18 @@ const CRUDAyudante = () => {
                                 <TableCell>Rol</TableCell> {/* Nueva columna para el cambio de rol */}
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Ayudante</TableCell>
-                                <TableCell>Correo Electronico</TableCell>
+                                <TableCell>Correo Electrónico</TableCell>
                                 <TableCell className="pl-10">Estado</TableCell>
                                 <TableCell>Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
                                     <TableRow key={index} isActive={item.estado === 'activo'} cols={6}>
-                                         <TableCell label="Rol">
-                                           <TableActions
-                                           item={item}
-                                           handleRoleChange={handleRoleChange}
-                                           />
+                                        <TableCell label="Rol">
+                                            <TableActions
+                                                item={item}
+                                                handleRoleChange={handleRoleChange}
+                                            />
                                         </TableCell>
                                         <TableCell label="Identificación">
                                             <div>
@@ -152,15 +160,15 @@ const CRUDAyudante = () => {
                                                 <p className="text-sm text-gray-600">{item.tipoDocumento.split(' ')[0]}</p>
                                             </div>
                                         </TableCell>
-                                       
                                         <TableCell label="Ayudante">
                                             <div>
                                                 <p className="text-gray-600">{item.nombre}</p>
                                                 <p className="text-sm text-gray-600">{item.telefono}</p>
                                             </div>
                                         </TableCell>
-                                        <TableCell label="Teléfono">{item.correoElectronico.substring(0, 18) + '...'}</TableCell>
-                                        
+                                        <TableCell label="Correo Electrónico">
+                                            {item.correoElectronico.substring(0, 18) + '...'}
+                                        </TableCell>
                                         <TableCell label="Estado" className='pl-10'>
                                             <Switch
                                                 name="estado"
@@ -171,15 +179,13 @@ const CRUDAyudante = () => {
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
                                                 <TableActions
-                                                item={item}
-                                                handleViewButtonClick={handleViewButtonClick}
-                                                handleEditButtonClick={handleEditButtonClick}
-                                                handleDeleteButtonClick={handleDeleteButtonClick}
+                                                    item={item}
+                                                    handleViewButtonClick={handleViewButtonClick}
+                                                    handleEditButtonClick={handleEditButtonClick}
+                                                    handleDeleteButtonClick={handleDeleteButtonClick}
                                                 />
                                             </div>
                                         </TableCell>
-
-
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -223,7 +229,6 @@ const CRUDAyudante = () => {
                     <ViewModal onClose={closeViewModal} item={selectedItem} />
                 </div>
             )}
-            
         </div>
     );
 };

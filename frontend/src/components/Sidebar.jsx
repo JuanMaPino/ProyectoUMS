@@ -41,11 +41,11 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%]'}`}>
+    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-gray-100 rounded-2xl dark:bg-gray-800 transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%]'}`}>
       <div className="flex flex-col h-full relative">
-        <div className={`flex items-center justify-between p-4 ${activeMenu ? '' : 'justify-center'}`}>
+        <div className={`flex items-center justify-between p-7 ${activeMenu ? '' : 'justify-center'}`}>
           <Link to="/" onClick={handleMenuToggle} className={`flex items-center gap-3 font-extrabold text-blue-500 dark:text-white ${activeMenu ? '' : 'justify-center'}`}>
-            <img src={UMSLogo} alt="UMS Logo" className={`w-${activeMenu ? '8' : '12'} h-${activeMenu ? '8' : '12'}`} />
+            <img src={UMSLogo} alt="UMS Logo" className={`w-${activeMenu ? '100' : '150'} h-${activeMenu ? '8' : '12'}`} />
             <span className={`${activeMenu ? 'block' : 'hidden'}`}>UMS</span>
           </Link>
         </div>

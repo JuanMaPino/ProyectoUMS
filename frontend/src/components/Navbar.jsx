@@ -66,7 +66,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className={`flex justify-between p-2 relative bg-white dark:bg-gray-800 shadow-md`}>
+    <div className={`flex justify-between p-2 relative bg-gray-100 rounded-2xl dark:bg-gray-800 shadow-md`}>
       <div>
         {!isSmallScreen && (
           <NavButton
@@ -100,7 +100,7 @@ const Navbar = () => {
         />
         <TooltipComponent content="Profile" position="BottomCenter">
           <div
-            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray dark:hover:bg-gray-600 rounded-lg"
+            className="flex items-center gap-2 cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg"
             onClick={() => handleClick('userProfile')}
           >
             <img src={logoums} className="rounded-full w-8 h-8" alt="user-profile" />
