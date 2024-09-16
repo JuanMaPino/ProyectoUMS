@@ -125,7 +125,14 @@ const CRUDDonador = () => {
           )
         : donadores;
 
-    const currentData = filteredData.slice(
+    // Mover donadores inactivos al final
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (a.estado === 'activo' && b.estado === 'inactivo') return -1;
+        if (a.estado === 'inactivo' && b.estado === 'activo') return 1;
+        return 0;
+    });
+
+    const currentData = sortedData.slice(
         startIndex,
         startIndex + itemsPerPage
     );
@@ -134,7 +141,7 @@ const CRUDDonador = () => {
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">
-                Gestión de Donadores
+                    Gestión de Donadores
                 </h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
@@ -236,7 +243,7 @@ const CRUDDonador = () => {
                                 ))}
                             </TableBody>
                             <Pagination
-                                totalItems={filteredData.length}
+                                totalItems={sortedData.length}
                                 itemsPerPage={itemsPerPage}
                                 currentPage={currentPage}
                                 onPageChange={setCurrentPage}
@@ -256,7 +263,7 @@ const CRUDDonador = () => {
                             />
                         ))}
                         <Pagination
-                            totalItems={filteredData.length}
+                            totalItems={sortedData.length}
                             itemsPerPage={itemsPerPage}
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}

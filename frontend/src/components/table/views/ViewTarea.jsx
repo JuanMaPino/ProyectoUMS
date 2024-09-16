@@ -21,18 +21,7 @@ const ViewTarea = ({ onClose, item }) => {
                     <p className="text-gray-700"><span className="font-medium">Cantidad de Horas:</span></p>
                     <p className="text-gray-800">{item.cantidadHoras}</p>
                 </div>
-                <div className="col-span-2">
-                    <p className="text-gray-700"><span className="font-medium">Ayudantes:</span></p>
-                    {item.ayudantes && item.ayudantes.length > 0 ? (
-                        item.ayudantes.map((ayudante, index) => (
-                            <p key={index} className="text-gray-800">
-                                {ayudante.nombre} ({ayudante.rol})
-                            </p>
-                        ))
-                    ) : (
-                        <p className="text-gray-800">No hay ayudantes asignados</p>
-                    )}
-                </div>
+               
                 <div>
                     <p className="text-gray-700"><span className="font-medium">Estado:</span></p>
                     <p className="text-gray-800">{item.estado}</p>

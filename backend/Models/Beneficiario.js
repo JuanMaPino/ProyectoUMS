@@ -41,8 +41,11 @@ const beneficiarioSchema = new Schema({
     },
     condicionEspecial: {
       type: String,
+  },
+    parentesco: {
+      type: String,
       required: true
-  }
+}
 }]
 
   ,
