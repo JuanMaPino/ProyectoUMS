@@ -7,6 +7,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
     const [insumos, setInsumos] = useState([]);
     const [tareas, setTareas] = useState([]);
     const [beneficiarios, setBeneficiarios] = useState([]);
+    const [ayudantes, setAyudantes] = useState([]); // Para almacenar los ayudantes disponibles
     const [formData, setFormData] = useState({
         nombre: '',
         tipo: 'Recreativa',
@@ -47,9 +48,19 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
             }
         };
 
+        const fetchAyudantes = async () => {
+            try {
+                const response = await axios.get('http://localhost:3002/ayudantes');
+                setAyudantes(response.data);
+            } catch (error) {
+                console.error('Error fetching ayudantes:', error.message);
+            }
+        };
+
         fetchInsumos();
         fetchTareas();
         fetchBeneficiarios();
+        fetchAyudantes();
 
         if (item) {
             setFormData({
@@ -116,7 +127,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
     const handleAddTarea = () => {
         setFormData(prevState => ({
             ...prevState,
-            tareas: [...prevState.tareas, { _id: '', nombre: '' }]
+            tareas: [...prevState.tareas, { _id: '', ayudante: '' }]
         }));
     };
 
@@ -132,7 +143,17 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         const { value } = e.target;
         const selectedTarea = tareas.find(t => t._id === value);
         const newTareas = [...formData.tareas];
-        newTareas[index] = selectedTarea ? { _id: selectedTarea._id, nombre: selectedTarea.nombre } : {};
+        newTareas[index] = selectedTarea ? { _id: selectedTarea._id, ayudante: '' } : {};
+        setFormData(prevState => ({
+            ...prevState,
+            tareas: newTareas
+        }));
+    };
+
+    const handleAyudanteChange = (index, e) => {
+        const { value } = e.target;
+        const newTareas = [...formData.tareas];
+        newTareas[index].ayudante = value;
         setFormData(prevState => ({
             ...prevState,
             tareas: newTareas
@@ -180,7 +201,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
     const handleAddBeneficiario = () => {
         setFormData(prevState => ({
             ...prevState,
-            beneficiarios: [...prevState.beneficiarios, {_id: '', nombre: '' }]
+            beneficiarios: [...prevState.beneficiarios, { _id: '', nombre: '' }]
         }));
     };
 
@@ -197,8 +218,8 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         if (field === 'beneficiario') {
             const selectedBeneficiario = beneficiarios.find(b => b._id === value);
             newBeneficiarios[index] = {
-                _id: value, // Corregir asignación del _id
-                nombre: selectedBeneficiario ? selectedBeneficiario.nombre : '' // Corregir asignación del nombre
+                _id: value,
+                nombre: selectedBeneficiario ? selectedBeneficiario.nombre : ''
             };
         } else {
             newBeneficiarios[index] = {
@@ -269,6 +290,19 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                                         <option key={t._id} value={t._id}>{t.nombre}</option>
                                     ))}
                                 </select>
+
+                                {/* Select para elegir ayudante */}
+                                <select
+                                    value={tarea.ayudante}
+                                    onChange={(e) => handleAyudanteChange(index, e)}
+                                    className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                >
+                                    <option value="">Selecciona un ayudante</option>
+                                    {ayudantes.map(a => (
+                                        <option key={a._id} value={a._id}>{a.nombre}</option>
+                                    ))}
+                                </select>
+
                                 <button
                                     type="button"
                                     onClick={() => handleRemoveTarea(index)}
@@ -333,7 +367,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         {formData.beneficiarios.map((beneficiario, index) => (
                             <div key={index} className="flex items-center space-x-4 mb-2">
                                 <select
-                                    value={beneficiario._id} // Cambiado para que use _id en lugar de beneficiario.beneficiario
+                                    value={beneficiario._id} 
                                     onChange={(e) => handleBeneficiarioChange(index, 'beneficiario', e.target.value)}
                                     className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                 >

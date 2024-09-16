@@ -23,11 +23,18 @@ const ViewActividad = ({ onClose, item }) => {
                     <p className="text-gray-800">{item.descripcion}</p>
                 </div>
                 <div className="col-span-2">
-                    <label className="block text-gray-700"><span className="font-semibold">Tareas:</span></label>
+                    <label className="block text-gray-700"><span className="font-semibold">Tareas y Ayudantes:</span></label>
                     {item.tareas && item.tareas.length > 0 ? (
                         <ul className="list-disc list-inside">
                             {item.tareas.map((tarea, index) => (
-                                <li key={index} className="text-gray-800">{tarea.nombre || "Nombre de tarea no disponible"}</li>
+                                <li key={index} className="text-gray-800">
+                                    <p>{tarea.nombre || "Nombre de tarea no disponible"}</p>
+                                    <p className="text-sm text-gray-500">
+                                        {tarea.ayudante?.nombre 
+                                            ? `Ayudante: ${tarea.ayudante.nombre}`
+                                            : "Ayudante no asignado"}
+                                    </p>
+                                </li>
                             ))}
                         </ul>
                     ) : (

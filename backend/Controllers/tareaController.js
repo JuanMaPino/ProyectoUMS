@@ -1,17 +1,19 @@
 const Tarea = require('../Models/Tarea');
 
+// Obtener todas las tareas
 exports.obtenerTodasLasTareas = async (req, res) => {
   try {
-    const tareas = await Tarea.find().populate('ayudantes', 'nombre rol');
+    const tareas = await Tarea.find();  // Eliminado .populate('ayudantes')
     res.json(tareas);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+// Crear una nueva tarea
 exports.crearTarea = async (req, res) => {
   try {
-    const nuevaTarea = new Tarea(req.body);
+    const nuevaTarea = new Tarea(req.body);  // Asegúrate de que ayudantes no está en el req.body
     await nuevaTarea.save();
     res.status(201).json(nuevaTarea);
   } catch (error) {
@@ -19,9 +21,10 @@ exports.crearTarea = async (req, res) => {
   }
 };
 
+// Obtener tarea por ID
 exports.obtenerTareaPorId = async (req, res) => {
   try {
-    const tarea = await Tarea.findById(req.params.id).populate('ayudantes', 'nombre rol');
+    const tarea = await Tarea.findById(req.params.id);  // Eliminado .populate('ayudantes')
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -31,9 +34,10 @@ exports.obtenerTareaPorId = async (req, res) => {
   }
 };
 
+// Actualizar tarea por ID
 exports.actualizarTarea = async (req, res) => {
   try {
-    const tarea = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate('ayudantes', 'nombre rol');
+    const tarea = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true });  // Eliminado .populate('ayudantes')
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -43,6 +47,7 @@ exports.actualizarTarea = async (req, res) => {
   }
 };
 
+// Eliminar tarea por ID
 exports.eliminarTarea = async (req, res) => {
   try {
     const tarea = await Tarea.findByIdAndDelete(req.params.id);
@@ -55,6 +60,7 @@ exports.eliminarTarea = async (req, res) => {
   }
 };
 
+// Cambiar estado de la tarea (activo/inactivo)
 exports.cambiarEstadoTarea = async (req, res) => {
   try {
     const tarea = await Tarea.findById(req.params.id);
