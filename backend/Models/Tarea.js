@@ -13,16 +13,17 @@ const tareaSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
- 
-  
+  ayudante: {
+    type: mongoose.Schema.Types.ObjectId, // Referencia al modelo Ayudante
+    ref: 'Ayudante'
+  },
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],
     default: 'activo'
-  },
-  ayudantes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ayudante'}]
+  }
 });
 
-const Tarea= mongoose.model('Tarea', tareaSchema);
+const Tarea = mongoose.model('Tarea', tareaSchema);
 
 module.exports = Tarea;

@@ -23,6 +23,9 @@ const actividadSchema = new mongoose.Schema({
       cantidad: { type: Number, required: true }
     }
   ],
+  beneficiarios: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Beneficiario' }
+  ],
   estado: {
     type: String,
     enum: ['activo', 'inactivo'],

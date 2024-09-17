@@ -2,7 +2,7 @@ const Rol = require('../Models/Rol');
 
 exports.obtenerTodosLosRoles = async (req, res) => {
   try {
-    const roles = await Rol.find();
+    const roles = await Rol.find().populate('permisos');
     res.json(roles);
   } catch (error) {
     res.status(500).json({ error: error.message });

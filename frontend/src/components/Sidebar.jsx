@@ -5,11 +5,22 @@ import { useStateContext } from '../context/ContextProvider';
 import { useDarkMode } from '../context/DarkModeContext';
 import UMSLogo from '../assets/logoums.png'; // Asegúrate de tener la imagen en esta ruta
 import '../assets/sideBar.css';
+import { jwtDecode } from 'jwt-decode'; // Importar jwt-decode
+import Cookies from 'js-cookie';
+import {useRoles} from '../context/RolesContext'
 
 const Sidebar = () => {
   const { activeMenu, setActiveMenu } = useStateContext();
+  const {roles} = useRoles();
   const { isDarkMode } = useDarkMode();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const token = Cookies.get("token");
+  const decodedToken = jwtDecode(token);
+  const userTipo = roles.find(tipo=> tipo?._id === decodedToken.usuario?.tipo);
+  const userPermisos = userTipo ? userTipo .permisos : [];
+  const tienePermiso = (permiso) => {
+    return userPermisos .some(p => p?.nombre?.toLowerCase() === permiso?.toLowerCase());
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,22 +52,20 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%]'}`}>
+    <aside className={`h-screen fixed top-0 left-0 z-50 self-center bg-gray-100 rounded-2xl dark:bg-gray-800 transition-all duration-300 ease-in-out ${activeMenu ? 'w-[15%]' : 'w-[5%]'}`}>
       <div className="flex flex-col h-full relative">
-        <div className={`flex items-center justify-between p-4 ${activeMenu ? '' : 'justify-center'}`}>
+        <div className={`flex items-center justify-between p-7 ${activeMenu ? '' : 'justify-center'}`}>
           <Link to="/" onClick={handleMenuToggle} className={`flex items-center gap-3 font-extrabold text-blue-500 dark:text-white ${activeMenu ? '' : 'justify-center'}`}>
-            <img src={UMSLogo} alt="UMS Logo" className={`w-${activeMenu ? '8' : '12'} h-${activeMenu ? '8' : '12'}`} />
+            <img src={UMSLogo} alt="UMS Logo" className={`w-${activeMenu ? '100' : '150'} h-${activeMenu ? '8' : '12'}`} />
             <span className={`${activeMenu ? 'block' : 'hidden'}`}>UMS</span>
           </Link>
         </div>
         <nav className="flex-1 overflow-y-auto">
           {links.map((category, index) => (
             <div key={index}>
-              <p className={`text-gray-400 dark:text-gray-400 m-2 mt-4 uppercase ${activeMenu ? 'block' : 'hidden'}`}>
-                {category.title}
-              </p>
               <ul>
-                {category.links.map((link) => (
+                {category.links.filter(link => tienePermiso(link.name))  // Filtrar los enlaces según permisos
+                  .map((link) => (
                   <li
                     key={link.name}
                     className="relative group"

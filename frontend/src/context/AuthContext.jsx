@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { register, login, logout } from "../api/ApiAuth";
+import { register, login, logout } from "../api/ApiAuth"; // Asegúrate de que la función logout está importada
 import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
@@ -48,8 +48,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signout = () => {
-    setUser(null);
+  // Función de logout que se conecta con el backend y limpia el estado del usuario
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await logout();  // Llama al API de logout
+      setUser(null);   // Limpia el estado del usuario
+      navigate('/login'); // Redirige al usuario a la página de login
+    } catch (error) {
+      handleErrors(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -62,7 +72,7 @@ export const AuthProvider = ({ children }) => {
   }, [errors]);
 
   return (
-    <AuthContext.Provider value={{ signup, signin, signout, user, errors, loading }}>
+    <AuthContext.Provider value={{ signup, signin, logout, user, errors, loading }}>
       {children}
     </AuthContext.Provider>
   );
