@@ -85,7 +85,7 @@ const CRUDDonador = () => {
                 showToast('Donador eliminado correctamente', 'success');
               }
             } catch (error) {
-              console.error('Error al eliminar donador:', error);
+              console.error('Error al eliminar el donador, este tiene donacines hechas:', error);
               if (error.response && error.status === 400) {
                 // Mostrar alerta si el donador tiene donaciones asociadas
                 showToast(error.response, 'error');
