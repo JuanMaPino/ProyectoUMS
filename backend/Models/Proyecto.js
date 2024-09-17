@@ -43,6 +43,7 @@ const proyectoSchema = new mongoose.Schema({
     type: Date,
     required: true
   },
+  
   fechaFin: {
     type: Date,
     required: true

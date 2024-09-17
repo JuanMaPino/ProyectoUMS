@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProyectos } from '../../../context/ProyectosContext';
 import axios from 'axios';
+import showToast, { showAlert } from '../alertFunctions';
 
 const ModalActividad = ({ onClose, item, proyectoId }) => {
     const { createActividad, updateActividad } = useProyectos();
@@ -14,8 +15,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         insumos: [],
         estado: 'activo'
     });
-    
-    console.log("idproyecto",proyectoId)
+
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
@@ -65,18 +65,82 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
             }
         }
 
+        if (name === 'insumos') {
+            if (formData.insumos.some(insumo => !insumo.insumo || !insumo.cantidad)) {
+                newErrors[name] = `Todos los insumos deben estar completos`;
+            } else {
+                delete newErrors[name];
+            }
+        }
+
+        if (name === 'tareas') {
+            if (formData.tareas.some(tarea => !tarea._id)) {
+                newErrors[name] = `Todas las tareas deben ser seleccionadas`;
+            } else {
+                delete newErrors[name];
+            }
+        }
+
         setErrors(newErrors);
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setFormData(prevState => {
+            const newFormData = {
+                ...prevState,
+                [name]: value
+            };
 
-        handleValidation(name, value);
+            handleValidation(name, value);
+
+            return newFormData;
+        });
+    };
+
+    const handleInsumoChange = (index, field, value) => {
+        const newInsumos = [...formData.insumos];
+        if (field === 'insumo') {
+            const selectedInsumo = insumos.find(i => i._id === value);
+            newInsumos[index] = {
+                ...newInsumos[index],
+                insumo: value,
+                nombre: selectedInsumo ? selectedInsumo.nombre : ''
+            };
+        } else {
+            newInsumos[index] = {
+                ...newInsumos[index],
+                [field]: value
+            };
+        }
+        setFormData(prevState => {
+            const newFormData = {
+                ...prevState,
+                insumos: newInsumos
+            };
+
+            handleValidation('insumos', newInsumos);
+
+            return newFormData;
+        });
+    };
+
+    const handleTareaChange = (index, e) => {
+        const { value } = e.target;
+        const selectedTarea = tareas.find(t => t._id === value);
+        const newTareas = [...formData.tareas];
+        newTareas[index] = selectedTarea ? { _id: selectedTarea._id, nombre: selectedTarea.nombre } : {};
+        setFormData(prevState => {
+            const newFormData = {
+                ...prevState,
+                tareas: newTareas
+            };
+
+            handleValidation('tareas', newTareas);
+
+            return newFormData;
+        });
     };
 
     const handleSubmit = async (e) => {
@@ -89,10 +153,24 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }
 
         try {
+            // Verificar cantidades disponibles
+            const insumosResponse = await axios.get('http://localhost:3002/insumos');
+            const insumosDisponibles = insumosResponse.data;
+
+            for (const insumo of formData.insumos) {
+                const insumoDisponible = insumosDisponibles.find(i => i._id === insumo.insumo);
+                if (insumoDisponible && insumo.cantidad > insumoDisponible.cantidad) {
+                    showToast(`La cantidad de ${insumoDisponible.nombre} excede el disponible.`,`error`);
+                    return;
+                }
+            }
+
             if (item && item._id) {
                 await updateActividad(proyectoId, item._id, formData);
+                showToast('Actividad actualizado correctamente.', 'success');
             } else {
                 await createActividad(proyectoId, formData);
+                showToast('Actividad creado correctamente.', 'success');
             }
             onClose();
         } catch (error) {
@@ -124,38 +202,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
 
     const handleRemoveInsumo = (index) => {
         const newInsumos = formData.insumos.filter((_, i) => i !== index);
-        setFormData(prevState => ({
-            ...prevState,
-            insumos: newInsumos
-        }));
-    };
-
-    const handleTareaChange = (index, e) => {
-        const { value } = e.target;
-        const selectedTarea = tareas.find(t => t._id === value);
-        const newTareas = [...formData.tareas];
-        newTareas[index] = selectedTarea ? { _id: selectedTarea._id, nombre: selectedTarea.nombre } : {};
-        setFormData(prevState => ({
-            ...prevState,
-            tareas: newTareas
-        }));
-    };
-
-    const handleInsumoChange = (index, field, value) => {
-        const newInsumos = [...formData.insumos];
-        if (field === 'insumo') {
-            const selectedInsumo = insumos.find(i => i._id === value);
-            newInsumos[index] = {
-                ...newInsumos[index],
-                insumo: value,
-                nombre: selectedInsumo ? selectedInsumo.nombre : ''
-            };
-        } else {
-            newInsumos[index] = {
-                ...newInsumos[index],
-                [field]: value
-            };
-        }
         setFormData(prevState => ({
             ...prevState,
             insumos: newInsumos

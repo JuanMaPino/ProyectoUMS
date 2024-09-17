@@ -20,7 +20,7 @@ import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
-import { showToast } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
+import { showToast,showAlert } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
 
 const CRUDDonador = () => {
     const {
@@ -68,15 +68,36 @@ const CRUDDonador = () => {
     };
 
     const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteDonador(id);
-            showToast({ title: 'Donador eliminado', icon: 'success' });
-        } catch (error) {
-            console.error('Error deleting item:', error);
-            showToast({ title: 'Error al eliminar el donador', icon: 'error' });
-        }
-    };
-
+        showAlert(
+          {
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esto',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+          },
+          async () => {
+            try {
+              const response = await deleteDonador(id);
+              
+              if (response.status === 204) {
+                showToast('Donador eliminado correctamente', 'success');
+              }
+            } catch (error) {
+              console.error('Error al eliminar donador:', error);
+              if (error.response && error.status === 400) {
+                // Mostrar alerta si el donador tiene donaciones asociadas
+                showToast(error.response, 'error');
+              } else {
+                showToast('Error al eliminar el donador', 'error');
+              }
+            }
+          }
+        );
+      };
+      
+      
     const handleViewButtonClick = (item) => {
         setSelectedItem(item);
         setShowViewModal(true);
@@ -88,16 +109,33 @@ const CRUDDonador = () => {
     };
 
     const handleSwitchChange = async (id) => {
-        const item = donadores.find((item) => item._id === id);
-        if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
-            await disableDonador(id); // Utilizando la función de cambio de estado del contexto
-        }
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado del donador.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    const item = donadores.find((item) => item._id === id);
+                    if (item) {
+                        const updatedItem = {
+                            ...item,
+                            estado: item.estado === 'activo' ? 'inactivo' : 'activo'
+                        };
+                        await disableDonador(id);
+                        showToast({ title: 'Estado actualizado', icon: 'success' });
+                    }
+                } catch (error) {
+                    console.error('Error updating estado:', error);
+                    showToast({ title: 'Error al actualizar el estado', icon: 'error' });
+                }
+            }
+        );
     };
-
     const closeModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);
@@ -125,7 +163,14 @@ const CRUDDonador = () => {
           )
         : donadores;
 
-    const currentData = filteredData.slice(
+    // Mover donadores inactivos al final
+    const sortedData = [...filteredData].sort((a, b) => {
+        if (a.estado === 'activo' && b.estado === 'inactivo') return -1;
+        if (a.estado === 'inactivo' && b.estado === 'activo') return 1;
+        return 0;
+    });
+
+    const currentData = sortedData.slice(
         startIndex,
         startIndex + itemsPerPage
     );
@@ -134,7 +179,7 @@ const CRUDDonador = () => {
         <div>
             <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
                 <h1 className="text-3xl font-semibold text-left text-gray-800">
-                Gestión de Donadores
+                    Gestión de Donadores
                 </h1>
                 <div className="flex items-center gap-2">
                     <CreateButton onClick={handleCreateClick} />
@@ -236,7 +281,7 @@ const CRUDDonador = () => {
                                 ))}
                             </TableBody>
                             <Pagination
-                                totalItems={filteredData.length}
+                                totalItems={sortedData.length}
                                 itemsPerPage={itemsPerPage}
                                 currentPage={currentPage}
                                 onPageChange={setCurrentPage}
@@ -256,7 +301,7 @@ const CRUDDonador = () => {
                             />
                         ))}
                         <Pagination
-                            totalItems={filteredData.length}
+                            totalItems={sortedData.length}
                             itemsPerPage={itemsPerPage}
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}

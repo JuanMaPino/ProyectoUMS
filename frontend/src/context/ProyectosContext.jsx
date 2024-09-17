@@ -37,7 +37,7 @@ export const ProyectoProvider = ({ children }) => {
         try {
             const response = await getActividadesByProyectoIdRequest(proyectoId);
             setActividades(response.data || []); // Ensure this matches your response structure
-            console.log(response.data); // Log activities to the console
+// Log activities to the console
             setErrors([]);
         } catch (error) {
             handleErrors(error);

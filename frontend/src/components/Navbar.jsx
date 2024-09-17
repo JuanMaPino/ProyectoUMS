@@ -66,7 +66,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className={`flex justify-between p-2 relative bg-white dark:bg-gray-800 shadow-md`}>
+    <div className={`flex justify-between p-2 relative bg-white dark:bg-gray-800 shadow-md `}>
       <div>
         {!isSmallScreen && (
           <NavButton

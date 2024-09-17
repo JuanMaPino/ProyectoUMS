@@ -98,21 +98,36 @@ export const DonadorProvider = ({ children }) => {
             return { success: false, error: errorMessage };
         }
     };
-    const deleteDonador = async (id) => {
-        try {
-            await deleteDonadorRequest(id);
-          
-            setDonadores(donadores.filter(d => d._id !== id));
-            setMessages(['Donador eliminado con éxito']); // Añadir mensaje de éxito
-            return { success: true };
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || 'An error occurred';
-            setErrors([errorMessage]);
-            handleError(error); 
-            return { success: false, error: errorMessage };
-        }
-    };
+const deleteDonador = async (id) => {
+  try {
+    await deleteDonadorRequest(id);
     
+    setDonadores(donadores.filter(d => d._id !== id));
+    setMessages(['Donador eliminado con éxito']);
+    return { success: true };
+  } catch (error) {
+    if(errorMessage === 400 || errorMessage === 500){
+     const errorMessage = error.response?.data?.message || 'El donador está en uso';
+     console.error("Error al eliminar donador:", errorMessage);
+     setErrors([errorMessage]);
+    return { success: false, error: errorMessage };
+        
+    }else if(error != 400){
+     const errorMessage = error.response?.data?.error || 'No se puede eliminar el donador';
+     console.error("Error al eliminar donador:", errorMessage);
+
+    setErrors([errorMessage]);  
+    return { success: true, error: errorMessage };
+    
+    }
+    // Capturando el mensaje de error que viene del backend
+    
+    // Estableciendo el mensaje de error para ser mostrado en la interfaz
+    
+  }
+};
+
+      
     useEffect(() => {
         getAllDonadores();
     }, []);

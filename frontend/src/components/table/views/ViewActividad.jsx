@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RiArrowLeftSLine } from 'react-icons/ri';
 
 const ViewActividad = ({ onClose, item }) => {
+
+    // Agrega un efecto para imprimir los datos de item y hacer debugging
+    useEffect(() => {
+        console.log('Datos de la actividad:', item);
+    }, [item]);
+
     return (
         <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles de la Actividad</h2>
@@ -22,25 +28,32 @@ const ViewActividad = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Descripción:</span></label>
                     <p className="text-gray-800">{item.descripcion}</p>
                 </div>
+                
+                {/* Sección de Tareas */}
                 <div className="col-span-2">
                     <label className="block text-gray-700"><span className="font-semibold">Tareas:</span></label>
                     {item.tareas && item.tareas.length > 0 ? (
                         <ul className="list-disc list-inside">
                             {item.tareas.map((tarea, index) => (
-                                <li key={index} className="text-gray-800">{tarea.nombre || "Nombre de tarea no disponible"}</li>
+                                <li key={index} className="text-gray-800">
+                                    {tarea.nombre ? tarea.nombre : "Nombre de tarea no disponible"}
+                                </li>
                             ))}
                         </ul>
                     ) : (
                         <p className="text-gray-800">No hay tareas asignadas</p>
                     )}
                 </div>
+
+                {/* Sección de Insumos */}
                 <div className="col-span-2">
                     <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
                     {item.insumos && item.insumos.length > 0 ? (
                         <ul className="list-disc list-inside">
                             {item.insumos.map((insumo, index) => (
                                 <li key={index} className="text-gray-800">
-                                    {insumo.nombre || "Nombre de insumo no disponible"} - Cantidad: {insumo.cantidad}
+                                    {insumo.nombre ? insumo.nombre : "Nombre de insumo no disponible"}
+                                    - Cantidad: {insumo.cantidad}
                                 </li>
                             ))}
                         </ul>
@@ -48,6 +61,7 @@ const ViewActividad = ({ onClose, item }) => {
                         <p className="text-gray-800">No hay insumos asignados</p>
                     )}
                 </div>
+
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
                     <p className={`text-gray-800 ${item.estado === 'activo' ? 'text-green-500' : 'text-red-500'}`}>

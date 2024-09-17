@@ -13,6 +13,7 @@ import SearchBar from '../components/table/SearchBar';
 import FormModal from '../components/table/modals/ModalProyecto';
 import ViewModal from '../components/table/views/ViewProyecto';
 import FloatingButton from '../components/FloatingButton';
+import { showToast,showAlert } from '../components/table/alertFunctions';
 
 const CRUDProyecto = () => {
     const navigate = useNavigate(); // Define navigate usando useNavigate
@@ -68,18 +69,35 @@ const CRUDProyecto = () => {
     const handleCreateOrUpdate = async (item) => {
         if (item._id) {
             await updateProyecto(item._id, item);
+            showToast('Proyecto actualizado', 'success');
         } else {
             await createProyecto(item);
+            showToast('Proyecto creado', 'success');
         }
         closeModal();
     };
 
     const handleDeleteButtonClick = async (id) => {
-        try {
-            await deleteProyecto(id);
-        } catch (error) {
-            console.error('Error deleting proyecto:', error);
-        }
+        showAlert(
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    await deleteProyecto(id);
+                    showToast('Proyecto eliminado', 'success');
+                    fetchData(); // Refresh projects after deletion
+                } catch (error) {
+                    console.error('Error deleting proyecto:', error);
+                    showToast('Error al eliminar el proyecto', 'error');
+                }
+            }
+        );
     };
 
     const handleViewButtonClick = (item) => {
