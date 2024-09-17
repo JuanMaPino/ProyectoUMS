@@ -176,8 +176,10 @@ const ModalDonador = ({ onClose, item }) => {
             let response;
             if (item && item._id) {
                 response = await updateDonador(item._id, formData);
+                showToast('Donador actualizado correctamente.', 'success');
             } else {
                 response = await createDonador(formData);
+                showToast('Donador creado correctamente.', 'success');
             }
     
             if (response.success) {
