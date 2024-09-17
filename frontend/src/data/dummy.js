@@ -34,6 +34,7 @@ export const gridOrderImage = (props) => (
   </div>
 );
 
+
 export const gridOrderStatus = (props) => (
   <button
     type="button"
@@ -480,7 +481,6 @@ export const links = [
       },
     ],
   },
-
   {
     title: 'Tablas',
     links: [

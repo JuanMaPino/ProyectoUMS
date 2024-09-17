@@ -18,7 +18,7 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate('/main');
+      navigate('/dashboard');
     }
   }, [user, navigate]);
 

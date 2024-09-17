@@ -153,7 +153,7 @@ function Register() {
             </div>
 
             <div>
-              <label htmlFor="tipo" className="block mb-2 text-sm font-medium  text-gray-700">Tipo</label>
+              <label htmlFor="tipo" className="block mb-2 text-sm font-medium  text-gray-700">Rol</label>
               <select
                 id="tipo"
                 name="tipo"

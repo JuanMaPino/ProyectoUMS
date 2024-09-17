@@ -25,7 +25,6 @@ export const RolProvider = ({ children }) => {
     const fetchPermisos = async () => {
         try {
             const response = await ObtenerTodosLosPermisos();
-            console.log(response)
             setPermisos(response.data);
             setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {
@@ -61,9 +60,11 @@ export const RolProvider = ({ children }) => {
         try {
             const capitalizedData = capitalizeRolData(data);
             const response = await updateRolRequest(id, capitalizedData);
+            fetchPermisos()
             const updatedRoles = roles.map(rol =>
                 rol._id === response.data._id ? response.data : rol
             );
+            
             setRoles(updatedRoles);
             setErrors([]); // Limpiar errores en caso de éxito
         } catch (error) {

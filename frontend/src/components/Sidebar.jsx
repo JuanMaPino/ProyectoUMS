@@ -5,11 +5,22 @@ import { useStateContext } from '../context/ContextProvider';
 import { useDarkMode } from '../context/DarkModeContext';
 import UMSLogo from '../assets/logoums.png'; // Asegúrate de tener la imagen en esta ruta
 import '../assets/sideBar.css';
+import { jwtDecode } from 'jwt-decode'; // Importar jwt-decode
+import Cookies from 'js-cookie';
+import {useRoles} from '../context/RolesContext'
 
 const Sidebar = () => {
   const { activeMenu, setActiveMenu } = useStateContext();
+  const {roles} = useRoles();
   const { isDarkMode } = useDarkMode();
   const [hoveredItem, setHoveredItem] = useState(null);
+  const token = Cookies.get("token");
+  const decodedToken = jwtDecode(token);
+  const userTipo = roles.find(tipo=> tipo?._id === decodedToken.usuario?.tipo);
+  const userPermisos = userTipo ? userTipo .permisos : [];
+  const tienePermiso = (permiso) => {
+    return userPermisos .some(p => p?.nombre?.toLowerCase() === permiso?.toLowerCase());
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,11 +63,9 @@ const Sidebar = () => {
         <nav className="flex-1 overflow-y-auto">
           {links.map((category, index) => (
             <div key={index}>
-              <p className={`text-gray-400 dark:text-gray-400 m-2 mt-4 uppercase ${activeMenu ? 'block' : 'hidden'}`}>
-                {category.title}
-              </p>
               <ul>
-                {category.links.map((link) => (
+                {category.links.filter(link => tienePermiso(link.name))  // Filtrar los enlaces según permisos
+                  .map((link) => (
                   <li
                     key={link.name}
                     className="relative group"
