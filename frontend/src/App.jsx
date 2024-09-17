@@ -8,6 +8,7 @@ import { DonadorProvider } from './context/DonadoresContext';
 import { DonacionesProvider } from './context/DonacionesContext';
 import { InsumoProvider } from './context/InsumosContext';
 import { AuthProvider } from './context/AuthContext';
+import { UsuariosProvider } from './context/UsuariosContext';
 import { useStateContext } from './context/ContextProvider';
 import { RolProvider } from './context/RolesContext';
 import ProtectedRoute from './components/ProtectedRoutes';
@@ -24,6 +25,7 @@ import CRUDDonacion from './pages/CrudDonacion';
 import CRUDInsumos from './pages/CrudInsumo';
 import CRUDTarea from './pages/CrudTarea';
 import CRUDActividad from './pages/CrudActividad';
+import CRUDUser from './pages/Usuarios';
 import LineChart from './components/Charts/LineChart';
 
 import Activities from './pages/Activities';
@@ -60,14 +62,14 @@ const AppLayout = ({ children }) => {
         </>
       )}
 
-      <div className={`w-full ${!isAuthPage && activeMenu ? 'md:ml-[16%]':  'md:ml-auto'} overflow-auto`}>
+      <div className={`w-full ${isAuthPage ? 'md:ml-auto' : !isAuthPage && activeMenu ? 'md:ml-[15%]' : 'md:ml-[5%]'} overflow-auto`}>
         {!isAuthPage && (
-          <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full">
+          <div className="fixed md:static bg-main-bg dark:bg-main-dark-bg navbar w-full mb-4">
             <Navbar />
           </div>
         )}
 
-        <div className="min-h-[100vh] h-full overflow-y-auto ">
+        <div className={`min-h-[100vh] h-full overflow-y-auto ${!isAuthPage ? 'px-5' : ''}`}>
           {children}
         </div>
       </div>
@@ -85,47 +87,49 @@ const App = () => {
           <ActividadProvider>
             <ProyectoProvider>
               <BeneficiarioProvider>
-                <DonadorProvider>
-                  <DonacionesProvider>
-                    <InsumoProvider>
-                      <AyudanteProvider>
-                        <RolProvider>
-                          <TareaProvider>
-                            <AppLayout>
-                              <Routes>
-                                <Route path="/register" element={<Register />} />
-                                <Route path="/login" element={<Login />} />
-                                <Route path="/olvide-contrasena" element={<ResetPassword/>}/>
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/" element={<Navigate to="/login" />} />
-                                {/*<Route element={<ProtectedRoute/>}> */}
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/roles" element={<CRUDRoles />} />
-                                <Route path="/donaciones" element={<CRUDDonacion />} />
-                                <Route path="/donadores" element={<CRUDDonador />} />
-                                <Route path="/beneficiarios" element={<CRUDTable />} />
-                                <Route path="/proyectos" element={<CRUDProyecto />} />
-
-                                <Route path="/roles" element={<CRUDRoles />} />
-
-                                <Route path="/insumos" element={<CRUDInsumos />} />
-                                <Route path="/ayudantes" element={<CRUDAyudante />} />
-                                <Route path="/tareas" element={<CRUDTarea />} />
-                                <Route path="/actividades" element={<CRUDActividad />} />
-
+                <UsuariosProvider>
+                  <DonadorProvider>
+                    <DonacionesProvider>
+                      <InsumoProvider>
+                        <AyudanteProvider>
+                          <RolProvider>
+                            <TareaProvider>
+                              <AppLayout>
+                                <Routes>
+                                  <Route path="/register" element={<Register />} />
+                                  <Route path="/login" element={<Login />} />
+                                  <Route path="/olvide-contrasena" element={<ResetPassword />} />
+                                  <Route path="/dashboard" element={<Dashboard />} />
+                                  <Route path="/" element={<Navigate to="/login" />} />
+                                  {/*<Route element={<ProtectedRoute/>}> */}
+                                  <Route path="/dashboard" element={<Dashboard />} />
+                                  <Route path="/roles" element={<CRUDRoles />} />
+                                  <Route path="/donaciones" element={<CRUDDonacion />} />
+                                  <Route path="/donadores" element={<CRUDDonador />} />
+                                  <Route path="/beneficiarios" element={<CRUDTable />} />
+                                  <Route path="/proyectos" element={<CRUDProyecto />} />
                                 
+                                  <Route path="/Usuarios" element={<CRUDUser />} />
 
-                                {/* Ejemplo de gráfico */}
-                                <Route path="/line-chart" element={<LineChart />} />
+                                  <Route path="/insumos" element={<CRUDInsumos />} />
+                                  <Route path="/ayudantes" element={<CRUDAyudante />} />
+                                  <Route path="/tareas" element={<CRUDTarea />} />
+                                  <Route path="/actividades" element={<CRUDActividad />} />
 
-                              </Routes>
-                            </AppLayout>
-                          </TareaProvider>
-                        </RolProvider>
-                      </AyudanteProvider>
-                    </InsumoProvider>
-                  </DonacionesProvider>
-                </DonadorProvider>
+
+
+                                  {/* Ejemplo de gráfico */}
+                                  <Route path="/line-chart" element={<LineChart />} />
+
+                                </Routes>
+                              </AppLayout>
+                            </TareaProvider>
+                          </RolProvider>
+                        </AyudanteProvider>
+                      </InsumoProvider>
+                    </DonacionesProvider>
+                  </DonadorProvider>
+                </UsuariosProvider>
               </BeneficiarioProvider>
             </ProyectoProvider>
           </ActividadProvider>

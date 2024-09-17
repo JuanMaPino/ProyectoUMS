@@ -3,29 +3,6 @@ const jwt = require('jsonwebtoken');
 const Usuario = require('../models/User');
 const crypto = require('crypto');
 const {sendCode} = require ('../Mails/forgetpasswordmessage')
-exports.register = async (req, res) => {
-  const { usuario, email, contraseña, tipo } = req.body;
-
-  try {
-    let user = await Usuario.findOne({ usuario });
-    if (user) {
-      return res.status(400).json({ message: 'El username ya está en uso' });
-    }
-    user = await Usuario.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'El email ya está en uso' });
-    }
-
-    const hashedPassword = await bcrypt.hash(contraseña, 12);
-    user = new Usuario({ usuario, email, contraseña: hashedPassword, tipo });
-    await user.save();
-
-    res.status(201).json({ message: 'Usuario registrado exitosamente', user });
-  } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ message: 'Error al registrar usuario' });
-  }
-};
 
 exports.login = async (req, res) => {
   const { usernameOrEmail, contraseña } = req.body;
@@ -54,6 +31,7 @@ exports.login = async (req, res) => {
         usuario: user.usuario,
         email: user.email,
         tipo: user.tipo,
+        
       }
     };
 
@@ -165,5 +143,77 @@ exports.newPassword = async (req, res) => {
   } catch (error) {
     console.error(error.message);
     res.status(500).json({ message: 'Error al cambiar la contraseña' });
+  }
+};
+
+exports.register = async (req, res) => {
+  const { usuario, email, contraseña, tipo } = req.body;
+
+  try {
+    let user = await Usuario.findOne({ usuario });
+    if (user) {
+      return res.status(400).json({ message: 'El username ya está en uso' });
+    }
+    user = await Usuario.findOne({ email });
+    if (user) {
+      return res.status(400).json({ message: 'El email ya está en uso' });
+    }
+
+    const hashedPassword = await bcrypt.hash(contraseña, 12);
+    user = new Usuario({ usuario, email, contraseña: hashedPassword, tipo });
+    await user.save();
+
+    res.status(201).json({ message: 'Usuario registrado exitosamente', user });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Error al registrar usuario' });
+  }
+};
+
+exports.getUsers = async (req, res) => {
+  try {
+    const users = await Usuario.find().populate({
+      path: 'tipo',
+      populate:{
+        path: 'permisos',
+      }
+    });
+    console.log(users)
+    res.status(200).json(users);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Error al obtener usuarios' });
+  }
+};
+
+exports.updateUsuario = async (req, res) => {
+  try {
+    const usuario = await Usuario.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!usuario) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+    res.json(usuario);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+exports.disableUsuario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await Usuario.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    let status = user.active 
+    user.active = !status;
+    await user.save();
+
+    res.status(200).json({ message: 'Usuario inhabilitado exitosamente', user });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Error al inhabilitar usuario' });
   }
 };
