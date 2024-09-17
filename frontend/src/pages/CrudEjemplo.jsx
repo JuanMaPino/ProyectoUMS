@@ -19,7 +19,7 @@ import { showAlert, showToast } from '../components/table/alertFunctions';
 import CardItem from '../components/table/CardItems/CardItem';
 import FloatingButton from '../components/FloatingButton';
 
-const   CRUDTable = () => {
+const CRUDTable = () => {
     const { beneficiarios, createBeneficiario, updateBeneficiario, deleteBeneficiario } = useBeneficiarios();
     const [filteredData, setFilteredData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -41,13 +41,35 @@ const   CRUDTable = () => {
             item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
             item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
-        setFilteredData(filtered);
+        // Ordenar los beneficiarios filtrados
+        const sortedFilteredData = filtered.sort((a, b) => {
+            if (a.estado === 'activo' && b.estado === 'inactivo') {
+                return -1;
+            }
+            if (a.estado === 'inactivo' && b.estado === 'activo') {
+                return 1;
+            }
+            return 0;
+        });
+        setFilteredData(sortedFilteredData);
         setCurrentPage(1);
     }, [beneficiarios, searchTerm]);
 
     const fetchData = async () => {
         try {
             // Método del contexto para obtener los datos
+            // Ordenar los beneficiarios por estado, activos primero, luego inactivos
+            const sortedBeneficiarios = beneficiarios.sort((a, b) => {
+                if (a.estado === 'activo' && b.estado === 'inactivo') {
+                    return -1;
+                }
+                if (a.estado === 'inactivo' && b.estado === 'activo') {
+                    return 1;
+                }
+                return 0;
+            });
+            setFilteredData(sortedBeneficiarios);
+            setCurrentPage(1);
         } catch (error) {
             console.error('Error fetching data:', error);
         }

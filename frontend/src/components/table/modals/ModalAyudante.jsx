@@ -146,7 +146,7 @@ const ModalAyudante = ({ onClose, item }) => {
                 <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Ayudante' : 'Agregar Ayudante'}</h2>
                 <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento<span className="text-red-500 text-sm">*</span></label>
                         <select
                             name="tipoDocumento"
                             value={formData.tipoDocumento}
@@ -159,7 +159,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="identificacion"
@@ -171,7 +171,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         {errors.identificacion && <p className="text-red-500 text-sm mt-1">{errors.identificacion}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="nombre"
@@ -183,7 +183,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         {errors.nombre && <p className="text-red-500 text-sm mt-1">{errors.nombre}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="telefono"
@@ -195,7 +195,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         {errors.telefono && <p className="text-red-500 text-sm mt-1">{errors.telefono}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Rol</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Rol<span className="text-red-500 text-sm">*</span></label>
                         <select
                             name="rol"
                             value={formData.rol}
@@ -208,7 +208,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Dirección<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="direccion"
@@ -231,7 +231,7 @@ const ModalAyudante = ({ onClose, item }) => {
                         {errors.correoElectronico && <p className="text-red-500 text-sm mt-1">{errors.correoElectronico}</p>}
                     </div>
                     <div className='sm:col-span-2'>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Institución</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Institución<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="institucion"

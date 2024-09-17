@@ -1,5 +1,15 @@
 import React from 'react';
-import { RiDeleteBin6Line, RiFolderLine ,RiEyeLine, RiPencilFill, RiUserHeartFill, RiUserStarFill } from 'react-icons/ri';
+import { RiDeleteBin6Line, RiFolderLine, RiEyeLine, RiPencilFill, RiUserHeartFill, RiUserStarFill, RiGroupLine } from 'react-icons/ri';  // Añadido icono de grupo
+
+// Componente de botón para ver beneficiarios
+const ViewBeneficiariosButton = ({ item, handleViewBeneficiariosClick }) => (
+    <button
+        onClick={() => handleViewBeneficiariosClick(item)}
+        className="rounded-lg transition-colors text-white bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-700 hover:to-blue-800 p-2"
+    >
+        <RiGroupLine />  {/* Icono para ver beneficiarios */}
+    </button>
+);
 
 // Componente de botón para ver
 const ViewButton = ({ item, handleViewButtonClick }) => (
@@ -26,7 +36,7 @@ const EditButton = ({ item, handleEditButtonClick }) => (
 const DeleteButton = ({ item, handleDeleteButtonClick }) => (
     <button
         onClick={() => handleDeleteButtonClick(item._id)}
-        className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-red-500 to-red-700 hover:from-red-700 hover:to-red-900' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+        className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-pink-600 to-pink-700 hover:from-red-700 hover:to-red-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
         disabled={item.estado !== 'activo'}
     >
         <RiDeleteBin6Line />
@@ -63,11 +73,11 @@ const ViewActividadesButton = ({ item, handleViewActividadesButtonClick }) => (
         onClick={() => handleViewActividadesButtonClick(item._id)}
         className="rounded-lg transition-colors text-white bg-gradient-to-r from-neutral-400 from-10% to-neutral-500 hover:from-neutral-500 hover:to-neutral-600 p-2"
     >
-        <RiFolderLine /> {/* Puedes reemplazar este ícono por uno más adecuado si lo prefieres */}
+        <RiFolderLine />
     </button>
 );
 
-const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, handleDeleteButtonClick, handleRoleChange, handleViewActividadesButtonClick }) => {
+const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, handleDeleteButtonClick, handleRoleChange, handleViewActividadesButtonClick, handleViewBeneficiariosClick }) => {
     return (
         <div className="flex gap-2">
             {/* Botón de ver */}
@@ -84,6 +94,9 @@ const TableActions = ({ item, handleViewButtonClick, handleEditButtonClick, hand
             
             {/* Botón de ver actividades */}
             {handleViewActividadesButtonClick && <ViewActividadesButton item={item} handleViewActividadesButtonClick={handleViewActividadesButtonClick} />}
+            
+            {/* Botón de ver beneficiarios */}
+            {handleViewBeneficiariosClick && <ViewBeneficiariosButton item={item} handleViewBeneficiariosClick={handleViewBeneficiariosClick} />}
         </div>
     );
 };

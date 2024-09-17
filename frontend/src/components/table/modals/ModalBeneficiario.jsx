@@ -29,7 +29,8 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 familiares: item.familiares.map(familiar => ({
                     documento: familiar.documento || '',
                     nombre: familiar.nombre || '',
-                    condicionEspecial: familiar.condicionEspecial || ''
+                    condicionEspecial: familiar.condicionEspecial || '',
+                    parentesco: familiar.parentesco || ''
                 })),
                 estado: item.estado || 'activo'
             });
@@ -141,7 +142,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                 <h2 className="col-span-2 text-3xl font-semibold mb-6 text-center text-gray-800">{item ? 'Editar Beneficiario' : 'Agregar Beneficiario'}</h2>
                 <div className="col-span-2 grid grid-cols-2 gap-8">
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Tipo de Documento<span className="text-red-500 text-sm">*</span></label>
                         <select
                             name="tipoDocumento"
                             value={formData.tipoDocumento}
@@ -154,7 +155,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Identificación</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Identificación<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="identificacion"
@@ -165,7 +166,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                         {errors.identificacion && <p className="text-red-500 text-sm">{errors.identificacion}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="nombre"
@@ -176,7 +177,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                         {errors.nombre && <p className="text-red-500 text-sm">{errors.nombre}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Teléfono<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="telefono"
@@ -198,7 +199,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                         {errors.correoElectronico && <p className="text-red-500 text-sm">{errors.correoElectronico}</p>}
                     </div>
                     <div>
-                        <label className="block text-gray-700 text-sm font-medium mb-2">Dirección</label>
+                        <label className="block text-gray-700 text-sm font-medium mb-2">Dirección<span className="text-red-500 text-sm">*</span></label>
                         <input
                             type="text"
                             name="direccion"
@@ -216,7 +217,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             <h3 className="text-xl font-medium mb-2">Familiar #{index + 1}</h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-gray-700 text-sm font-medium mb-2">Documento</label>
+                                    <label className="block text-gray-700 text-sm font-medium mb-2">Documento<span className="text-red-500 text-sm">*</span></label>
                                     <input
                                         type="text"
                                         name="documento"
@@ -226,7 +227,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-gray-700 text-sm font-medium mb-2">Nombre</label>
+                                    <label className="block text-gray-700 text-sm font-medium mb-2">Nombre<span className="text-red-500 text-sm">*</span></label>
                                     <input
                                         type="text"
                                         name="nombre"
@@ -241,6 +242,16 @@ const ModalBeneficiario = ({ onClose, item }) => {
                                         type="text"
                                         name="condicionEspecial"
                                         value={familiar.condicionEspecial}
+                                        onChange={(e) => handleFamiliarChange(e, index)}
+                                        className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
+                                    />
+                                </div>
+                                <div className="col-span-2">
+                                    <label className="block text-gray-700 text-sm font-medium mb-2">Parentesco<span className="text-red-500 text-sm">*</span></label>
+                                    <input
+                                        type="text"
+                                        name="parentesco"
+                                        value={familiar.parentesco}
                                         onChange={(e) => handleFamiliarChange(e, index)}
                                         className="shadow-sm border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring focus:border-blue-300"
                                     />

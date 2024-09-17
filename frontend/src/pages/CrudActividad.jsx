@@ -13,6 +13,7 @@ import SearchBar from '../components/table/SearchBar';
 import Switch from '../components/table/Switch';
 import ModalActividad from '../components/table/modals/ModalActividad';
 import ViewActividad from '../components/table/views/ViewActividad';
+import ViewBeneActivi from '../components/table/views/ViewBeneActivi'; // Importar el nuevo modal
 import CardItem from '../components/table/CardItems/CardActividad';
 import { showAlert, showToast } from '../components/table/alertFunctions';
 
@@ -29,12 +30,13 @@ const CRUDActividad = () => {
         deleteProyecto,
         disableProyecto,
         fetchProyectos,
-        updateActividad // Añade la función para actualizar la actividad
+        updateActividad
     } = useProyectos();
 
     const [currentPage, setCurrentPage] = useState(1);
     const [showModalForm, setShowModalForm] = useState(false);
     const [showViewModal, setShowViewModal] = useState(false);
+    const [showBeneficiariosModal, setShowBeneficiariosModal] = useState(false); // Estado para el modal de beneficiarios
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -125,7 +127,7 @@ const CRUDActividad = () => {
                         estado: actividad.estado === 'activo' ? 'inactivo' : 'activo'
                     };
                     await updateActividad(proyectoId, id, updatedActividad);
-                    fetchActividades(proyectoId); // Refresh activities after update
+                    fetchActividades(proyectoId);
                     showToast('Estado de la actividad actualizado', 'success');
                 } catch (error) {
                     console.error('Error updating activity status:', error);
@@ -140,6 +142,12 @@ const CRUDActividad = () => {
         setShowViewModal(true);
     };
 
+    const handleViewBeneficiariosClick = (item) => {
+        console.log(item);  // Verifica si 'item' contiene los beneficiarios correctamente
+        setSelectedItem(item);
+        setShowBeneficiariosModal(true); // Mostrar el modal de beneficiarios
+    };
+    
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
         setShowModalForm(true);
@@ -153,6 +161,11 @@ const CRUDActividad = () => {
     const closeViewModal = () => {
         setSelectedItem(null);
         setShowViewModal(false);
+    };
+
+    const closeBeneficiariosModal = () => {
+        setSelectedItem(null);
+        setShowBeneficiariosModal(false); // Cerrar modal de beneficiarios
     };
 
     const proyecto = proyectos.find(p => p._id === proyectoId);
@@ -210,12 +223,14 @@ const CRUDActividad = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
-                                                <TableActions
-                                                    item={item}
-                                                    handleViewButtonClick={handleViewButtonClick}
-                                                    handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)}
-                                                />
+                                            <TableActions
+                                                item={item}
+                                                handleViewButtonClick={handleViewButtonClick}
+                                                handleEditButtonClick={handleEditButtonClick}
+                                                handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)}
+                                                handleViewBeneficiariosClick={handleViewBeneficiariosClick}
+                                            />
+                                                
                                             </div>
                                         </TableCell>
                                     </TableRow>
@@ -260,9 +275,16 @@ const CRUDActividad = () => {
                     />
                 </div>
             )}
+            {showBeneficiariosModal && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ViewBeneActivi
+                        onClose={closeBeneficiariosModal}
+                        beneficiarios={selectedItem?.beneficiarios || []} // Pasar beneficiarios al modal
+                    />
+                </div>
+            )}
         </div>
     );
 };
 
 export default CRUDActividad;
-

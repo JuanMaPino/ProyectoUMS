@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDonadores } from '../../../context/DonadoresContext';
 import { RiCloseLine } from 'react-icons/ri';
-
+import { showToast } from '../../table/alertFunctions'; 
 
 const ModalDonador = ({ onClose, item }) => {
     const { createDonador, updateDonador, donadores, messages, errors } = useDonadores();
@@ -132,10 +132,9 @@ const ModalDonador = ({ onClose, item }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // Validación final antes de enviar el formulario
+        
         const validationErrors = { ...formErrors };
-    
+        
         if (!formData.identificacion || !/^\d{5,12}$/.test(formData.identificacion)) {
             validationErrors.identificacion = 'La identificación debe contener solo números y estar entre 5 y 12 caracteres.';
         }
@@ -159,13 +158,13 @@ const ModalDonador = ({ onClose, item }) => {
             setFormErrors(validationErrors);
             return;
         }
+    
         if (!item || item.identificacion !== formData.identificacion) {
             if (checkIfExists('identificacion', formData.identificacion)) {
                 setFormErrors({ ...formErrors, identificacion: 'Esta identificación ya está registrada.' });
                 return;
             }
         }
-    
         if (!item || item.correoElectronico !== formData.correoElectronico) {
             if (checkIfExists('correoElectronico', formData.correoElectronico)) {
                 setFormErrors({ ...formErrors, correoElectronico: 'Este correo electrónico ya está registrado.' });
@@ -174,26 +173,22 @@ const ModalDonador = ({ onClose, item }) => {
         }
     
         try {
+            let response;
             if (item && item._id) {
-                const response = await updateDonador(item._id, formData);
-                if (response.success) {
-                    show_alert(messages[0], 'success');
-                    onClose();
-                } else {
-                    show_alert(errors[0], 'error');
-                }
+                response = await updateDonador(item._id, formData);
             } else {
-                const response = await createDonador(formData);
-                if (response.success) {
-                    show_alert(messages[0], 'success');
-                    onClose();
-                } else {
-                    show_alert(errors[0], 'error');
-                }
-                onClose();
+                response = await createDonador(formData);
+            }
+    
+            if (response.success) {
+                showToast(messages[0], 'success');
+                onClose(); // Cerrar el modal
+            } else {
+                showToast(errors[0], 'error');
             }
         } catch (error) {
-            console.error('Error saving item:', error.response ? error.response.data : error.message);
+            console.error('Error al guardar:', error.response ? error.response.data : error.message);
+            showToast('Error al guardar el donador', 'error');
         }
     };
     
