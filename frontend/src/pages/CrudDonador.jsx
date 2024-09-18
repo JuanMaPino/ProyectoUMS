@@ -68,6 +68,7 @@ const CRUDDonador = () => {
     };
 
     const handleDeleteButtonClick = async (id) => {
+        
         showAlert(
           {
             title: '¿Estás seguro?',
@@ -79,18 +80,24 @@ const CRUDDonador = () => {
           },
           async () => {
             try {
+                console.log("id donador", id)
               const response = await deleteDonador(id);
               
-              if (response.status === 204) {
+              
+              
+              if (response.response === 204) {
                 showToast('Donador eliminado correctamente', 'success');
               }
             } catch (error) {
-              console.error('Error al eliminar el donador, este tiene donacines hechas:', error);
-              if (error.response && error.status === 400) {
+              
+              if (error.response && error.status === 204) {
+                console.log(error.response)
+                showToast('Donador eliminado correctamente', 'succes');
                 // Mostrar alerta si el donador tiene donaciones asociadas
-                showToast(error.response, 'error');
+                
               } else {
-                showToast('Error al eliminar el donador', 'error');
+                console.log(error.response)
+                showToast('Error al eliminar el donador, este tiene donaciones hechas', 'error');
               }
             }
           }
