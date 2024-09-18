@@ -20,7 +20,7 @@ import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
-import { showToast,showAlert } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
+import { showToast, showAlert } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
 
 const CRUDDonador = () => {
     const {
@@ -63,41 +63,36 @@ const CRUDDonador = () => {
             closeModal();
         } catch (error) {
             console.error('Error updating item:', error);
-            showToast({ title: 'Error al actualizar el donador', icon: 'error' });
+            const errorMessage = error.response?.data?.message || 'Error al actualizar el donador';
+            showToast({ title: errorMessage, icon: 'error' });
         }
     };
 
     const handleDeleteButtonClick = async (id) => {
         showAlert(
-          {
-            title: '¿Estás seguro?',
-            text: 'No podrás revertir esto',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-          },
-          async () => {
-            try {
-              const response = await deleteDonador(id);
-              
-              if (response.status === 204) {
-                showToast('Donador eliminado correctamente', 'success');
-              }
-            } catch (error) {
-              console.error('Error al eliminar el donador, este tiene donacines hechas:', error);
-              if (error.response && error.status === 400) {
-                // Mostrar alerta si el donador tiene donaciones asociadas
-                showToast(error.response, 'error');
-              } else {
-                showToast('Error al eliminar el donador', 'error');
-              }
+            {
+                title: '¿Estás seguro?',
+                text: 'No podrás revertir esto',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    const response = await deleteDonador(id);
+                    if (response.status === 204) {
+                        showToast('Donador eliminado correctamente', 'success');
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar el donador:', error);
+                    const errorMessage = error.response?.data?.message || 'Error al eliminar, ya tiene una donacion asociada';
+                    showToast(errorMessage, 'error');
+                }
             }
-          }
         );
-      };
-      
-      
+    };
+
     const handleViewButtonClick = (item) => {
         setSelectedItem(item);
         setShowViewModal(true);
@@ -127,15 +122,17 @@ const CRUDDonador = () => {
                             estado: item.estado === 'activo' ? 'inactivo' : 'activo'
                         };
                         await disableDonador(id);
-                        showToast({ title: 'Estado actualizado', icon: 'success' });
+                        showToast('Estado actualizado', 'success' );
                     }
                 } catch (error) {
-                    console.error('Error updating estado:', error);
-                    showToast({ title: 'Error al actualizar el estado', icon: 'error' });
+                    const errorMessage = error.response?.data?.message || 'Error al actualizar el estado';
+                    console.error('Error updating estado:', errorMessage);
+                    showToast({ title: errorMessage, icon: 'error' });
                 }
             }
         );
     };
+
     const closeModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);

@@ -7,7 +7,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
     const [insumos, setInsumos] = useState([]);
     const [tareas, setTareas] = useState([]);
     const [beneficiarios, setBeneficiarios] = useState([]);
-    const [ayudantes, setAyudantes] = useState([]); // Para almacenar los ayudantes disponibles
+    const [ayudantes, setAyudantes] = useState([]);
     const [formData, setFormData] = useState({
         nombre: '',
         tipo: 'Recreativa',
@@ -17,51 +17,31 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         beneficiarios: [],
         estado: 'activo'
     });
-    
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchInsumos = async () => {
+        // Fetch data
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3002/insumos');
-                setInsumos(response.data);
+                const [insumosResponse, tareasResponse, beneficiariosResponse, ayudantesResponse] = await Promise.all([
+                    axios.get('http://localhost:3002/insumos'),
+                    axios.get('http://localhost:3002/tareas'),
+                    axios.get('http://localhost:3002/beneficiarios'),
+                    axios.get('http://localhost:3002/ayudantes')
+                ]);
+                setInsumos(insumosResponse.data);
+                setTareas(tareasResponse.data);
+                setBeneficiarios(beneficiariosResponse.data);
+                setAyudantes(ayudantesResponse.data);
             } catch (error) {
-                console.error('Error fetching insumos:', error.message);
+                console.error('Error fetching data:', error.message);
             }
         };
 
-        const fetchTareas = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/tareas');
-                setTareas(response.data);
-            } catch (error) {
-                console.error('Error fetching tareas:', error.message);
-            }
-        };
+        fetchData();
+    }, []);
 
-        const fetchBeneficiarios = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/beneficiarios');
-                setBeneficiarios(response.data);
-            } catch (error) {
-                console.error('Error fetching beneficiarios:', error.message);
-            }
-        };
-
-        const fetchAyudantes = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/ayudantes');
-                setAyudantes(response.data);
-            } catch (error) {
-                console.error('Error fetching ayudantes:', error.message);
-            }
-        };
-
-        fetchInsumos();
-        fetchTareas();
-        fetchBeneficiarios();
-        fetchAyudantes();
-
+    useEffect(() => {
         if (item) {
             setFormData({
                 nombre: item.nombre || '',
@@ -123,7 +103,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }
     };
 
-    // Tareas
     const handleAddTarea = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -160,7 +139,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }));
     };
 
-    // Insumos
     const handleAddInsumo = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -197,7 +175,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }));
     };
 
-    // Beneficiarios
     const handleAddBeneficiario = () => {
         setFormData(prevState => ({
             ...prevState,

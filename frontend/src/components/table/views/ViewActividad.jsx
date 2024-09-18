@@ -1,11 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RiArrowLeftSLine } from 'react-icons/ri';
 
 const ViewActividad = ({ onClose, item }) => {
+    const [tareas, setTareas] = useState([]);
+    const [insumos, setInsumos] = useState([]);
 
-    // Agrega un efecto para imprimir los datos de item y hacer debugging
     useEffect(() => {
-        console.log('Datos de la actividad:', item);
+        console.log("Datos de la actividad:", item);
+
+        // Asumimos que item.tareas e item.insumos ya están poblados desde el backend
+        if (item.tareas) {
+            setTareas(item.tareas); // item.tareas ya tiene los detalles completos
+            console.log("Tareas recibidas:", item.tareas)
+        }
+
+        if (item.insumos) {
+            setInsumos(item.insumos); // item.insumos ya tiene los detalles completos
+        }
     }, [item]);
 
     return (
@@ -14,7 +25,7 @@ const ViewActividad = ({ onClose, item }) => {
             <div className="grid grid-cols-2 gap-4">
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">ID de Actividad:</span></label>
-                    <p className="text-gray-800">{item.id_actividad}</p>
+                    <p className="text-gray-800">{item._id}</p>
                 </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Nombre:</span></label>
@@ -28,14 +39,21 @@ const ViewActividad = ({ onClose, item }) => {
                     <label className="block text-gray-700"><span className="font-semibold">Descripción:</span></label>
                     <p className="text-gray-800">{item.descripcion}</p>
                 </div>
-                
-                {/* Sección de Tareas */}
+
+                {/* Tareas */}
                 <div className="col-span-2">
                     <label className="block text-gray-700"><span className="font-semibold">Tareas y Ayudantes:</span></label>
-                    {item.tareas && item.tareas.length > 0 ? (
+                    {tareas && tareas.length > 0 ? (
                         <ul className="list-disc list-inside">
-                            {item.tareas.map((tarea, index) => (
-                                <li key={index} className="text-gray-800">{tarea.nombre || "Nombre de tarea no disponible"}</li>
+                            {tareas.map((tarea, index) => (
+                                <li key={index} className="text-gray-800">
+                                    <p>{tarea.nombre || "Nombre de tarea no disponible"}</p>
+                                    <p className="text-sm text-gray-500">
+                                        {tarea.ayudante?.nombre
+                                            ? `Ayudante: ${tarea.ayudante?.nombre}`
+                                            : "Ayudante no asignado"}
+                                    </p>
+                                </li>
                             ))}
                         </ul>
                     ) : (
@@ -43,22 +61,22 @@ const ViewActividad = ({ onClose, item }) => {
                     )}
                 </div>
 
-                {/* Sección de Insumos */}
+                {/* Insumos */}
                 <div className="col-span-2">
                     <label className="block text-gray-700"><span className="font-semibold">Insumos:</span></label>
-                    {item.insumos && item.insumos.length > 0 ? (
+                    {insumos && insumos.length > 0 ? (
                         <ul className="list-disc list-inside">
-                            {item.insumos.map((insumo, index) => (
+                            {insumos.map((insumo, index) => (
                                 <li key={index} className="text-gray-800">
-                                    {insumo.nombre ? insumo.nombre : "Nombre de insumo no disponible"}
-                                    - Cantidad: {insumo.cantidad}
+                                    {insumo.insumo?.nombre || "Nombre de insumo no disponible"} - Cantidad: {insumo.cantidad}
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <p className="text-gray-800">No hay insumos asignados</p>
+                        <p>No hay insumos asignados</p>
                     )}
                 </div>
+
 
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>
