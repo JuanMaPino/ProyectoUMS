@@ -315,7 +315,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddTarea}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Tarea
                         </button>
@@ -355,7 +355,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddInsumo}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Insumo
                         </button>
@@ -388,25 +388,25 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddBeneficiario}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Beneficiario
                         </button>
                     </div>
 
-                    <div className="sm:col-span-2 flex justify-end">
+                    <div className="sm:col-span-2 flex justify-end space-x-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-gray-500 text-white px-4 py-2 rounded mr-4"
-                        >
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg"
                         >
-                            {item ? 'Actualizar' : 'Guardar'}
+                            {item ? 'Actualizar Actividad' : 'Guardar Actividad'}
                         </button>
                     </div>
                 </form>

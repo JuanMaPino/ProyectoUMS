@@ -68,7 +68,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                     error = 'El teléfono debe tener 10 dígitos numéricos';
                 } else if (/^0/.test(value)) {
                     error = 'El Telefono no puede comenzar con 0';
-                }   
+                }
                 break;
             case 'correoElectronico':
                 if (value && !/.+@.+\..+/.test(value)) {
@@ -120,7 +120,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
             console.error('Validation errors:', errors);
             return;
         }
-    
+
         try {
             if (item && item._id) {
                 await updateBeneficiario(item._id, formData);
@@ -260,7 +260,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
                             <button
                                 type="button"
                                 onClick={() => removeFamiliar(index)}
-                                className="text-red-500 mt-2 hover:text-red-700 focus:outline-none"
+                                className="text-red-500 mt-2 hover:text-red-700 focus:outline-none border-2 border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700 py-1 px-2 rounded-lg "
                             >
                                 <RiDeleteBin6Line className="inline-block mr-1" />
                                 Eliminar Familiar
@@ -270,27 +270,26 @@ const ModalBeneficiario = ({ onClose, item }) => {
                     <button
                         type="button"
                         onClick={addFamiliar}
-                        className="text-blue-500 hover:text-blue-700 focus:outline-none"
+                        className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                     >
                         <RiAddCircleLine className="inline-block mr-1" />
                         Agregar Familiar
                     </button>
                 </div>
-                <div className="col-span-2 flex justify-end">
+                <div className="col-span-2 flex justify-end space-x-4">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="text-gray-500 hover:text-gray-700 mr-4 focus:outline-none"
+                        className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                     >
-                        <RiCloseLine className="inline-block mr-1" />
                         Cancelar
                     </button>
                     <button
                         type="submit"
                         onClick={handleSubmit}
-                        className="bg-blue-500 hover:bg-blue-700 text-white rounded py-2 px-6 focus:outline-none"
+                        className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
                     >
-                        {item ? 'Actualizar Beneficiario' : 'Crear Beneficiario'}
+                        {item ? 'Actualizar Beneficiario' : 'Agregar Beneficiaro'}
                     </button>
                 </div>
             </div>
