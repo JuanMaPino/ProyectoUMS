@@ -242,19 +242,21 @@ const ModalAyudante = ({ onClose, item }) => {
                         />
                         {errors.institucion && <p className="text-red-500 text-sm mt-1">{errors.institucion}</p>}
                     </div>
-                    <div className="sm:col-span-2">
-                        <div className="flex flex-col justify-center mt-6">
-                            <button type="submit" className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
-                                {item ? 'Actualizar Ayudante' : 'Agregar Ayudante'}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
+                    <div className="col-span-2 flex justify-end space-x-4">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2  border-gradient-to-r border-red-400  hover:border-red-600 hover:from-red-600 hover:to-red-700  font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            onClick={handleSubmit}
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            {item ? 'Actualizar Ayudante' : 'Agregar Ayudante'}
+                        </button>
                     </div>
                 </form>
             </div>

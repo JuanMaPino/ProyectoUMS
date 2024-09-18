@@ -154,22 +154,20 @@ const ModalRol = ({ onClose, item }) => {
                             ))}
                         </div>
                     </div>
-                    <div className="sm:col-span-2">
-                        <div className="flex flex-col justify-center mt-6">
-                            <button
-                                type="submit"
-                                className="bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline"
-                            >
-                                {item ? 'Actualizar Rol' : 'Agregar Rol'} {/* Cambia el texto del botón según el contexto */}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={onClose} // Cierra el modal
-                                className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline mt-2"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
+                    <div className="sm:col-span-2 flex justify-end space-x-3">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            type="submit"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg"
+                        >
+                            {item ? 'Actualizar Rol' : 'Guardar Rol'}
+                        </button>
                     </div>
                 </form>
             </div>

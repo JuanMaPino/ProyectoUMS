@@ -14,6 +14,7 @@ import { RolProvider } from './context/RolesContext';
 import ProtectedRoute from './components/ProtectedRoutes';
 
 import './App.css';
+import LandingPage from './pages/Landing/LandingPage';
 import CRUDRoles from './pages/CrudRol';
 import Register from './pages/Register';
 import CRUDTable from './pages/CrudEjemplo';
@@ -41,7 +42,7 @@ const AppLayout = ({ children }) => {
   const location = useLocation();
 
   // Incluir '/olvide-' en la verificación de páginas de autenticación
-  const isAuthPage = ['/login', '/register', '/olvide-contrasena'].includes(location.pathname);
+  const isAuthPage = ['/login', '/register', '/olvide-contrasena', '/'].includes(location.pathname);
 
   console.log("Current Path:", location.pathname); // Depuración
   console.log("Is Auth Page:", isAuthPage); // Depuración
@@ -96,11 +97,12 @@ const App = () => {
                             <TareaProvider>
                               <AppLayout>
                                 <Routes>
+                                  <Route path="/" element={<LandingPage />} />
                                   <Route path="/register" element={<Register />} />
                                   <Route path="/login" element={<Login />} />
                                   <Route path="/olvide-contrasena" element={<ResetPassword />} />
                                   <Route path="/dashboard" element={<Dashboard />} />
-                                  <Route path="/" element={<Navigate to="/login" />} />
+                                  {/* <Route path="" element={<Navigate to="/login" />} /> */}
                                   {/*<Route element={<ProtectedRoute/>}> */}
                                   <Route path="/dashboard" element={<Dashboard />} />
                                   <Route path="/roles" element={<CRUDRoles />} />
@@ -115,8 +117,11 @@ const App = () => {
                                   <Route path="/ayudantes" element={<CRUDAyudante />} />
                                   <Route path="/tareas" element={<CRUDTarea />} />
                                   <Route path="/actividades/:proyectoId" element={<CRUDActividad />} />
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 73dcd70ed66f157ba16aff49963a676c7149b5dd
 
                                   {/* Ejemplo de gráfico */}
                                   <Route path="/line-chart" element={<LineChart />} />
