@@ -49,8 +49,8 @@ const ViewActividad = ({ onClose, item }) => {
                                 <li key={index} className="text-gray-800">
                                     <p>{tarea.nombre || "Nombre de tarea no disponible"}</p>
                                     <p className="text-sm text-gray-500">
-                                        {tarea.ayudante?.nombre 
-                                            ? `Ayudante: ${tarea.ayudante.nombre}`
+                                        {tarea.ayudante?.nombre
+                                            ? `Ayudante: ${tarea.ayudante?.nombre}`
                                             : "Ayudante no asignado"}
                                     </p>
                                 </li>
@@ -76,6 +76,7 @@ const ViewActividad = ({ onClose, item }) => {
                         <p>No hay insumos asignados</p>
                     )}
                 </div>
+
 
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>

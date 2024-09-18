@@ -7,7 +7,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
     const [insumos, setInsumos] = useState([]);
     const [tareas, setTareas] = useState([]);
     const [beneficiarios, setBeneficiarios] = useState([]);
-    const [ayudantes, setAyudantes] = useState([]); // Para almacenar los ayudantes disponibles
+    const [ayudantes, setAyudantes] = useState([]);
     const [formData, setFormData] = useState({
         nombre: '',
         tipo: 'Recreativa',
@@ -17,51 +17,31 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         beneficiarios: [],
         estado: 'activo'
     });
-    
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        const fetchInsumos = async () => {
+        // Fetch data
+        const fetchData = async () => {
             try {
-                const response = await axios.get('http://localhost:3002/insumos');
-                setInsumos(response.data);
+                const [insumosResponse, tareasResponse, beneficiariosResponse, ayudantesResponse] = await Promise.all([
+                    axios.get('http://localhost:3002/insumos'),
+                    axios.get('http://localhost:3002/tareas'),
+                    axios.get('http://localhost:3002/beneficiarios'),
+                    axios.get('http://localhost:3002/ayudantes')
+                ]);
+                setInsumos(insumosResponse.data);
+                setTareas(tareasResponse.data);
+                setBeneficiarios(beneficiariosResponse.data);
+                setAyudantes(ayudantesResponse.data);
             } catch (error) {
-                console.error('Error fetching insumos:', error.message);
+                console.error('Error fetching data:', error.message);
             }
         };
 
-        const fetchTareas = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/tareas');
-                setTareas(response.data);
-            } catch (error) {
-                console.error('Error fetching tareas:', error.message);
-            }
-        };
+        fetchData();
+    }, []);
 
-        const fetchBeneficiarios = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/beneficiarios');
-                setBeneficiarios(response.data);
-            } catch (error) {
-                console.error('Error fetching beneficiarios:', error.message);
-            }
-        };
-
-        const fetchAyudantes = async () => {
-            try {
-                const response = await axios.get('http://localhost:3002/ayudantes');
-                setAyudantes(response.data);
-            } catch (error) {
-                console.error('Error fetching ayudantes:', error.message);
-            }
-        };
-
-        fetchInsumos();
-        fetchTareas();
-        fetchBeneficiarios();
-        fetchAyudantes();
-
+    useEffect(() => {
         if (item) {
             setFormData({
                 nombre: item.nombre || '',
@@ -123,7 +103,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }
     };
 
-    // Tareas
     const handleAddTarea = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -160,7 +139,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }));
     };
 
-    // Insumos
     const handleAddInsumo = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -197,7 +175,6 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
         }));
     };
 
-    // Beneficiarios
     const handleAddBeneficiario = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -315,7 +292,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddTarea}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Tarea
                         </button>
@@ -355,7 +332,7 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddInsumo}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Insumo
                         </button>
@@ -388,25 +365,25 @@ const ModalActividad = ({ onClose, item, proyectoId }) => {
                         <button
                             type="button"
                             onClick={handleAddBeneficiario}
-                            className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg mt-2"
                         >
                             Agregar Beneficiario
                         </button>
                     </div>
 
-                    <div className="sm:col-span-2 flex justify-end">
+                    <div className="sm:col-span-2 flex justify-end space-x-3">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="bg-gray-500 text-white px-4 py-2 rounded mr-4"
-                        >
+                            className="bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-red-700 border-2 border-gradient-to-r border-red-400 hover:border-red-600 hover:from-red-600 hover:to-red-700 font-bold py-2 px-6 rounded-lg focus:outline-none focus:shadow-outline"
+                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
-                            className="bg-blue-500 text-white px-4 py-2 rounded"
+                            className="bg-gradient-to-l from-indigo-400 to-indigo-600 hover:from-indigo-600 hover:to-indigo-800 text-white px-4 py-2 rounded-lg"
                         >
-                            {item ? 'Actualizar' : 'Guardar'}
+                            {item ? 'Actualizar Actividad' : 'Guardar Actividad'}
                         </button>
                     </div>
                 </form>

@@ -59,20 +59,22 @@ const CRUDUser = () => {
                 showToast('Usuario actualizado exitosamente', 'success');
             } else {
                 await createUsuario(user);
+                showToast('Usuario creado exitosamente', 'success');
             }
         } catch (error) {
             console.error('Error saving user:', error);
         } finally {
-            handleCloseModal()
+            handleCloseModal();
         }
-
     };
 
     const handleDeleteButtonClick = async (id) => {
         try {
             await deleteUsuario(id);
+            showToast('Usuario eliminado exitosamente', 'success');
         } catch (error) {
             console.error('Error deleting user:', error);
+            showToast('Error al eliminar el usuario', 'error');
         }
     };
 
@@ -102,7 +104,7 @@ const CRUDUser = () => {
             showAlert(
                 {
                     title: '¿Estás seguro?',
-                    text: `El estado del usuario cambiará a ${item.estado ? 'inactivo' : 'activo'}`,
+                    text: `El estado del usuario cambiará a ${item.active ? 'inactivo' : 'activo'}`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Sí, cambiar',
@@ -111,7 +113,7 @@ const CRUDUser = () => {
                 async () => {
                     const updatedItem = {
                         ...item,
-                        active: item.active ? false : true
+                        active: !item.active
                     };
                     try {
                         await handleCreateOrUpdate(updatedItem);
@@ -123,7 +125,7 @@ const CRUDUser = () => {
                 }
             );
         }
-    };    
+    };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
@@ -154,7 +156,7 @@ const CRUDUser = () => {
                                 {currentData.map((user, index) => (
                                     <TableRow key={index} isActive={user.active} cols={5}>
                                         <TableCell label="Usuario">{user.usuario}</TableCell>
-                                        <TableCell label="Email">{user.email}</TableCell>
+                                        <TableCell label="Email">{user.email.substring(0,18) + '...'}</TableCell>
                                         <TableCell label="Rol">{user.tipo?.nombre}</TableCell>
                                         <TableCell label="Estado" className='pl-10'>
                                             <Switch
@@ -208,7 +210,7 @@ const CRUDUser = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={handleCloseModal} item={selectedItem} fetchData={fetchData} />
+                    <FormModal onClose={handleCloseModal} item={selectedItem} />
                 </div>
             )}
             {showViewModal && selectedItem && (
