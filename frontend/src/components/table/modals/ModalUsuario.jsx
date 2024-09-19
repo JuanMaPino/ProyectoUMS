@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useUsuarios } from '../../../context/UsuariosContext';
+import { useAuth } from '../../../context/AuthContext';
 import { useRoles } from '../../../context/RolesContext'; // Agregamos el uso del contexto de roles
 import { showToast } from '../../table/alertFunctions';
 import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri'; // Iconos de visibilidad de contraseña
 
 const ModalUsuario = ({ onClose, item }) => {
-    const { createUsuario, updateUsuario } = useUsuarios();
+    const { signup } = useAuth();
     const { roles } = useRoles(); // Obtenemos los roles disponibles
     const [formData, setFormData] = useState({
         usuario: '',
@@ -79,7 +79,7 @@ const ModalUsuario = ({ onClose, item }) => {
                 await updateUsuario(item._id, formData);
                 showToast('Usuario actualizado exitosamente', 'success');
             } else {
-                await createUsuario(formData);
+                await signup(formData);
                 showToast('Usuario creado exitosamente', 'success');
             }
             onClose();

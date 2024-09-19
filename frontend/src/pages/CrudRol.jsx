@@ -56,14 +56,19 @@ const CRUDRoles = () => {
         setSearchTerm(query);
     };
 
-    const handleUpdate = async (updatedItem) => {
+    const handleCreateOrUpdate = async (item) => {
         try {
-            await updateRol(updatedItem._id, updatedItem);
-            showToast('Rol actualizado exitosamente', 'success');
+            if (item._id) {
+                await updateRol(item._id, item);
+                showToast('Rol actualizado exitosamente', 'success');
+            } else {
+                await createRol(item);
+                showToast('Rol agregado exitosamente', 'success'); // Mensaje de éxito al agregar
+            }
             closeModal();
         } catch (error) {
-            console.error('Error updating item:', error);
-            showToast('Error al actualizar rol', 'error');
+            console.error('Error creando o actualizando el rol:', error);
+            showToast('Error al crear o actualizar rol', 'error');
         }
     };
 
@@ -80,9 +85,9 @@ const CRUDRoles = () => {
             async () => {
                 try {
                     await deleteRol(id);
-                    showToast('Rol eliminado exitosamente', 'success');
+                    showToast('Rol eliminado exitosamente', 'success'); // Mensaje de éxito al eliminar
                 } catch (error) {
-                    console.error('Error deleting item:', error);
+                    console.error('Error al eliminar el rol:', error);
                     showToast('Error al eliminar rol', 'error');
                 }
             }
@@ -120,7 +125,7 @@ const CRUDRoles = () => {
                             <TableHead cols={3}>
                                 <TableCell className="pl-4">Nombre</TableCell>
                                 <TableCell className="pl-4">Descripción</TableCell>
-                                <TableCell className="pl-10">Acciones</TableCell> {/* Ajustar padding */}
+                                <TableCell className="pl-10">Acciones</TableCell>
                             </TableHead>
                             <TableBody>
                                 {currentData.map((item, index) => (
@@ -172,7 +177,7 @@ const CRUDRoles = () => {
             )}
             {showModalForm && (
                 <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
-                    <FormModal onClose={closeModal} onSubmit={selectedItem ? handleUpdate : createRol} item={selectedItem} />
+                    <FormModal onClose={closeModal} onSubmit={handleCreateOrUpdate} item={selectedItem} />
                 </div>
             )}
         </div>

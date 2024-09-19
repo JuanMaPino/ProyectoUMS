@@ -4,12 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import logo from "../assets/img/logoums.png";
 import bosque from "../assets/img/bosquesito.jpeg";
 import { RiEyeCloseLine, RiEyeLine } from 'react-icons/ri';
+import Swal from 'sweetalert2';
 
 function Login() {
   const { signin, errors, loading, user } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ usernameOrEmail: '', contraseña: '' });
-
   const [passwordVisible, setPasswordVisible] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
@@ -18,7 +18,19 @@ function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      // Mostrar la alerta de inicio de sesión exitoso
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: 'Inicio de sesión exitoso',
+        showConfirmButton: false,
+        timer: 1500
+      });
+      
+      // Redirigir al dashboard después de la alerta
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
     }
   }, [user, navigate]);
 
@@ -83,9 +95,9 @@ function Login() {
             <p className="mt-4 text-sm text-red-500 text-center">Error: {errors.join(', ')}</p>
           )}
 
-          <div className="flex justify-between mt-4 text-sm text-gray-600 hover:text-cyan-700">
+          <div className="flex justify-center mt-4 text-sm text-gray-600 hover:text-cyan-700 ">
             <Link to="/olvide-contrasena">¿Olvidaste tu contraseña?</Link>
-            <Link to="/register">¿No tienes cuenta?</Link>
+            {/* <Link to="/register">¿No tienes cuenta?</Link> */}
           </div>
         </form>
       </div>

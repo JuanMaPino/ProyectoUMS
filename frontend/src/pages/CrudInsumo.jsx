@@ -14,6 +14,8 @@ import FormModal from '../components/table/modals/ModalInsumo';
 import ViewModal from '../components/table/views/ViewInsumo';
 import CardItem from '../components/table/CardItems/CardItem';
 import { Link } from 'react-router-dom';
+import { showToast,showAlert } from '../components/table/alertFunctions';
+
 const CRUDInsumos = () => {
     const { insumos, createInsumo, updateInsumo, deleteInsumo, getAllInsumos } = useInsumos();
     const [filteredData, setFilteredData] = useState([]);
@@ -77,15 +79,34 @@ const CRUDInsumos = () => {
         setShowModalForm(true);
     };
 
-    const handleSwitchChange = async (id) => {
-        const item = insumos.find(item => item._id === id);
-        if (item) {
-            const updatedItem = {
-                ...item,
-                estado: item.estado === 'activo' ? 'inactivo' : 'activo'
-            };
-            await updateInsumo(updatedItem._id, updatedItem);
-        }
+    const handleSwitchChange = (id) => {
+        showAlert(
+            {
+                title: '¿Deseas cambiar el estado?',
+                text: 'Esta acción actualizará el estado del insumo.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cambiar',
+                cancelButtonText: 'Cancelar'
+            },
+            async () => {
+                try {
+                    const item = insumos.find(item => item._id === id);
+                    if (item) {
+                        const updatedItem = {
+                            ...item,
+                            estado: item.estado === 'activo' ? 'inactivo' : 'activo'
+                        };
+                        await updateInsumo(updatedItem._id, updatedItem);
+                        showToast('Estado del insumo actualizado', 'success');
+                        getAllInsumos(); // Refresca la lista de insumos
+                    }
+                } catch (error) {
+                    console.error('Error updating insumo status:', error);
+                    showToast('Error al actualizar el estado', 'error');
+                }
+            }
+        );
     };
 
     const closeModal = () => {
@@ -132,12 +153,12 @@ const CRUDInsumos = () => {
 
     return (
         <div>
-        <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
-            <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Insumos</h1>
-            <div className="flex items-center gap-2">
-                <SearchBar onSearch={handleSearch} />
+            <div className="flex flex-col lg:flex-row justify-between items-center mb-4 gap-4">
+                <h1 className="text-3xl font-semibold text-left text-gray-800">Gestión de Insumos</h1>
+                <div className="flex items-center gap-2">
+                    <SearchBar onSearch={handleSearch} />
+                </div>
             </div>
-        </div>
             {filteredData.length === 0 ? (
                 <p className="text-center">No hay registros disponibles</p>
             ) : (

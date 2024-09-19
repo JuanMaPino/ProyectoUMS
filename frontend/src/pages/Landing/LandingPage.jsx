@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Heart, Users, DollarSign, ArrowRight, AlertCircle, X } from 'lucide-react'
+import picture from "../../assets/img/fundacio1.jpeg";
+import Accion from "../../assets/img/Accion.jpg";
 
 const Button = ({ children, className, variant, onClick }) => (
-  <button 
+  <button
     onClick={onClick}
     className={`px-4 py-2 rounded-md ${className} ${variant === 'outline' ? 'border border-current' : ''}`}
   >
@@ -10,12 +12,13 @@ const Button = ({ children, className, variant, onClick }) => (
   </button>
 )
 
+//Cuadros de Proyectos
 const Card = ({ children, className }) => (
   <div className={`bg-white rounded-lg shadow-md overflow-hidden ${className}`}>
     {children}
   </div>
 )
-
+//Targetas de texto de proyectos
 const CardHeader = ({ children, className }) => (
   <div className={`p-4 ${className}`}>{children}</div>
 )
@@ -45,7 +48,7 @@ const Input = ({ placeholder, type, className, value, onChange, name }) => (
 
 const Select = ({ children, value, onChange }) => (
   <div className="relative">
-    <select 
+    <select
       className="w-full px-3 py-2 border rounded-md appearance-none"
       value={value}
       onChange={onChange}
@@ -277,14 +280,17 @@ const App = () => {
         </nav>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-blue-50">
-          <div className="container px-4 md:px-6">
+        <section className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-blue-50 bg-cover"
+          style={{ backgroundImage: `url(${picture})` }}>
+          <div className="absolute inset-0 bg-black/50 backdrop-brightness-75"></div> {/* Filtro de brillo y opacidad */}
+
+          <div className="relative container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-blue-800">
+                <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-blue-600">
                   Juntos podemos cambiar vidas
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-600 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                <p className="mx-auto max-w-[700px] text-white md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Únete a nuestra misión de crear un mundo mejor. Cada acción cuenta, cada donación transforma vidas.
                 </p>
               </div>
@@ -292,7 +298,7 @@ const App = () => {
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => setShowDonationForm(true)}>
                   Donar Ahora
                 </Button>
-                <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+                <Button variant="outline" className="text-white border-blue-600 hover:bg-blue-500 ">
                   Conoce Más
                 </Button>
               </div>
@@ -305,7 +311,7 @@ const App = () => {
               <div className="space-y-4 max-w-lg">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-blue-800">Nuestra Misión</h2>
                 <p className="text-gray-600 md:text-lg/relaxed">
-                  En Fundación Esperanza, nos dedicamos a mejorar la vida de las personas más vulnerables.
+                  En La Fundación Un mundo de sonrisas, nos dedicamos a mejorar la vida de las personas más vulnerables.
                   Trabajamos incansablemente para proporcionar educación, atención médica y oportunidades
                   a quienes más lo necesitan.
                 </p>
@@ -314,7 +320,7 @@ const App = () => {
                 </Button>
               </div>
               <img
-                src="/placeholder.svg?height=400&width=400"
+                src={Accion}
                 alt="Nuestra misión en acción"
                 width={400}
                 height={400}
@@ -331,17 +337,17 @@ const App = () => {
                 {
                   title: "Educación para Todos",
                   description: "Construimos escuelas y proporcionamos materiales educativos en comunidades desfavorecidas.",
-                  image: "/placeholder.svg?height=200&width=300"
+                  image: "https://res.cloudinary.com/doliz92a2/image/upload/v1726720771/Landing/obcztpmlmslihzi0ldyw.jpg"
                 },
                 {
-                  title: "Salud Comunitaria",
-                  description: "Llevamos atención médica básica a zonas rurales mediante clínicas móviles.",
-                  image: "/placeholder.svg?height=200&width=300"
+                  title: "Comedor Comunitario",
+                  description: "Compartimos comidas para las comunidades que mas lo necesitan.",
+                  image: "https://res.cloudinary.com/doliz92a2/image/upload/v1726720892/Landing/zj020rdz2gwsreihltwe.jpg"
                 },
                 {
-                  title: "Agua Limpia",
-                  description: "Instalamos sistemas de purificación de agua en áreas sin acceso a agua potable.",
-                  image: "/placeholder.svg?height=200&width=300"
+                  title: "FIestas Navideñas",
+                  description: "Hacemos eventos con nuestra comunidad, los cuales son importantes como lo seria navidad.",
+                  image: "https://res.cloudinary.com/doliz92a2/image/upload/v1726721840/Landing/obzinph2jxhme66eqkt8.jpg"
                 }
               ].map((project, index) => (
                 <Card key={index} className="overflow-hidden">

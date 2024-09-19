@@ -170,8 +170,7 @@ const CRUDUser = () => {
                                                 <TableActions
                                                     item={user}
                                                     handleViewButtonClick={handleViewButtonClick}
-                                                    handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={handleDeleteButtonClick}
+                                                    // handleEditButtonClick={handleEditButtonClick}
                                                 />
                                             </div>
                                         </TableCell>

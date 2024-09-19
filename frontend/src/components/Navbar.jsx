@@ -97,7 +97,7 @@ const Navbar = () => {
           />
         )}
       </div>
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <NavButton
           title="Chat"
           dotColor="#03C9D7"
@@ -117,7 +117,7 @@ const Navbar = () => {
           customFunc={toggleDarkMode}
           color="blue"
           icon={isDarkMode ? <FiSun /> : <FiMoon />}
-        />
+        /> */}
 
         {/* Perfil de usuario con menú desplegable */}
         <div className="relative">
@@ -157,7 +157,6 @@ const Navbar = () => {
         {showChat && <MessageBox title="Chat" message="No hay mensajes" />}
         {showNotification && <MessageBox title="Notificaciones" message="No hay notificaciones" />}
       </div>
-    </div>
   );
 };
 
