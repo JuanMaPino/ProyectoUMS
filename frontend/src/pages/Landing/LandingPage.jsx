@@ -258,18 +258,21 @@ const App = () => {
           <Heart className="h-6 w-6 text-blue-600" />
           <span className="ml-2 text-2xl font-bold text-gray-800">Fundación Un Mundo De Sonrisas</span>
         </a>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors" href="#about">
+        <nav className="ml-auto flex gap-4 sm:gap-4">
+          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-300 rounded-md transition-colors px-3 py-2" href="#about">
             Sobre Nosotros
           </a>
-          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors" href="#projects">
+          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-300 rounded-md transition-colors px-3 py-2" href="#projects">
             Proyectos
           </a>
-          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors" href="#donate">
+          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-300 rounded-md transition-colors px-3 py-2" href="#donate">
             Donar
           </a>
-          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors" href="#contact">
+          <a className="text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-300 rounded-md transition-colors px-3 py-2" href="#contact">
             Contacto
+          </a>
+          <a className="text-sm font-medium text-gray-600 hover:text-white transition-colors bg-gradient-to-br from-blue-200 to-blue-500 hover:from-blue-300 hover:to-blue-700 rounded-lg px-3 py-2" href="/login">
+            Login
           </a>
         </nav>
       </header>

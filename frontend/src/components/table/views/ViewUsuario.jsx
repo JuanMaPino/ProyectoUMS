@@ -2,7 +2,7 @@ import React from 'react';
 
 const ViewUsuario = ({ onClose, item }) => {
     return (
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
+        <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto overflow-y-auto">
             <h2 className="text-3xl font-semibold mb-6 text-center text-gray-800">Detalles del Usuario</h2>
             <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -15,7 +15,7 @@ const ViewUsuario = ({ onClose, item }) => {
                 </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Tipo de Usuario:</span></label>
-                    <p className="text-gray-800">{item.tipo.nombre}</p>
+                    <p className="text-gray-800">{item.tipo?.nombre}</p>
                 </div>
                 <div>
                     <label className="block text-gray-700"><span className="font-semibold">Estado:</span></label>

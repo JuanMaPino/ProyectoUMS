@@ -20,7 +20,7 @@ import ModalDonador from '../components/table/modals/ModalDonador';
 import ViewDonador from '../components/table/views/ViewDonador';
 import CardItem from '../components/table/CardItems/CardDonador';
 import FloatingButton from '../components/FloatingButton';
-import { showToast,showAlert } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
+import { showToast, showAlert } from '../components/table/alertFunctions'; // Ajusta la ruta según donde está definido showAlert
 
 const CRUDDonador = () => {
     const {
@@ -63,13 +63,15 @@ const CRUDDonador = () => {
             closeModal();
         } catch (error) {
             console.error('Error updating item:', error);
-            showToast({ title: 'Error al actualizar el donador', icon: 'error' });
+            const errorMessage = error.response?.data?.message || 'Error al actualizar el donador';
+            showToast({ title: errorMessage, icon: 'error' });
         }
     };
 
     const handleDeleteButtonClick = async (id) => {
         
         showAlert(
+
           {
             title: '¿Estás seguro?',
             text: 'No podrás revertir esto',
@@ -99,12 +101,11 @@ const CRUDDonador = () => {
                 console.log(error.response)
                 showToast('Error al eliminar el donador, este tiene donaciones hechas', 'error');
               }
+
             }
-          }
         );
-      };
-      
-      
+    };
+
     const handleViewButtonClick = (item) => {
         setSelectedItem(item);
         setShowViewModal(true);
@@ -134,15 +135,17 @@ const CRUDDonador = () => {
                             estado: item.estado === 'activo' ? 'inactivo' : 'activo'
                         };
                         await disableDonador(id);
-                        showToast({ title: 'Estado actualizado', icon: 'success' });
+                        showToast('Estado actualizado', 'success' );
                     }
                 } catch (error) {
-                    console.error('Error updating estado:', error);
-                    showToast({ title: 'Error al actualizar el estado', icon: 'error' });
+                    const errorMessage = error.response?.data?.message || 'Error al actualizar el estado';
+                    console.error('Error updating estado:', errorMessage);
+                    showToast({ title: errorMessage, icon: 'error' });
                 }
             }
         );
     };
+
     const closeModal = () => {
         setSelectedItem(null);
         setShowModalForm(false);
