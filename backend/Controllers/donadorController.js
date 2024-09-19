@@ -59,13 +59,14 @@ exports.eliminarDonador = async (req, res) => {
     const donacionesAsociadas = await Donacion.find({ donador: req.params.id });
     if (donacionesAsociadas.length > 0) {
       return res.status(400).json({ error: 'No se puede eliminar el donador porque tiene donaciones registradas.' });
+    }else{
+      return res.status(204).json({succes:"success"});
     }
 
     const donador = await Donador.findByIdAndDelete(req.params.id);
     if (!donador) {
       return res.status(404).json({ error: 'Donador no encontrado' });
     }
-    res.status(204).end();
   } catch (error) {
     console.error(`Error al eliminar donador: ${error.message}`);
     res.status(500).json({ error: error.message });

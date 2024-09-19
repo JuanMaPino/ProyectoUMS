@@ -83,7 +83,18 @@ exports.cambiarEstadoProyecto = async (req, res) => {
 
 exports.obtenerActividadesPorProyecto = async (req, res) => {
   try {
-    const proyecto = await Proyecto.findById(req.params.id).select('actividades');
+    const proyecto = await Proyecto.findById(req.params.id)
+      .select('actividades')
+      .populate({
+        path: 'actividades.tareas',
+        populate: {
+          path: 'ayudante', // Poblar los ayudantes de las tareas
+          select: 'nombre rol' // Seleccionar solo los campos nombre y rol de los ayudantes
+        }
+      })
+      .populate('actividades.insumos.insumo') // Popula los insumos
+      .populate('actividades.beneficiarios'); // Popula los beneficiarios
+
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -115,7 +126,11 @@ exports.agregarActividad = async (req, res) => {
 exports.actualizarActividad = async (req, res) => {
   try {
     const { id, idActividad } = req.params;
-    const proyecto = await Proyecto.findById(id);
+    const proyecto = await Proyecto.findById(id)
+      .populate('actividades.tareas')
+      .populate('actividades.insumos.insumo')
+      .populate('actividades.beneficiarios'); // Popula tareas e insumos
+
     if (!proyecto) {
       return res.status(404).json({ error: 'Proyecto no encontrado' });
     }
@@ -132,6 +147,7 @@ exports.actualizarActividad = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar actividad', details: error.message });
   }
 };
+
 
 // Eliminar una actividad de un proyecto
 exports.eliminarActividad = async (req, res) => {
