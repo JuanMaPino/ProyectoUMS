@@ -119,7 +119,6 @@ const App = () => {
                                   <Route path="/actividades/:proyectoId" element={<CRUDActividad />} />
 
 
-
                                   {/* Ejemplo de gráfico */}
                                   <Route path="/line-chart" element={<LineChart />} />
 

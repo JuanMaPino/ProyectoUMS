@@ -69,26 +69,39 @@ const CRUDDonador = () => {
     };
 
     const handleDeleteButtonClick = async (id) => {
+        
         showAlert(
-            {
-                title: '¿Estás seguro?',
-                text: 'No podrás revertir esto',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            },
-            async () => {
-                try {
-                    const response = await deleteDonador(id);
-                    if (response.status === 204) {
-                        showToast('Donador eliminado correctamente', 'success');
-                    }
-                } catch (error) {
-                    console.error('Error al eliminar el donador:', error);
-                    const errorMessage = error.response?.data?.message || 'Error al eliminar, ya tiene una donacion asociada';
-                    showToast(errorMessage, 'error');
-                }
+
+          {
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esto',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+          },
+          async () => {
+            try {
+                console.log("id donador", id)
+              const response = await deleteDonador(id);
+              
+              
+              
+              if (response.response === 204) {
+                showToast('Donador eliminado correctamente', 'success');
+              }
+            } catch (error) {
+              
+              if (error.response && error.status === 204) {
+                console.log(error.response)
+                showToast('Donador eliminado correctamente', 'succes');
+                // Mostrar alerta si el donador tiene donaciones asociadas
+                
+              } else {
+                console.log(error.response)
+                showToast('Error al eliminar el donador, este tiene donaciones hechas', 'error');
+              }
+
             }
         );
     };
