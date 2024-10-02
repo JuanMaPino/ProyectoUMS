@@ -30,3 +30,8 @@
 [0918/211607.862:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
 [0918/211640.720:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
 [0918/211641.813:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
+[0922/174535.773:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
+[0922/174536.298:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
+[0922/174555.960:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
+[0922/174556.449:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)
+[0922/174606.885:ERROR:registration_protocol_win.cc(108)] CreateFile: El sistema no puede encontrar el archivo especificado. (0x2)

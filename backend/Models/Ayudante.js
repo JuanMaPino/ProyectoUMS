@@ -11,8 +11,8 @@ const ayudanteSchema = new Schema({
     type: Number,
     required: true,
     unique: true,
-    min: [10000000, 'el documento debe tener minimo 8 digitos'],
-    max: [9999999999, 'el documento debe ser maximo de 10 digitos']
+    min: [10000000, 'El documento debe tener mínimo 8 dígitos'],
+    max: [9999999999, 'El documento debe ser máximo de 10 dígitos']
   },
   nombre: {
     type: String,
@@ -22,8 +22,8 @@ const ayudanteSchema = new Schema({
   telefono: {
     type: Number,
     required: true,
-    min: [999999999, 'El telefono debe tener 10 digitos'],
-    max: [9999999999, 'El telefono no debe exceder los 10 digitos']
+    min: [999999999, 'El teléfono debe tener 10 dígitos'],
+    max: [9999999999, 'El teléfono no debe exceder los 10 dígitos']
   },
   rol: {
     type: String,
@@ -39,7 +39,7 @@ const ayudanteSchema = new Schema({
   correoElectronico: {
     type: String,
     unique: true,
-    match: [/.+\@.+\..+/, 'Ingrese un correo electronico valido']
+    match: [/.+\@.+\..+/, 'Ingrese un correo electrónico válido']
   },
   institucion: {
     type: String,
@@ -49,7 +49,19 @@ const ayudanteSchema = new Schema({
     type: String,
     enum: ['activo', 'inactivo'],
     default: 'activo'
-  }
+  },
+  // Nuevo campo para almacenar las tareas asignadas
+  tareasAsignadas: [{
+    tarea: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'Tarea'  // Referencia al modelo Tarea
+    },
+    horas: {
+      type: Number,
+      required: true,
+      min: [1, 'Debe asignar al menos 1 hora']
+    }
+  }]
 });
 
 const Ayudante = mongoose.model('Ayudante', ayudanteSchema);

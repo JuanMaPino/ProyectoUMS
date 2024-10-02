@@ -17,12 +17,14 @@ const tareaSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId, // Referencia al modelo Ayudante
     ref: 'Ayudante'
   },
-  estado: {
+  Proceso: {
     type: String,
-    enum: ['activo', 'inactivo'],
+    enum: ['Creado', 'En proceso','Finalizado','Cancelado'],
     default: 'activo'
-  }
+  },
+  
 });
+//proceso tareas 
 
 const Tarea = mongoose.model('Tarea', tareaSchema);
 

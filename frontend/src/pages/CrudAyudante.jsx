@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RiUserHeartFill, RiUserStarFill } from 'react-icons/ri'; // Importamos los iconos
+import { RiUserHeartFill } from 'react-icons/ri';
 import { useAyudantes } from '../context/AyudantesContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -16,6 +16,7 @@ import ViewModal from '../components/table/views/ViewAyudante';
 import CardAyudante from '../components/table/CardItems/CardAyudante';
 import FloatingButton from '../components/FloatingButton';
 import { RiDeleteBin6Line, RiEyeLine, RiPencilFill } from 'react-icons/ri';
+import AssignHoursModal from '../components/table/modals/AssignHoursModal';
 
 const CRUDAyudante = () => {
     const {
@@ -25,7 +26,7 @@ const CRUDAyudante = () => {
         disableAyudante,
         deleteAyudante,
         ayudantes,
-        errors
+        setAyudantes
     } = useAyudantes();
 
     const [filteredData, setFilteredData] = useState([]);
@@ -34,6 +35,9 @@ const CRUDAyudante = () => {
     const [showViewModal, setShowViewModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showAssignHoursModal, setShowAssignHoursModal] = useState(false);
+    const [selectedAyudanteForHours, setSelectedAyudanteForHours] = useState(null);
+    const [, forceUpdate] = useState();
 
     const itemsPerPage = 10;
 
@@ -48,7 +52,6 @@ const CRUDAyudante = () => {
             item.telefono.toString().toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        // Mover ayudantes inactivos al final
         const sortedData = [...filtered].sort((a, b) => {
             if (a.estado === 'activo' && b.estado === 'inactivo') return -1;
             if (a.estado === 'inactivo' && b.estado === 'activo') return 1;
@@ -56,7 +59,7 @@ const CRUDAyudante = () => {
         });
 
         setFilteredData(sortedData);
-        setCurrentPage(1); // Resetear a la primera página en una nueva búsqueda
+        setCurrentPage(1);
     }, [ayudantes, searchTerm]);
 
     const fetchData = async () => {
@@ -119,6 +122,24 @@ const CRUDAyudante = () => {
         await updateAyudante(id, updatedItem);
     };
 
+    const handleAssignHoursButtonClick = (item) => {
+        setSelectedAyudanteForHours(item);
+        setShowAssignHoursModal(true);
+    };
+
+    const closeAssignHoursModal = () => {
+        setSelectedAyudanteForHours(null);
+        setShowAssignHoursModal(false);
+    };
+
+    const handleUpdateAyudante = (updatedAyudante) => {
+        const updatedAyudantes = ayudantes.map(ayudante => 
+            ayudante._id === updatedAyudante._id ? updatedAyudante : ayudante
+        );
+        setAyudantes(updatedAyudantes);
+        forceUpdate({});
+    };
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const currentData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
@@ -138,7 +159,7 @@ const CRUDAyudante = () => {
                     <div className="hidden md:block">
                         <Table>
                             <TableHead cols={6}>
-                                <TableCell>Rol</TableCell> {/* Nueva columna para el cambio de rol */}
+                                <TableCell>Rol</TableCell>
                                 <TableCell>Identificación</TableCell>
                                 <TableCell>Ayudante</TableCell>
                                 <TableCell>Correo Electrónico</TableCell>
@@ -178,6 +199,13 @@ const CRUDAyudante = () => {
                                         </TableCell>
                                         <TableCell label="Acciones">
                                             <div className="flex gap-2">
+                                                <button 
+                                                    onClick={() => handleAssignHoursButtonClick(item)}
+                                                    className="flex items-center justify-center text-blue-600 hover:text-blue-800"
+                                                    title="Asignar Horas"
+                                                >
+                                                    <RiUserHeartFill />
+                                                </button>
                                                 <TableActions
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
@@ -220,13 +248,29 @@ const CRUDAyudante = () => {
                 </div>
             )}
             {showModalForm && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <FormModal onClose={handleCloseModal} item={selectedItem} fetchData={fetchData} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <FormModal
+                        onClose={handleCloseModal}
+                        onSubmit={handleCreateOrUpdate}
+                        item={selectedItem}
+                    />
                 </div>
             )}
             {showViewModal && selectedItem && (
-                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50 ">
-                    <ViewModal onClose={closeViewModal} item={selectedItem} />
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <ViewModal
+                        onClose={closeViewModal}
+                        item={selectedItem}
+                    />
+                </div>
+            )}
+            {showAssignHoursModal && selectedAyudanteForHours && (
+                <div className="fixed inset-0 z-50 flex justify-center items-center bg-gray-900 bg-opacity-50">
+                    <AssignHoursModal 
+                        onClose={closeAssignHoursModal} 
+                        item={selectedAyudanteForHours} 
+                        onUpdate={handleUpdateAyudante}
+                    />
                 </div>
             )}
         </div>
