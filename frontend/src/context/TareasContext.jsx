@@ -1,13 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     createTareaRequest,
     updateTareaRequest,
     getTareaByIdRequest,
-    getAllTareasRequest,
+    getAllTareasRequest,  // Aquí es donde haces la petición para obtener todas las tareas
     disableTareaRequest,
-    deleteTareaRequest // Agregado para la eliminación de beneficiario
-} from '../api/ApiTarea'; // Asegúrate de ajustar la ruta según tu estructura de archivos
+    deleteTareaRequest
+} from '../api/ApiTarea';
 
 // Definición del contexto
 const TareaContext = createContext();
@@ -20,8 +19,8 @@ export const TareaProvider = ({ children }) => {
     const [tareas, setTareas] = useState([]);
     const [errors, setErrors] = useState([]);
 
-    // Función para obtener todas las tareas
-    const fetchTareas = async () => {
+    // Cambiamos fetchTareas a getAllTareas para mantener la consistencia
+    const getAllTareas = async () => {
         try {
             const response = await getAllTareasRequest();
             setTareas(response.data);
@@ -33,7 +32,6 @@ export const TareaProvider = ({ children }) => {
     // Función para crear una tarea
     const createTarea = async (data) => {
         try {
-            console.log("Datos a enviar", data)
             const capitalizedData = capitalizeTareaData(data);
             const response = await createTareaRequest(capitalizedData);
             setTareas([...tareas, response.data]);
@@ -65,7 +63,6 @@ export const TareaProvider = ({ children }) => {
         }
     };
 
-    // Función para eliminar una tarea
     const deleteTarea = async (id) => {
         try {
             await deleteTareaRequest(id);
@@ -76,7 +73,7 @@ export const TareaProvider = ({ children }) => {
         }
     };
 
-    // Función para manejar errores
+    // Manejo de errores
     const handleErrors = (error) => {
         if (error.response && error.response.data) {
             setErrors([error.response.data.error]);
@@ -85,9 +82,9 @@ export const TareaProvider = ({ children }) => {
         }
     };
 
-    // Cargar tareas al montar el componente
+    // Cargar las tareas cuando el componente se monta
     useEffect(() => {
-        fetchTareas();
+        getAllTareas();  // Llamamos a getAllTareas en lugar de fetchTareas
     }, []);
 
     const capitalizeTareaData = (data) => {
@@ -103,7 +100,8 @@ export const TareaProvider = ({ children }) => {
                 createTarea,
                 updateTarea,
                 disableTarea,
-                deleteTarea
+                deleteTarea,
+                getAllTareas  // Asegúrate de exportar getAllTareas aquí
             }}
         >
             {children}

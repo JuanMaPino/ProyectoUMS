@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { getAllTareasRequest, updateTareaRequest } from '../../../api/ApiTarea';
-import { updateAyudanteRequest } from '../../../api/ApiAyudante';
+import { useTareas } from '../../../context/TareasContext';
+import { useAyudantes } from '../../../context/AyudantesContext';
 
 const AssignHoursModal = ({ onClose, item, onUpdate }) => {
-  const [tareas, setTareas] = useState([]);
+  const { tareas, getAllTareas } = useTareas();
+  const { updateAyudante } = useAyudantes();
   const [tareasAsignadas, setTareasAsignadas] = useState(item.tareasAsignadas || []);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchTareas = async () => {
-      try {
-        const response = await getAllTareasRequest();
-        setTareas(response.data);
-      } catch (error) {
-        console.error('Error al obtener las tareas:', error);
-      }
-    };
-    fetchTareas();
+    getAllTareas();
   }, []);
 
   const handleAssignTarea = (tarea) => {
@@ -27,25 +20,18 @@ const AssignHoursModal = ({ onClose, item, onUpdate }) => {
         horas: tarea.cantidadHoras,
         estado: 'Creada'
       };
-      setTareasAsignadas([...tareasAsignadas, newTarea]);
+      setTareasAsignadas(prevTareas => [...prevTareas, newTarea]);
     }
   };
 
   const handleRemoveTarea = (tareaId) => {
-    setTareasAsignadas(tareasAsignadas.filter(t => t.tarea?._id !== tareaId));
+    setTareasAsignadas(prevTareas => prevTareas.filter(t => t.tarea?._id !== tareaId));
   };
 
-  const handleUpdateEstado = async (tareaId, nuevoEstado) => {
-    const updatedTareas = tareasAsignadas.map(t => 
-      t.tarea._id === tareaId ? { ...t, estado: nuevoEstado } : t
-    );
-    setTareasAsignadas(updatedTareas);
-
-    try {
-      await updateTareaRequest(tareaId, { Proceso: nuevoEstado });
-    } catch (error) {
-      console.error('Error al actualizar el estado de la tarea:', error);
-    }
+  const handleUpdateEstado = (tareaId, nuevoEstado) => {
+    setTareasAsignadas(prevTareas => prevTareas.map(t => 
+      t.tarea?._id === tareaId ? { ...t, estado: nuevoEstado } : t
+    ));
   };
 
   const handleSave = async () => {
@@ -64,7 +50,7 @@ const AssignHoursModal = ({ onClose, item, onUpdate }) => {
         })),
       };
 
-      await updateAyudanteRequest(item._id, updatedAyudante);
+      await updateAyudante(item?._id, updatedAyudante);
 
       if (typeof onUpdate === 'function') {
         onUpdate(updatedAyudante);

@@ -20,13 +20,12 @@ import AssignHoursModal from '../components/table/modals/AssignHoursModal';
 
 const CRUDAyudante = () => {
     const {
+        ayudantes,
         createAyudante,
         updateAyudante,
         getAllAyudantes,
         disableAyudante,
-        deleteAyudante,
-        ayudantes,
-        setAyudantes
+        deleteAyudante
     } = useAyudantes();
 
     const [filteredData, setFilteredData] = useState([]);
@@ -37,12 +36,11 @@ const CRUDAyudante = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showAssignHoursModal, setShowAssignHoursModal] = useState(false);
     const [selectedAyudanteForHours, setSelectedAyudanteForHours] = useState(null);
-    const [, forceUpdate] = useState();
 
     const itemsPerPage = 10;
 
     useEffect(() => {
-        fetchData();
+        getAllAyudantes();
     }, []);
 
     useEffect(() => {
@@ -61,14 +59,6 @@ const CRUDAyudante = () => {
         setFilteredData(sortedData);
         setCurrentPage(1);
     }, [ayudantes, searchTerm]);
-
-    const fetchData = async () => {
-        try {
-            await getAllAyudantes();
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    };
 
     const handleCreateClick = () => {
         setSelectedItem(null);
@@ -132,12 +122,9 @@ const CRUDAyudante = () => {
         setShowAssignHoursModal(false);
     };
 
-    const handleUpdateAyudante = (updatedAyudante) => {
-        const updatedAyudantes = ayudantes.map(ayudante => 
-            ayudante._id === updatedAyudante._id ? updatedAyudante : ayudante
-        );
-        setAyudantes(updatedAyudantes);
-        forceUpdate({});
+    const handleUpdateAyudante = async (updatedAyudante) => {
+        await updateAyudante(updatedAyudante._id, updatedAyudante);
+        getAllAyudantes(); // Actualiza la lista de ayudantes después de la modificación
     };
 
     const startIndex = (currentPage - 1) * itemsPerPage;
