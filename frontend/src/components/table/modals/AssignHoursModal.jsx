@@ -71,7 +71,6 @@ const AssignHoursModal = ({ onClose, item, onUpdate }) => {
             <X size={24} />
           </button>
         </div>
-
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h3 className="text-xl font-semibold mb-4 text-gray-700">Tareas Disponibles</h3>
@@ -104,6 +103,7 @@ const AssignHoursModal = ({ onClose, item, onUpdate }) => {
                       onClick={() => handleRemoveTarea(tarea.tarea?._id)}
                       className="text-red-500 hover:text-red-700"
                     >
+                      <h1>hi</h1>
                       <Trash2 size={18} />
                     </button>
                   </div>
