@@ -19,6 +19,7 @@
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "classnames": "^2.5.1",
+    "cors": "^2.8.5",
     "js-cookie": "^3.0.5",
     "js-cookies": "^1.0.4",
     "jwt-decode": "^4.0.0",

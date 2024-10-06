@@ -9,5 +9,4 @@ router.put('/:id', tareaController.actualizarTarea);
 router.delete('/:id', tareaController.eliminarTarea);
 router.patch('/:id/estado', tareaController.cambiarEstadoTarea);
 
-
 module.exports = router;

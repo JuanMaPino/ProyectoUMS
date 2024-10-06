@@ -1,26 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     createTareaRequest,
     updateTareaRequest,
-    getTareaByIdRequest,
     getAllTareasRequest,
     disableTareaRequest,
-    deleteTareaRequest // Agregado para la eliminación de beneficiario
-} from '../api/ApiTarea'; // Asegúrate de ajustar la ruta según tu estructura de archivos
+    deleteTareaRequest
+} from '../api/ApiTarea';
 
-// Definición del contexto
 const TareaContext = createContext();
 
-// Hook personalizado para usar el contexto
 export const useTareas = () => useContext(TareaContext);
 
-// Proveedor del contexto que envuelve la aplicación
 export const TareaProvider = ({ children }) => {
     const [tareas, setTareas] = useState([]);
     const [errors, setErrors] = useState([]);
 
-    // Función para obtener todas las tareas
     const fetchTareas = async () => {
         try {
             const response = await getAllTareasRequest();
@@ -30,53 +24,55 @@ export const TareaProvider = ({ children }) => {
         }
     };
 
-    // Función para crear una tarea
     const createTarea = async (data) => {
         try {
-            console.log("Datos a enviar", data)
             const capitalizedData = capitalizeTareaData(data);
             const response = await createTareaRequest(capitalizedData);
-            setTareas([...tareas, response.data]);
+            setTareas(prevTareas => [...prevTareas, response.data]);
+            return response.data;
         } catch (error) {
             handleErrors(error);
+            throw error;
         }
     };
 
-    // Función para actualizar una tarea
     const updateTarea = async (id, data) => {
         try {
             const capitalizedData = capitalizeTareaData(data);
             const response = await updateTareaRequest(id, capitalizedData);
-            const updatedTareas = tareas.map(tarea =>
-                tarea._id === response.data._id ? response.data : tarea
+            setTareas(prevTareas => 
+                prevTareas.map(tarea => tarea._id === id ? response.data : tarea)
             );
-            setTareas(updatedTareas);
+            return response.data;
         } catch (error) {
             handleErrors(error);
+            throw error;
         }
     };
 
     const disableTarea = async (id) => {
         try {
             const res = await disableTareaRequest(id);
-            setTareas(tareas.map(p => p._id === id ? res.data : p));
+            setTareas(prevTareas => 
+                prevTareas.map(tarea => tarea._id === id ? res.data : tarea)
+            );
+            return res.data;
         } catch (error) {
-            setErrors(error.response.data);
+            handleErrors(error);
+            throw error;
         }
     };
 
-    // Función para eliminar una tarea
     const deleteTarea = async (id) => {
         try {
             await deleteTareaRequest(id);
-            const updatedTareas = tareas.filter(tarea => tarea._id !== id);
-            setTareas(updatedTareas);
+            setTareas(prevTareas => prevTareas.filter(tarea => tarea._id !== id));
         } catch (error) {
             handleErrors(error);
+            throw error;
         }
     };
 
-    // Función para manejar errores
     const handleErrors = (error) => {
         if (error.response && error.response.data) {
             setErrors([error.response.data.error]);
@@ -85,7 +81,6 @@ export const TareaProvider = ({ children }) => {
         }
     };
 
-    // Cargar tareas al montar el componente
     useEffect(() => {
         fetchTareas();
     }, []);
@@ -103,7 +98,8 @@ export const TareaProvider = ({ children }) => {
                 createTarea,
                 updateTarea,
                 disableTarea,
-                deleteTarea
+                deleteTarea,
+                fetchTareas
             }}
         >
             {children}

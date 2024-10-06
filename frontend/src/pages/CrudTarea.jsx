@@ -15,7 +15,7 @@ import FormModal from '../components/table/modals/ModalTarea';
 import ViewModal from '../components/table/views/ViewTarea';
 import CardTarea from '../components/table/CardItems/CardTarea';
 import FloatingButton from '../components/FloatingButton';
-import { showAlert, showToast } from '../components/table/alertFunctions'; // Importar la función de alerta
+import { showAlert, showToast } from '../components/table/alertFunctions';
 
 const CRUDTarea = () => {
     const {
@@ -37,7 +37,6 @@ const CRUDTarea = () => {
 
     const itemsPerPage = 10;
 
-    // Este efecto se encarga de filtrar las tareas por el término de búsqueda
     useEffect(() => {
         if (tareas) {
             const filtered = tareas.filter(item =>
@@ -45,7 +44,7 @@ const CRUDTarea = () => {
                 item.accion.toLowerCase().includes(searchTerm.toLowerCase())
             );
             setFilteredData(filtered);
-            setCurrentPage(1); // Reset to first page on new search
+            setCurrentPage(1);
         }
     }, [tareas, searchTerm]);
 
@@ -101,11 +100,14 @@ const CRUDTarea = () => {
             },
             async () => {
                 try {
-                    await disableTarea(id);
+                    const updatedTarea = await disableTarea(id);
+                    setFilteredData(prevData => 
+                        prevData.map(tarea => tarea._id === id ? updatedTarea : tarea)
+                    );
                     showToast('Estado de la tarea actualizado', 'success');
                 } catch (error) {
                     console.error('Error updating task status:', error);
-                    showToast('Error al actualizar el estado', 'error');
+                    showToast(error.response?.data?.error || 'Error al actualizar el estado', 'error');
                 }
             }
         );
@@ -118,7 +120,9 @@ const CRUDTarea = () => {
 
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
-        setShowModalForm(true);
+        setShow
+
+ModalForm(true);
     };
 
     const closeModal = () => {
@@ -181,7 +185,7 @@ const CRUDTarea = () => {
                                                     item={item}
                                                     handleViewButtonClick={handleViewButtonClick}
                                                     handleEditButtonClick={handleEditButtonClick}
-                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)} // Pasar el id aquí
+                                                    handleDeleteButtonClick={() => handleDeleteButtonClick(item._id)}
                                                 />
                                             </div>
                                         </TableCell>
