@@ -103,7 +103,7 @@ const AssignHoursModal = ({ onClose, item, onUpdate }) => {
                       onClick={() => handleRemoveTarea(tarea.tarea?._id)}
                       className="text-red-500 hover:text-red-700"
                     >
-                      <h1>hi</h1>
+
                       <Trash2 size={18} />
                     </button>
                   </div>
