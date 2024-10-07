@@ -1,31 +1,41 @@
 const Tarea = require('../Models/Tarea');
 
-// Obtener todas las tareas
 exports.obtenerTodasLasTareas = async (req, res) => {
   try {
-    const tareas = await Tarea.find().populate('ayudante', 'nombre rol'); // Aquí añadimos populate para los ayudantes
+    const tareas = await Tarea.find().populate('ayudante', 'nombre rol');
     res.json(tareas);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Crear una nueva tarea
 exports.crearTarea = async (req, res) => {
   try {
-    const nuevaTarea = new Tarea(req.body);  // Asegúrate de que ayudante está en el req.body si es necesario
+    const { nombre, accion, cantidadHoras, estado } = req.body;
+    
+    if (!nombre || !accion || !cantidadHoras) {
+      return res.status(400).json({ error: 'Nombre, acción y cantidad de horas son campos requeridos' });
+    }
+
+    const nuevaTarea = new Tarea({
+      nombre,
+      accion,
+      cantidadHoras: parseInt(cantidadHoras, 10),
+      estado: estado || 'activo'
+    });
+
     await nuevaTarea.save();
-    const tareaPoblada = await Tarea.findById(nuevaTarea._id).populate('ayudante', 'nombre rol'); // Populate después de guardar
+    const tareaPoblada = await Tarea.findById(nuevaTarea._id).populate('ayudante', 'nombre rol');
     res.status(201).json(tareaPoblada);
   } catch (error) {
+    console.error('Error al crear la tarea:', error);
     res.status(400).json({ error: error.message });
   }
 };
 
-// Obtener tarea por ID
 exports.obtenerTareaPorId = async (req, res) => {
   try {
-    const tarea = await Tarea.findById(req.params.id).populate('ayudante', 'nombre rol'); // Populate el ayudante
+    const tarea = await Tarea.findById(req.params.id).populate('ayudante', 'nombre rol');
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -35,11 +45,10 @@ exports.obtenerTareaPorId = async (req, res) => {
   }
 };
 
-// Actualizar tarea por ID
 exports.actualizarTarea = async (req, res) => {
   try {
     const tarea = await Tarea.findByIdAndUpdate(req.params.id, req.body, { new: true })
-      .populate('ayudante', 'nombre rol'); // Populate en la actualización también
+      .populate('ayudante', 'nombre rol');
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
@@ -49,7 +58,6 @@ exports.actualizarTarea = async (req, res) => {
   }
 };
 
-// Eliminar tarea por ID
 exports.eliminarTarea = async (req, res) => {
   try {
     const tarea = await Tarea.findByIdAndDelete(req.params.id);
@@ -62,17 +70,18 @@ exports.eliminarTarea = async (req, res) => {
   }
 };
 
-// Cambiar estado de la tarea (activo/inactivo)
 exports.cambiarEstadoTarea = async (req, res) => {
   try {
-    const tarea = await Tarea.findById(req.params.id).populate('ayudante', 'nombre rol'); // Populate en el cambio de estado también
+    const tarea = await Tarea.findById(req.params.id);
     if (!tarea) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
     tarea.estado = tarea.estado === 'activo' ? 'inactivo' : 'activo';
-    await tarea.save();
-    res.json(tarea);
+    const tareaActualizada = await tarea.save();
+    const tareaPoblada = await Tarea.findById(tareaActualizada._id).populate('ayudante', 'nombre rol');
+    res.json(tareaPoblada);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Error al cambiar el estado de la tarea:', error);
+    res.status(500).json({ error: 'Error interno del servidor', details: error.message });
   }
 };

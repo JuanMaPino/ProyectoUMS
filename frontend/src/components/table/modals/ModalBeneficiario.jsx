@@ -18,7 +18,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
     const [errors, setErrors] = useState({});
 
     useEffect(() => {
-        if (item) {
+        if (item) { 
             setFormData({
                 tipoDocumento: item.tipoDocumento || 'C.C',
                 identificacion: item.identificacion || '',

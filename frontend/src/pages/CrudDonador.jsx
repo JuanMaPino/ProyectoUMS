@@ -69,41 +69,41 @@ const CRUDDonador = () => {
     };
 
     const handleDeleteButtonClick = async (id) => {
-
+        
         showAlert(
 
-            {
-                title: '¿Estás seguro?',
-                text: 'No podrás revertir esto',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Sí, eliminar',
-                cancelButtonText: 'Cancelar'
-            },
-            async () => {
-                try {
-                    console.log("id donador", id)
-                    const response = await deleteDonador(id);
+          {
+            title: '¿Estás seguro?',
+            text: 'No podrás revertir esto',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+          },
+          async () => {
+            try {
+                console.log("id donador", id)
+              const response = await deleteDonador(id);
+              
+              
+              
+              if (response.response === 204) {
+                showToast('Donador eliminado correctamente', 'success');
+              }
+            } catch (error) {
+              
+              if (error.response && error.status === 204) {
+                console.log(error.response)
+                showToast('Donador eliminado correctamente', 'succes');
+                // Mostrar alerta si el donador tiene donaciones asociadas
+                
+              } else {
+                console.log(error.response)
+                showToast('Error al eliminar el donador, este tiene donaciones hechas', 'error');
+              }
 
-
-
-                    if (response.response === 204) {
-                        showToast('Donador eliminado correctamente', 'success');
-                    }
-                } catch (error) {
-
-                    if (error.response && error.status === 204) {
-                        console.log(error.response)
-                        showToast('Donador eliminado correctamente', 'succes');
-                        // Mostrar alerta si el donador tiene donaciones asociadas
-
-                    } else {
-                        console.log(error.response)
-                        showToast('Error al eliminar el donador, este tiene donaciones hechas', 'error');
-                    }
-
-                }
             }
+        }
         );
     };
 
@@ -136,7 +136,7 @@ const CRUDDonador = () => {
                             estado: item.estado === 'activo' ? 'inactivo' : 'activo'
                         };
                         await disableDonador(id);
-                        showToast('Estado actualizado', 'success');
+                        showToast('Estado actualizado', 'success' );
                     }
                 } catch (error) {
                     const errorMessage = error.response?.data?.message || 'Error al actualizar el estado';
@@ -160,18 +160,18 @@ const CRUDDonador = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     const filteredData = searchTerm
         ? donadores.filter(
-            (item) =>
-                item.identificacion
-                    .toString()
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (item.telefono &&
-                    item.telefono
-                        .toString()
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase()))
-        )
+              (item) =>
+                  item.identificacion
+                      .toString()
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()) ||
+                  item.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  (item.telefono &&
+                      item.telefono
+                          .toString()
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase()))
+          )
         : donadores;
 
     // Mover donadores inactivos al final

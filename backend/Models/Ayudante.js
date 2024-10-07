@@ -59,7 +59,11 @@ const ayudanteSchema = new Schema({
     horas: {
       type: Number,
       required: true,
-      min: [1, 'Debe asignar al menos 1 hora']
+      // min: [1, 'Debe asignar al menos 1 hora']
+    },
+    nombreTarea: {
+      type: String, 
+      require: true
     }
   }]
 });

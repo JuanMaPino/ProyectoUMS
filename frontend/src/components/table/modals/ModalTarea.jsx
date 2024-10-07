@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTareas } from '../../../context/TareasContext';
 import { RiCloseLine } from 'react-icons/ri';
-import { showToast } from '../../table/alertFunctions'; // Ajusta la ruta según tu estructura
+import { showToast } from '../../table/alertFunctions';
 
 const ModalTarea = ({ onClose, item }) => {
     const { createTarea, updateTarea } = useTareas();
@@ -67,17 +67,22 @@ const ModalTarea = ({ onClose, item }) => {
 
         if (formIsValid) {
             try {
+                const dataToSend = {
+                    ...formData,
+                    cantidadHoras: parseInt(formData.cantidadHoras, 10)
+                };
+
                 if (item && item._id) {
-                    await updateTarea(item._id, formData);
+                    await updateTarea(item._id, dataToSend);
                     showToast('Tarea actualizada correctamente.', 'success');
                 } else {
-                    await createTarea(formData);
+                    await createTarea(dataToSend);
                     showToast('Tarea creada correctamente.', 'success');
                 }
                 onClose();
             } catch (error) {
-                console.error('Error saving task:', error.message);
-                showToast('Error al guardar la tarea.', 'error');
+                console.error('Error saving task:', error.response?.data?.error || error.message);
+                showToast(error.response?.data?.error || 'Error al guardar la tarea.', 'error');
             }
         }
     };
