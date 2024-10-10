@@ -24,7 +24,7 @@ const tareaSchema = new mongoose.Schema({
   }, 
   proceso: {
     type: String,
-    enum: ['Creado', 'En proceso','Finalizado','Cancelado'],
+    enum: ['Creado','En proceso','Finalizado','Cancelado'],
     default: 'Creado'
   }
 });

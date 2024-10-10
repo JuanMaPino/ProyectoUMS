@@ -47,7 +47,7 @@ const ModalBeneficiario = ({ onClose, item }) => {
             });
         }
     }, [item]);
-
+    
     const validateField = (name, value) => {
         let error = '';
         switch (name) {

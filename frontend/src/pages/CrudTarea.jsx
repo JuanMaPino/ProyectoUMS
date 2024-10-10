@@ -120,9 +120,8 @@ const CRUDTarea = () => {
 
     const handleEditButtonClick = (item) => {
         setSelectedItem(item);
-        setShow
-
-ModalForm(true);
+        setShowModalForm(true);
+        //ModalForm(true);
     };
 
     const closeModal = () => {

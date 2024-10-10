@@ -6,11 +6,11 @@ const cors = require('cors');
 const auth = require('./Routes/authRoutes');
 const beneficiarioRoutes = require('./Routes/beneficiarioRoutes');
 const ayudanteRoutes = require('./Routes/ayudanteRoutes');
-const tareaRoutes = require('./Routes/tareaRoutes'); 
+const tareaRoutes = require('./Routes/tareaRoutes');
 const donadorRoutes = require('./Routes/donadorRoutes');
 const donacionRoutes = require('./Routes/donacionRoutes');
-const proyectoRoutes = require('./Routes/proyectoRoutes'); 
-const insumoRoutes = require('./Routes/insumoRoutes'); 
+const proyectoRoutes = require('./Routes/proyectoRoutes');
+const insumoRoutes = require('./Routes/insumoRoutes');
 const rolRoutes = require('./Routes/rolRoutes')
 const permisosRoutes = require('./Routes/permisosRoutes')
 
@@ -26,18 +26,19 @@ app.use(cors({
 //   origin: 'http://localhost:8081',
 //   credentials: true
 // }));
+
 app.use(morgan('dev'));
 app.use(express.json());
 
 app.use('/auth', auth);
 app.use('/beneficiarios', beneficiarioRoutes);
 app.use('/ayudantes', ayudanteRoutes);
-app.use('/tareas', tareaRoutes);  
+app.use('/tareas', tareaRoutes);
 app.use('/donadores', donadorRoutes);
 app.use('/donaciones', donacionRoutes);
-app.use('/proyectos', proyectoRoutes); 
-app.use('/insumos', insumoRoutes) 
-app.use('/roles', rolRoutes) 
+app.use('/proyectos', proyectoRoutes);
+app.use('/insumos', insumoRoutes)
+app.use('/roles', rolRoutes)
 app.use('/permisos', permisosRoutes)
 
 

@@ -1,3 +1,4 @@
+
 const Tarea = require('../Models/Tarea');
 
 exports.obtenerTodasLasTareas = async (req, res) => {
@@ -11,7 +12,7 @@ exports.obtenerTodasLasTareas = async (req, res) => {
 
 exports.crearTarea = async (req, res) => {
   try {
-    const { nombre, accion, cantidadHoras, estado } = req.body;
+    const { nombre, accion, cantidadHoras, estado, proceso } = req.body;
     
     if (!nombre || !accion || !cantidadHoras) {
       return res.status(400).json({ error: 'Nombre, acción y cantidad de horas son campos requeridos' });
@@ -21,7 +22,8 @@ exports.crearTarea = async (req, res) => {
       nombre,
       accion,
       cantidadHoras: parseInt(cantidadHoras, 10),
-      estado: estado || 'activo'
+      estado: estado || 'activo',
+      proceso: proceso || 'Creado'
     });
 
     await nuevaTarea.save();

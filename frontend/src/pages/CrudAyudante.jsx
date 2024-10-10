@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { RiUserHeartFill } from 'react-icons/ri';
+import { RiPlayListAddLine } from 'react-icons/ri';
 import { useAyudantes } from '../context/AyudantesContext';
 import Table from '../components/table/Table';
 import TableHead from '../components/table/TableHead';
@@ -188,10 +189,11 @@ const CRUDAyudante = () => {
                                             <div className="flex gap-2">
                                                 <button 
                                                     onClick={() => handleAssignHoursButtonClick(item)}
-                                                    className="flex items-center justify-center text-blue-600 hover:text-blue-800"
+                                                    className={`rounded-lg transition-colors text-white ${item.estado === 'activo' ? 'bg-gradient-to-r from-indigo-500 to-indigo-600 hover:from-indigo-700 hover:to-indigo-800' : 'bg-gray-300 cursor-not-allowed'} p-2`}
+                                                    disabled={item.estado !== 'activo'}
                                                     title="Asignar Horas"
                                                 >
-                                                    <RiUserHeartFill />
+                                                    <RiPlayListAddLine />
                                                 </button>
                                                 <TableActions
                                                     item={item}

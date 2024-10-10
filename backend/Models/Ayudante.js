@@ -64,6 +64,10 @@ const ayudanteSchema = new Schema({
     nombreTarea: {
       type: String, 
       require: true
+    },
+    proceso: { 
+      type: String, 
+      ref: 'Creada'
     }
   }]
 });
