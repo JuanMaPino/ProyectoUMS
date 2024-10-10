@@ -23,7 +23,7 @@ export const AyudanteProvider = ({ children }) => {
       handleErrors(error);
     }
   };
-
+//crear ayudantes
   const createAyudante = async (data) => {
     try {
       const capitalizedData = capitalizeAyudanteData(data);
